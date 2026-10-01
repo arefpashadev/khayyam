@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
-import { getDefaultConfig, steps, type OrderKind, type PreviewTarget, type WizardConfig } from "./config";
+export type TourName = "intro" | "editor";
+
+import { getDefaultConfig, steps, type IndustryKey, type OrderKind, type PreviewTarget, type WizardConfig } from "./config";
 
 type WizardState = {
   kind: OrderKind;
@@ -17,9 +19,10 @@ type WizardState = {
   update: (patch: Partial<WizardConfig>, target?: PreviewTarget) => void;
   toggleSection: (value: string) => void;
   setVariant: (variant: number) => void;
-  /** Onboarding tour step; null when closed. */
-  tour: number | null;
-  setTour: (step: number | null) => void;
+  setIndustry: (industry: IndustryKey) => void;
+  /** Open guided tour and its step; null when closed. */
+  tour: { name: TourName; step: number } | null;
+  setTour: (tour: { name: TourName; step: number } | null) => void;
   submit: () => void;
   restart: () => void;
 };
@@ -71,6 +74,7 @@ export const useWizard = create<WizardState>((set, get) => ({
     }),
 
   setVariant: (variant) => set((state) => ({ config: { ...state.config, variant }, focus: { target: "hero", tick: state.focus.tick + 1 } })),
+  setIndustry: (industry) => set((state) => ({ config: { ...state.config, industry, variant: 0 }, focus: { target: "top", tick: state.focus.tick + 1 } })),
 
   submit: () => set({ submitted: true }),
   restart: () => get().init(get().kind),

@@ -1,13 +1,12 @@
 "use client";
 
-import { Check, Droplet, EyeOff, Link2, Moon, Sparkles, Sun, Wind, Zap } from "lucide-react";
+import { Check, Droplet, EyeOff, Info, Link2, Moon, Sparkles, Sun, Wind, Zap } from "lucide-react";
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
 
 import {
   appFeatures,
   appExtras,
-  appLayouts,
   buildPreviewVars,
   colors,
   faNumber,
@@ -16,12 +15,9 @@ import {
   radii,
   motionLevels,
   siteExtras,
-  siteLayouts,
   siteSections,
   themes,
   typeStyles,
-  type IndustryKey,
-  type LayoutKey,
   type StepKey,
 } from "./config";
 import { useWizard } from "./store";
@@ -75,6 +71,7 @@ const field =
 const BrandStep = () => {
   const config = useWizard((state) => state.config);
   const update = useWizard((state) => state.update);
+  const content = industries[config.industry];
 
   return (
     <div className="flex flex-col gap-5">
@@ -82,20 +79,11 @@ const BrandStep = () => {
         <Label>نام برند</Label>
         <input value={config.brandName} onChange={(event) => update({ brandName: event.target.value }, "top")} placeholder="مثلاً کافه خیام" maxLength={28} className={`${field} h-11 font-bold placeholder:font-normal`} />
       </label>
-      <div>
-        <Label>حوزه فعالیت</Label>
-        <div className="grid grid-cols-3 gap-1.5">
-          {(Object.keys(industries) as IndustryKey[]).map((key) => {
-            const item = industries[key];
-            return (
-              <Tile key={key} selected={config.industry === key} onClick={() => update({ industry: key }, "hero")} className="flex h-[68px] flex-col items-center justify-center gap-1.5 px-1 text-center">
-                <item.icon className={`size-[18px] ${config.industry === key ? "text-[#078ef0]" : "text-[#6b7780]"}`} aria-hidden="true" />
-                <span className="text-[11px] font-bold leading-4">{item.label}</span>
-              </Tile>
-            );
-          })}
-        </div>
-      </div>
+      <label className="block">
+        <Label>جمله اصلی صفحه (اختیاری)</Label>
+        <input value={config.tagline} onChange={(event) => update({ tagline: event.target.value }, "hero")} placeholder={content.headline} maxLength={48} className={`${field} h-11`} />
+        <span className="mt-1.5 block text-[11px] text-[#8a959b]">اگر خالی بماند، متن پیشنهادی ما نمایش داده می‌شود.</span>
+      </label>
     </div>
   );
 };
@@ -184,54 +172,6 @@ const ShapeStep = () => {
         onChange={(type) => update({ type, mood: null })}
         options={typeStyles.map((type) => ({ value: type.value, label: type.value === "heavy" ? "پررنگ" : type.label, icon: <span className="text-[15px] leading-none" style={{ fontWeight: weight[type.value] }}>آ</span> }))}
       />
-    </div>
-  );
-};
-
-/** Tiny wireframe drawing of each layout. */
-const LayoutGlyph = ({ value }: { value: LayoutKey }) => {
-  const bar = "rounded-sm bg-current";
-  const block = "rounded-[3px] bg-current opacity-25";
-  const glyphs: Record<LayoutKey, ReactNode> = {
-    split: (
-      <div className="flex size-full items-center gap-1.5 p-1.5">
-        <div className="flex flex-1 flex-col gap-1"><span className={`${bar} h-1 w-full`} /><span className={`${bar} h-1 w-2/3`} /><span className={`${bar} mt-0.5 h-1.5 w-1/2 opacity-60`} /></div>
-        <div className={`${block} h-full flex-1`} />
-      </div>
-    ),
-    centered: (
-      <div className="flex size-full flex-col items-center gap-1 p-1.5"><span className={`${bar} h-1 w-2/3`} /><span className={`${bar} h-1 w-1/3`} /><div className={`${block} mt-0.5 w-full flex-1`} /></div>
-    ),
-    fullbleed: (
-      <div className="size-full p-1"><div className="flex size-full flex-col items-center justify-center gap-1 rounded-[3px] bg-current"><span className="h-1 w-2/3 rounded-sm bg-white" /><span className="h-1 w-1/3 rounded-sm bg-white/70" /></div></div>
-    ),
-    cards: <div className="grid size-full grid-cols-2 gap-1 p-1.5"><div className={block} /><div className={block} /><div className={block} /><div className={block} /></div>,
-    list: (
-      <div className="flex size-full flex-col gap-1 p-1.5">
-        {[0, 1, 2].map((row) => (<div key={row} className="flex flex-1 items-center gap-1"><span className={`${block} aspect-square h-full`} /><span className={`${bar} h-1 flex-1`} /></div>))}
-      </div>
-    ),
-    feed: (
-      <div className="flex size-full flex-col gap-1 p-1.5"><div className="flex gap-1">{[0, 1, 2, 3].map((dot) => (<span key={dot} className="size-2 rounded-full bg-current" />))}</div><div className={`${block} w-full flex-1`} /></div>
-    ),
-  };
-  return <div className="h-12 w-full rounded-lg bg-white/80 text-current">{glyphs[value]}</div>;
-};
-
-const LayoutStep = () => {
-  const kind = useWizard((state) => state.kind);
-  const layout = useWizard((state) => state.config.layout);
-  const update = useWizard((state) => state.update);
-  const options = kind === "app" ? appLayouts : siteLayouts;
-
-  return (
-    <div className="grid grid-cols-3 gap-1.5">
-      {options.map((option) => (
-        <Tile key={option.value} selected={layout === option.value} onClick={() => update({ layout: option.value }, "hero")} className="p-1.5">
-          <LayoutGlyph value={option.value} />
-          <span className="mt-1.5 block pb-0.5 text-center text-[11px] font-bold">{option.label}</span>
-        </Tile>
-      ))}
     </div>
   );
 };
@@ -343,16 +283,20 @@ const ReferencesStep = () => {
         <Label>چه چیزی در آن‌ها دوست دارید؟</Label>
         <textarea value={notes} rows={2} onChange={(event) => update({ notes: event.target.value }, "top")} placeholder="مثلاً رنگ‌های سایت اول و منوی ساده سایت دوم" className={`${field} resize-none py-2.5 leading-6`} />
       </label>
+      <p className="flex gap-2 rounded-xl bg-[#fff7e8] px-3 py-2.5 text-[11.5px] leading-6 text-[#7a5a1c]">
+        <Info className="mt-1 size-3.5 shrink-0" aria-hidden="true" />
+        همه این مقادیر طبق خواسته شما قابل تغییر است. بعد از ثبت درخواست هم می‌توانید هر تغییری را برایمان بفرستید.
+      </p>
     </div>
   );
 };
 
-export const stepPanels: Record<StepKey, () => ReactNode> = {
+/** Editor-phase panels; the gallery steps live in gallery.tsx. */
+export const stepPanels: Partial<Record<StepKey, () => ReactNode>> = {
   brand: BrandStep,
   mood: MoodStep,
   color: ColorStep,
   shape: ShapeStep,
-  layout: LayoutStep,
   sections: SectionsStep,
   extras: ExtrasStep,
   references: ReferencesStep,

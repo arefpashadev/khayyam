@@ -1,5 +1,20 @@
 import {
+  ArrowUpLeft,
   Award,
+  Bike,
+  Check,
+  ChefHat,
+  Dumbbell,
+  Gift,
+  Mail,
+  MapPin,
+  Phone,
+  Pill,
+  Quote,
+  Shirt,
+  Smartphone,
+  Sofa,
+  Sparkles,
   BadgeCheck,
   CalendarDays,
   ChevronLeft,
@@ -336,73 +351,173 @@ export const HeroArt = ({ art, config, tall }: { art: HeroArtKey; config: Wizard
       </div>
     ),
 
-    /* ---------- generic ---------- */
-    orbs: (
-      <div className={`${frame} bg-(--pv-soft)`}>
-        <div className="absolute -bottom-[18%] -left-[10%] size-[62%] rounded-full bg-(--pv-primary) opacity-90" />
-        <div className="absolute -right-[6%] -top-[14%] size-[44%] rounded-full opacity-60" style={{ backgroundColor: mix(config.color, "#ffffff", 0.45) }} />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="pv-float flex size-[30%] max-h-40 max-w-40 items-center justify-center rounded-(--pv-r-card) bg-(--pv-bg) shadow-2xl">
-            <Icon className="size-1/2 text-(--pv-primary)" strokeWidth={1.6} aria-hidden="true" />
-          </span>
-        </div>
-        <Float className="bottom-[10%] right-[8%]" delay={0.6}><span className={chip}><Star className="size-3.5 fill-(--pv-primary) text-(--pv-primary)" aria-hidden="true" />۴٫۹ از ۵</span></Float>
-      </div>
-    ),
-    mosaic: (
-      <div className={`${frame} grid grid-cols-3 grid-rows-3 gap-2.5`}>
-        <div className="col-span-2 row-span-2 flex items-center justify-center rounded-(--pv-r-card) bg-(--pv-primary)">
-          <Icon className="size-1/3 text-(--pv-on-primary)" strokeWidth={1.4} aria-hidden="true" />
-        </div>
-        {[0.55, 0.3, 0.75, 0.45, 0.2].map((amount, index) => (
-          <div key={index} className="rounded-(--pv-r-card)" style={{ backgroundColor: shade(amount) }} />
-        ))}
-      </div>
-    ),
-    rings: (
-      <div className={`${frame} bg-(--pv-soft)`}>
-        {[92, 70, 48].map((size) => (
-          <span key={size} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-(--pv-primary)" style={{ width: `${size}%`, aspectRatio: "1", opacity: 0.18 + (92 - size) / 160 }} />
-        ))}
-        <span className="absolute left-1/2 top-1/2 flex size-[26%] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-(--pv-primary)">
-          <Icon className="size-1/2 text-(--pv-on-primary)" strokeWidth={1.6} aria-hidden="true" />
-        </span>
-        {content.features.slice(0, 2).map((item, index) => (
-          <Float key={item.label} delay={index * 0.7} className={index === 0 ? "right-[6%] top-[14%]" : "bottom-[14%] left-[6%]"}>
-            <span className={chip}><item.icon className="size-3.5 text-(--pv-primary)" aria-hidden="true" /> {item.label}</span>
-          </Float>
-        ))}
-      </div>
-    ),
-    stack: (
-      <div className={`${frame} flex items-center justify-center bg-(--pv-surface)`}>
-        <div className="absolute h-[62%] w-[52%] -rotate-[9deg] rounded-(--pv-r-card)" style={{ backgroundColor: shade(0.55) }} />
-        <div className="absolute h-[62%] w-[52%] rotate-[6deg] rounded-(--pv-r-card)" style={{ backgroundColor: shade(0.25) }} />
-        <div className="relative flex h-[62%] w-[52%] flex-col justify-between rounded-(--pv-r-card) bg-(--pv-bg) p-[6%] shadow-2xl">
-          <span className="flex size-[28%] items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-primary)"><Icon className="size-1/2 text-(--pv-on-primary)" aria-hidden="true" /></span>
-          <div className="space-y-2">{bar("80%")}{bar("50%", 0.4)}</div>
-        </div>
-      </div>
-    ),
-    bars: (
-      <div className={`${frame} flex items-end justify-center gap-[4%] bg-(--pv-soft) px-[10%] pt-[18%]`}>
-        {[0.45, 0.7, 0.55, 0.95, 0.75].map((height, index) => (
-          <div key={index} className="relative flex-1 rounded-t-(--pv-r-card)" style={{ height: `${height * 100}%`, backgroundColor: index === 3 ? "var(--pv-primary)" : shade(0.35 + index * 0.08) }}>
-            {index === 3 && (
-              <span className="pv-float absolute -top-[18%] left-1/2 flex aspect-square w-[150%] -translate-x-1/2 items-center justify-center rounded-full bg-(--pv-bg) shadow-xl">
-                <Icon className="size-1/2 text-(--pv-primary)" aria-hidden="true" />
-              </span>
-            )}
+    /* ---------- company (more) ---------- */
+    services: (
+      <div className={`${frame} flex flex-col justify-center gap-3 bg-(--pv-soft) p-[8%]`}>
+        {content.features.slice(0, 3).map((item, index) => (
+          <div key={item.label} className={`${panel} flex items-center gap-3 p-3.5`} style={{ marginInlineEnd: `${index * 8}%` }}>
+            <span className={`flex size-11 shrink-0 items-center justify-center rounded-(--pv-r-ctrl) ${index === 0 ? "bg-(--pv-primary) text-(--pv-on-primary)" : "bg-(--pv-soft) text-(--pv-primary)"}`}><item.icon className="size-5" aria-hidden="true" /></span>
+            <div className="flex-1"><strong className="block text-[13px]">{item.label}</strong><span className="text-[11px] text-(--pv-muted)">مشاوره رایگان اولیه</span></div>
+            <ArrowUpLeft className="size-4 text-(--pv-muted)" aria-hidden="true" />
           </div>
         ))}
       </div>
     ),
-    frame: (
-      <div className={`${frame} p-[7%]`}>
-        <div className="absolute inset-[7%] translate-x-[4%] translate-y-[5%] rounded-(--pv-r-card) border-2 border-(--pv-primary)" />
-        <div className="relative flex size-full items-center justify-center rounded-(--pv-r-card)" style={{ backgroundColor: shade(0.3) }}>
-          <Icon className="size-1/4 text-(--pv-primary)" strokeWidth={1.3} aria-hidden="true" />
-          <span className="absolute -bottom-3 right-[8%] rounded-(--pv-r-ctrl) bg-(--pv-primary) px-3 py-1.5 text-[12px] font-bold text-(--pv-on-primary) shadow-lg">{content.features[0].label}</span>
+    quote: (
+      <div className={`${frame} flex items-center justify-center bg-(--pv-primary) p-[8%]`}>
+        <div className={`${panel} w-full p-[7%]`}>
+          <Quote className="size-8 text-(--pv-primary)" aria-hidden="true" />
+          <p className="mt-3 text-[15px] font-bold leading-8">همکاری با این تیم فروش ما را در شش ماه دو برابر کرد.</p>
+          <div className="mt-4 flex items-center gap-3"><Avatar tone={shade(0.2)} /><div className="text-[12px]"><strong className="block">مهدی صالحی</strong><span className="text-(--pv-muted)">مدیرعامل گروه آریا</span></div></div>
+        </div>
+      </div>
+    ),
+
+    /* ---------- shop (more) ---------- */
+    categories: (
+      <div className={`${frame} grid grid-cols-3 content-center gap-x-3 gap-y-5 bg-(--pv-surface) p-[8%]`}>
+        {[["مد و پوشاک", Shirt], ["دیجیتال", Smartphone], ["خانه", Sofa], ["زیبایی", Sparkles], ["ورزشی", Dumbbell], ["هدیه", Gift]].map(([label, CategoryIcon], index) => {
+          const Glyph = CategoryIcon as typeof Shirt;
+          return (
+            <div key={label as string} className="flex flex-col items-center gap-2">
+              <span className="flex aspect-square w-[72%] items-center justify-center rounded-full" style={{ backgroundColor: index === 0 ? "var(--pv-primary)" : shade(0.55 + (index % 3) * 0.1) }}>
+                <Glyph className={`size-1/2 ${index === 0 ? "text-(--pv-on-primary)" : "text-(--pv-primary)"}`} strokeWidth={1.5} aria-hidden="true" />
+              </span>
+              <span className="text-[12px] font-bold">{label as string}</span>
+            </div>
+          );
+        })}
+      </div>
+    ),
+    deal: (
+      <div className={`${frame} bg-(--pv-soft)`}>
+        <div className={`absolute inset-[9%] ${panel} grid grid-cols-2 overflow-hidden`}>
+          <div className="relative" style={{ backgroundColor: shade(0.3) }}>
+            <ShoppingBag className="absolute left-1/2 top-1/2 size-1/3 -translate-x-1/2 -translate-y-1/2 text-(--pv-primary)" strokeWidth={1.2} aria-hidden="true" />
+          </div>
+          <div className="flex flex-col justify-center gap-3 p-[8%]">
+            <span className="w-fit rounded-(--pv-r-ctrl) bg-(--pv-primary) px-2 py-0.5 text-[11px] font-bold text-(--pv-on-primary)">پیشنهاد شگفت‌انگیز</span>
+            <strong className="text-[14px]">هدفون بی‌سیم</strong>
+            <span className="text-[12px] text-(--pv-muted) line-through">۲٬۹۰۰</span>
+            <strong className="text-[18px] text-(--pv-primary)">۱٬۹۹۰ <span className="text-[11px] font-normal">هزار تومان</span></strong>
+            <div className="flex gap-1.5" dir="ltr">
+              {["۰۲", "۱۴", "۳۸"].map((part) => (
+                <span key={part} className="flex size-9 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-text) text-[13px] font-bold text-(--pv-bg)">{part}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    ),
+
+    /* ---------- restaurant (more) ---------- */
+    delivery: (
+      <div className={`${frame} bg-(--pv-soft)`}>
+        <svg viewBox="0 0 400 300" className="absolute inset-0 size-full opacity-60" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M40 250 C 120 200, 160 260, 220 170 S 330 90, 360 50" fill="none" stroke="var(--pv-primary)" strokeWidth="4" strokeDasharray="10 10" strokeLinecap="round" />
+        </svg>
+        <span className="absolute right-[10%] top-[12%] flex size-12 items-center justify-center rounded-full bg-(--pv-primary) text-(--pv-on-primary) shadow-lg"><Icon className="size-6" aria-hidden="true" /></span>
+        <Float className="bottom-[10%] left-[8%]">
+          <div className={`${panel} w-56 p-3.5`}>
+            <div className="flex items-center gap-2 text-[13px] font-bold"><Bike className="size-4 text-(--pv-primary)" aria-hidden="true" />سفارش در راه است</div>
+            <span className="mt-2 block h-1.5 overflow-hidden rounded-full bg-(--pv-surface)"><span className="block h-full w-2/3 rounded-full bg-(--pv-primary)" /></span>
+            <span className="mt-2 block text-[11px] text-(--pv-muted)">رسیدن تا ۱۲ دقیقه دیگر</span>
+          </div>
+        </Float>
+      </div>
+    ),
+    chef: (
+      <div className={`${frame} grid grid-cols-[1fr_1.2fr] gap-3`}>
+        <div className="flex items-end justify-center overflow-hidden rounded-(--pv-r-card) bg-(--pv-primary)">
+          <ChefHat className="mb-[10%] size-2/3 text-(--pv-on-primary) opacity-90" strokeWidth={1.1} aria-hidden="true" />
+        </div>
+        <div className="flex flex-col justify-center gap-3 rounded-(--pv-r-card) bg-(--pv-soft) p-[9%]">
+          <span className="text-[12px] text-(--pv-muted)">سرآشپز</span>
+          <strong className="text-[18px]">رضا موسوی</strong>
+          <span className="flex gap-0.5 text-(--pv-primary)">{[0, 1, 2, 3, 4].map((star) => <Star key={star} className="size-3.5 fill-current" aria-hidden="true" />)}</span>
+          <p className="text-[12px] leading-6 text-(--pv-muted)">۲۰ سال تجربه در آشپزی ایرانی و مدیترانه‌ای</p>
+        </div>
+      </div>
+    ),
+
+    /* ---------- education (more) ---------- */
+    live: (
+      <div className={`${frame} bg-(--pv-text) p-[5%]`}>
+        <div className="relative h-full overflow-hidden rounded-(--pv-r-card)" style={{ backgroundColor: shade(0.35) }}>
+          <UserRound className="absolute bottom-0 left-1/2 size-2/3 -translate-x-1/2 text-white/60" strokeWidth={1} aria-hidden="true" />
+          <span className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-[#e5484d] px-2.5 py-1 text-[11px] font-bold text-white"><span className="size-1.5 rounded-full bg-white" />زنده</span>
+          <div className="absolute bottom-3 left-3 flex gap-2">
+            {[0.15, 0.5, 0.7].map((amount) => <span key={amount} className="size-12 rounded-(--pv-r-ctrl) ring-2 ring-white/70" style={{ backgroundColor: shade(amount) }} />)}
+          </div>
+          <span className="absolute bottom-3 right-3 rounded-(--pv-r-ctrl) bg-black/40 px-2.5 py-1 text-[11px] text-white">۲۴۸ نفر آنلاین</span>
+        </div>
+      </div>
+    ),
+    teacher: (
+      <div className={`${frame} flex items-center justify-center bg-(--pv-soft)`}>
+        <div className={`${panel} w-[70%] p-[6%] text-center`}>
+          <span className="mx-auto flex size-20 items-end justify-center overflow-hidden rounded-full bg-(--pv-primary)"><UserRound className="mb-[-12%] size-[85%] text-(--pv-on-primary)" strokeWidth={1.2} aria-hidden="true" /></span>
+          <strong className="mt-3 block text-[15px]">استاد نگار امینی</strong>
+          <span className="text-[12px] text-(--pv-muted)">مدرس طراحی محصول</span>
+          <div className="mt-4 grid grid-cols-3 gap-2 text-[11px]">
+            {[["۴٫۹", "امتیاز"], ["۱۲", "دوره"], ["۸هزار", "دانشجو"]].map(([value, label]) => (
+              <span key={label} className="rounded-(--pv-r-ctrl) bg-(--pv-surface) py-2"><strong className="block text-[13px]">{value}</strong>{label}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    ),
+
+    /* ---------- health (more) ---------- */
+    prescription: (
+      <div className={`${frame} bg-(--pv-soft) p-[8%]`}>
+        <div className={`h-full ${panel} p-[6%]`}>
+          <div className="mb-3 flex items-center gap-2 text-[13px] font-bold"><Pill className="size-4 text-(--pv-primary)" aria-hidden="true" />داروهای امروز</div>
+          {[["آموکسی‌سیلین", "۸:۰۰", true], ["ویتامین D", "۱۴:۰۰", true], ["امپرازول", "۲۰:۰۰", false]].map(([drug, time, done]) => (
+            <div key={drug as string} className="flex items-center gap-3 border-b border-(--pv-border) py-2.5 text-[12px] last:border-0">
+              <span className={`flex size-5 items-center justify-center rounded-full ${done ? "bg-(--pv-primary) text-(--pv-on-primary)" : "ring-2 ring-(--pv-border)"}`}>{done ? <Check className="size-3" strokeWidth={3} aria-hidden="true" /> : null}</span>
+              <span className="flex-1">{drug as string}</span><strong>{time as string}</strong>
+            </div>
+          ))}
+        </div>
+      </div>
+    ),
+    clinic: (
+      <div className={`${frame} bg-(--pv-surface)`}>
+        <div className="absolute inset-0 grid grid-cols-6 grid-rows-4 gap-px opacity-40">{Array.from({ length: 24 }, (_, index) => <span key={index} style={{ backgroundColor: index % 5 === 0 ? shade(0.55) : shade(0.85) }} />)}</div>
+        <span className="pv-float absolute left-[46%] top-[30%] flex size-12 items-center justify-center rounded-full bg-(--pv-primary) text-(--pv-on-primary) shadow-xl ring-4 ring-(--pv-bg)"><MapPin className="size-6" aria-hidden="true" /></span>
+        <div className={`absolute bottom-[8%] right-[6%] ${panel} w-56 p-3.5`}>
+          <strong className="text-[13px]">کلینیک {name}</strong>
+          <span className="mt-1 block text-[11px] text-(--pv-muted)">تهران، خیابان ولیعصر</span>
+          <div className="mt-2 flex gap-1.5">{["تأمین اجتماعی", "آزاد"].map((item) => <span key={item} className="rounded-(--pv-r-ctrl) bg-(--pv-soft) px-2 py-0.5 text-[10px] font-bold text-(--pv-primary)">{item}</span>)}</div>
+        </div>
+      </div>
+    ),
+
+    /* ---------- personal (more) ---------- */
+    skills: (
+      <div className={`${frame} flex flex-col justify-center gap-4 bg-(--pv-soft) px-[10%]`}>
+        {[["طراحی رابط کاربری", 95], ["تحقیق کاربر", 80], ["برنامه‌نویسی فرانت", 70], ["برندینگ", 85]].map(([skill, value]) => (
+          <div key={skill as string}>
+            <div className="mb-1.5 flex justify-between text-[12px]"><strong>{skill as string}</strong><span className="text-(--pv-muted)">{(value as number).toLocaleString("fa-IR")}٪</span></div>
+            <span className="block h-2 overflow-hidden rounded-full bg-(--pv-bg)"><span className="block h-full rounded-full bg-(--pv-primary)" style={{ width: `${value}%` }} /></span>
+          </div>
+        ))}
+      </div>
+    ),
+    contact: (
+      <div className={`${frame} flex items-center justify-center bg-(--pv-primary)`}>
+        <div className={`${panel} w-[72%] p-[6%]`}>
+          <strong className="text-[16px]">بیایید با هم کار کنیم</strong>
+          {[[Mail, "hello@example.ir"], [Phone, "۰۹۱۲ ۳۴۵ ۶۷۸۹"], [MapPin, "تهران"]].map(([ContactIcon, value]) => {
+            const Glyph = ContactIcon as typeof Mail;
+            return (
+              <div key={value as string} className="mt-3 flex items-center gap-3 text-[12px]">
+                <span className="flex size-8 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-soft) text-(--pv-primary)"><Glyph className="size-4" aria-hidden="true" /></span>
+                <span dir="auto">{value as string}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
     ),

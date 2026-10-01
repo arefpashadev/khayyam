@@ -1,9 +1,10 @@
-import { ChevronDown, Menu, MessageCircle, Moon, Quote, Star, UserRound } from "lucide-react";
+import { ChevronDown, Menu, MessageCircle, Moon, Quote, Search, ShoppingCart, Star, UserRound } from "lucide-react";
 import type { CSSProperties, ReactNode } from "react";
 
 import { faNumber, industries, mix, type WizardConfig } from "../config";
-import { getDesign } from "../designs";
+import { getSiteDesign } from "../designs";
 import { HeroArt } from "./hero-art";
+import { IndustryShowcase } from "./industry-showcase";
 
 const heading = (size: number): CSSProperties => ({
   fontSize: `calc(${size}px * var(--pv-hs))`,
@@ -35,7 +36,7 @@ export const SiteTop = ({ config, compact }: { config: WizardConfig; compact: bo
   const content = industries[config.industry];
   const name = config.brandName.trim() || "برند شما";
   const BrandIcon = content.icon;
-  const design = getDesign(config.industry, config.variant);
+  const design = getSiteDesign(config.industry, config.variant);
   const pattern: CSSProperties | undefined = design.pattern
     ? { backgroundImage: "radial-gradient(var(--pv-border) 1.4px, transparent 1.4px)", backgroundSize: "22px 22px" }
     : undefined;
@@ -64,7 +65,21 @@ export const SiteTop = ({ config, compact }: { config: WizardConfig; compact: bo
     <div className="flex items-center gap-2">
       {extra("multilang") && <span className="flex h-9 items-center gap-1 rounded-(--pv-r-ctrl) bg-(--pv-surface) px-2.5 text-[11px] font-bold"><span>FA</span><span className="text-(--pv-muted)">EN</span></span>}
       {extra("darkmode") && <span className="flex size-9 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-surface)"><Moon className="size-4" aria-hidden="true" /></span>}
-      {!compact && <span className={`${primaryButton} h-10 px-5 text-[13px]`}>{content.cta}</span>}
+      {config.industry === "shop" ? (
+        <>
+          {!compact && (
+            <span className="flex h-10 w-56 items-center gap-2 rounded-(--pv-r-ctrl) bg-(--pv-surface) px-3 text-[12px] text-(--pv-muted)">
+              <Search className="size-4" aria-hidden="true" /> جستجوی محصول…
+            </span>
+          )}
+          <span className="relative flex size-10 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-primary) text-(--pv-on-primary)">
+            <ShoppingCart className="size-[18px]" aria-hidden="true" />
+            <span className="absolute -left-1 -top-1 flex size-5 items-center justify-center rounded-full bg-(--pv-text) text-[10px] font-bold text-(--pv-bg)">۳</span>
+          </span>
+        </>
+      ) : (
+        !compact && <span className={`${primaryButton} h-10 px-5 text-[13px]`}>{content.cta}</span>
+      )}
       {compact && <Menu className="ms-1 size-6" aria-hidden="true" />}
     </div>
   );
@@ -85,7 +100,8 @@ export const SiteTop = ({ config, compact }: { config: WizardConfig; compact: bo
     <header className="flex items-center justify-between border-b border-(--pv-border) px-20 py-5">{logo}{links}{tools}</header>
   );
 
-  const centered = config.layout !== "split" && !compact;
+  const composition = design.composition;
+  const centered = (composition === "centered" || composition === "editorial") && !compact;
   const proof =
     design.proof === "rating" ? (
       <div className={`flex items-center gap-3 ${centered ? "justify-center" : ""}`}>
@@ -116,7 +132,7 @@ export const SiteTop = ({ config, compact }: { config: WizardConfig; compact: bo
     <div key={config.motion} className={`pv-rise flex flex-col gap-5 ${centered ? "items-center text-center" : "items-start text-right"}`}>
       <span className={`rounded-(--pv-r-ctrl) px-3 py-1.5 text-[12px] font-bold ${inverted ? "bg-white/15 text-white" : "bg-(--pv-soft) text-(--pv-primary)"}`}>{content.badge}</span>
       <h1 style={heading(compact ? 30 : 54)} className={inverted ? "text-white" : ""}>
-        {content.headline}
+        {config.tagline.trim() || content.headline}
       </h1>
       <p className={`max-w-[34ch] ${compact ? "text-[14px]" : "text-[17px]"} leading-8 ${inverted ? "text-white/80" : "text-(--pv-muted)"}`}>{content.sub}</p>
       <div className="flex flex-wrap items-center gap-3">
@@ -130,29 +146,55 @@ export const SiteTop = ({ config, compact }: { config: WizardConfig; compact: bo
   return (
     <>
       {nav}
-      <section data-pv="hero" className="pv-section" style={config.layout === "fullbleed" ? undefined : pattern}>
-        {config.layout === "fullbleed" ? (
-          <div className={`relative overflow-hidden bg-(--pv-primary) ${compact ? "px-5 py-14" : "grid grid-cols-[1.1fr_1fr] items-center gap-12 px-20 py-20"}`}>
+      <section data-pv="hero" className="pv-section" style={composition === "fullbleed" ? undefined : pattern}>
+        {compact ? (
+          <div className={composition === "fullbleed" ? "bg-(--pv-primary) px-5 py-12" : "flex flex-col gap-8 px-5 py-10"}>
+            {heroText(composition === "fullbleed")}
+            {composition !== "fullbleed" && <HeroArt art={design.art} config={config} tall />}
+          </div>
+        ) : composition === "fullbleed" ? (
+          <div className="relative grid grid-cols-[1.1fr_1fr] items-center gap-12 overflow-hidden bg-(--pv-primary) px-20 py-20">
             <div className="absolute -left-24 -top-24 size-96 rounded-full bg-white/10" />
             <div className="absolute -bottom-32 left-1/3 size-80 rounded-full bg-black/10" />
             <div className="relative">{heroText(true)}</div>
-            {!compact && (
-              <div className="relative rounded-(--pv-r-card) bg-(--pv-bg) p-3 shadow-2xl">
-                <HeroArt art={design.art} config={config} tall />
-              </div>
-            )}
+            <div className="relative rounded-(--pv-r-card) bg-(--pv-bg) p-3 shadow-2xl">
+              <HeroArt art={design.art} config={config} tall />
+            </div>
           </div>
-        ) : centered ? (
+        ) : composition === "centered" ? (
           <div className="flex flex-col items-center gap-12 px-20 py-20">
             {heroText()}
             <div className="w-full max-w-[920px]">
               <HeroArt art={design.art} config={config} />
             </div>
           </div>
+        ) : composition === "editorial" ? (
+          <div className="px-20 pb-16 pt-14">
+            <div className="grid grid-cols-[1.4fr_1fr] items-end gap-10 border-b border-(--pv-border) pb-10">
+              <h1 className="pv-rise text-right" style={heading(68)}>{config.tagline.trim() || content.headline}</h1>
+              <div className="flex flex-col items-start gap-4">
+                <p className="text-[16px] leading-8 text-(--pv-muted)">{content.sub}</p>
+                <span className={`${primaryButton} h-12 px-7 text-[14px]`}>{content.cta}</span>
+              </div>
+            </div>
+            <div className="mt-10 grid grid-cols-[1fr_2fr] items-center gap-10">
+              <div>{proof ?? <span className="text-[13px] font-bold text-(--pv-primary)">{content.badge}</span>}</div>
+              <HeroArt art={design.art} config={config} />
+            </div>
+          </div>
         ) : (
-          <div className={`grid items-center ${compact ? "gap-8 px-5 py-10" : "grid-cols-2 gap-14 px-20 py-20"}`}>
-            {heroText()}
-            <HeroArt art={design.art} config={config} tall />
+          <div className="grid grid-cols-2 items-center gap-14 px-20 py-20">
+            {composition === "mirror" ? (
+              <>
+                <HeroArt art={design.art} config={config} tall />
+                {heroText()}
+              </>
+            ) : (
+              <>
+                {heroText()}
+                <HeroArt art={design.art} config={config} tall />
+              </>
+            )}
           </div>
         )}
       </section>
@@ -164,11 +206,12 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
   const content = industries[config.industry];
   const name = config.brandName.trim() || "برند شما";
   const has = (section: string) => config.sections.includes(section);
-  const design = getDesign(config.industry, config.variant);
+  const design = getSiteDesign(config.industry, config.variant);
 
   return (
     <div dir="rtl" data-motion={config.motion} className="pv-root min-h-full bg-(--pv-bg) font-sans text-(--pv-text)">
       <SiteTop config={config} compact={compact} />
+      <IndustryShowcase config={config} compact={compact} />
 
       {has("features") && (
         <Section id="features" compact={compact} className="bg-(--pv-surface)">

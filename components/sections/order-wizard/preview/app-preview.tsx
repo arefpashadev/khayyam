@@ -2,6 +2,8 @@ import { Bell, Heart, House, Search, UserRound } from "lucide-react";
 import type { CSSProperties } from "react";
 
 import { appFeatures, industries, mix, type WizardConfig } from "../config";
+import { getAppDesign, industryArts } from "../designs";
+import { HeroArt } from "./hero-art";
 
 const heading = (size: number): CSSProperties => ({
   fontSize: `calc(${size}px * var(--pv-hs))`,
@@ -12,10 +14,52 @@ const heading = (size: number): CSSProperties => ({
 
 export const AppPreview = ({ config }: { config: WizardConfig }) => {
   const content = industries[config.industry];
+  const design = getAppDesign(config.variant);
   const name = config.brandName.trim() || "برند شما";
+  const headline = config.tagline.trim() || content.headline;
   const enabled = appFeatures.filter((feature) => config.sections.includes(feature.value));
   const tabs = [{ value: "home", label: "خانه", icon: House }, ...enabled.slice(0, 3), { value: "profile", label: "پروفایل", icon: UserRound }];
   const tile = (amount: number) => ({ backgroundColor: mix(config.color, config.theme === "dark" ? "#0f151c" : "#ffffff", amount) });
+
+  const banner = {
+    solid: (
+      <div className="relative overflow-hidden rounded-(--pv-r-card) bg-(--pv-primary) p-5 text-(--pv-on-primary)">
+        <div className="absolute -left-10 -top-10 size-36 rounded-full bg-white/15" />
+        <span className="relative text-[11px] font-bold opacity-80">{content.badge}</span>
+        <p className="relative mt-2 max-w-[18ch]" style={heading(20)}>{headline}</p>
+        <span className="relative mt-4 inline-flex h-9 items-center rounded-(--pv-r-ctrl) bg-(--pv-bg) px-4 text-[12px] font-bold text-(--pv-text)">{content.cta}</span>
+      </div>
+    ),
+    art: (
+      <div className="overflow-hidden rounded-(--pv-r-card)">
+        <HeroArt art={industryArts[config.industry][(config.variant + 1) % 6]} config={config} />
+      </div>
+    ),
+    stats: (
+      <div className="grid grid-cols-3 gap-2">
+        {content.stats.map(([value, label], index) => (
+          <div key={label} className={`rounded-(--pv-r-card) p-3 ${index === 0 ? "bg-(--pv-primary) text-(--pv-on-primary)" : "bg-(--pv-soft)"}`}>
+            <strong className="block text-[16px]">{value}</strong>
+            <span className="text-[10px] opacity-75">{label}</span>
+          </div>
+        ))}
+      </div>
+    ),
+    search: (
+      <div className="rounded-(--pv-r-card) bg-(--pv-soft) p-4">
+        <p style={heading(18)}>{headline}</p>
+        <div className="mt-3 flex h-11 items-center gap-2 rounded-(--pv-r-ctrl) bg-(--pv-bg) px-3 text-[12px] text-(--pv-muted)">
+          <Search className="size-4" aria-hidden="true" /> جستجو در {name}
+        </div>
+      </div>
+    ),
+    greeting: (
+      <div className="py-2">
+        <span className="text-[12px] font-bold text-(--pv-primary)">{content.badge}</span>
+        <p className="mt-1" style={heading(26)}>{headline}</p>
+      </div>
+    ),
+  }[design.banner];
 
   return (
     <div dir="rtl" data-motion={config.motion} className="pv-root flex min-h-full flex-col bg-(--pv-bg) font-sans text-(--pv-text)">
@@ -43,14 +87,9 @@ export const AppPreview = ({ config }: { config: WizardConfig }) => {
             </span>
           </div>
         )}
-        {config.sections.includes("search") && (
-          <div data-pv="search" className="pv-section flex h-12 items-center gap-3 rounded-(--pv-r-ctrl) border border-(--pv-border) bg-(--pv-surface) px-4 text-[13px] text-(--pv-muted)">
-            <Search className="size-4" aria-hidden="true" /> جستجو در {name}
-          </div>
-        )}
 
-        {config.layout === "feed" && (
-          <div data-pv="hero" className="pv-section flex gap-3 overflow-hidden">
+        {design.layout === "feed" && (
+          <div className="flex gap-3 overflow-hidden">
             {content.features.map((item, index) => (
               <div key={item.label} className="flex shrink-0 flex-col items-center gap-1.5">
                 <span className="flex size-16 items-center justify-center rounded-full p-[3px]" style={{ background: index === 0 ? "var(--pv-primary)" : "var(--pv-border)" }}>
@@ -64,18 +103,8 @@ export const AppPreview = ({ config }: { config: WizardConfig }) => {
           </div>
         )}
 
-        {config.layout !== "feed" && (
-          <div data-pv="hero" className="pv-section relative overflow-hidden rounded-(--pv-r-card) bg-(--pv-primary) p-5 text-(--pv-on-primary)">
-            <div className="absolute -left-10 -top-10 size-36 rounded-full bg-white/15" />
-            <span className="relative text-[11px] font-bold opacity-80">{content.badge}</span>
-            <p className="relative mt-2 max-w-[18ch]" style={heading(20)}>
-              {content.headline}
-            </p>
-            <span className="relative mt-4 inline-flex h-9 items-center rounded-(--pv-r-ctrl) bg-(--pv-bg) px-4 text-[12px] font-bold text-(--pv-text)">{content.cta}</span>
-          </div>
-        )}
+        <div data-pv="hero" className="pv-section">{banner}</div>
 
-        {/* shortcuts for every enabled feature */}
         {enabled.length > 0 && (
           <div data-pv="features" className="pv-section grid grid-cols-4 gap-3">
             {enabled.map((feature) => (
@@ -91,7 +120,7 @@ export const AppPreview = ({ config }: { config: WizardConfig }) => {
 
         <strong style={heading(16)}>پیشنهاد امروز</strong>
 
-        {config.layout === "cards" && (
+        {design.layout === "cards" && (
           <div className="grid grid-cols-2 gap-3">
             {content.features.map((item, index) => (
               <div key={item.label} className="overflow-hidden rounded-(--pv-r-card) border border-(--pv-border) bg-(--pv-surface)">
@@ -107,7 +136,7 @@ export const AppPreview = ({ config }: { config: WizardConfig }) => {
           </div>
         )}
 
-        {config.layout === "list" && (
+        {design.layout === "list" && (
           <div className="flex flex-col gap-3">
             {content.features.map((item, index) => (
               <div key={item.label} className="flex items-center gap-3 rounded-(--pv-r-card) border border-(--pv-border) bg-(--pv-surface) p-3">
@@ -122,7 +151,7 @@ export const AppPreview = ({ config }: { config: WizardConfig }) => {
           </div>
         )}
 
-        {config.layout === "feed" &&
+        {design.layout === "feed" &&
           content.features.slice(0, 2).map((item, index) => (
             <article key={item.label} className="overflow-hidden rounded-(--pv-r-card) border border-(--pv-border) bg-(--pv-surface)">
               <div className="flex items-center gap-2 p-3 text-[12px] font-bold">
@@ -137,15 +166,26 @@ export const AppPreview = ({ config }: { config: WizardConfig }) => {
           ))}
       </div>
 
-      {/* tab bar */}
-      <nav className="sticky bottom-0 mt-auto flex items-center justify-around border-t border-(--pv-border) bg-(--pv-bg) px-3 pb-7 pt-3">
-        {tabs.map((tab, index) => (
-          <span key={tab.value} className={`flex flex-col items-center gap-1 text-[10px] ${index === 0 ? "font-bold text-(--pv-primary)" : "text-(--pv-muted)"}`}>
-            <tab.icon className="size-5" aria-hidden="true" />
-            {tab.label}
-          </span>
-        ))}
-      </nav>
+      {design.tabBar === "floating" ? (
+        <nav className="sticky bottom-0 mt-auto px-5 pb-7 pt-2">
+          <div className="flex items-center justify-around rounded-full bg-(--pv-text) px-3 py-3 shadow-xl">
+            {tabs.map((tab, index) => (
+              <span key={tab.value} className={`flex size-10 items-center justify-center rounded-full ${index === 0 ? "bg-(--pv-primary) text-(--pv-on-primary)" : "text-(--pv-bg) opacity-60"}`}>
+                <tab.icon className="size-5" aria-hidden="true" />
+              </span>
+            ))}
+          </div>
+        </nav>
+      ) : (
+        <nav className="sticky bottom-0 mt-auto flex items-center justify-around border-t border-(--pv-border) bg-(--pv-bg) px-3 pb-7 pt-3">
+          {tabs.map((tab, index) => (
+            <span key={tab.value} className={`flex flex-col items-center gap-1 text-[10px] ${index === 0 ? "font-bold text-(--pv-primary)" : "text-(--pv-muted)"}`}>
+              <tab.icon className="size-5" aria-hidden="true" />
+              {tab.label}
+            </span>
+          ))}
+        </nav>
+      )}
     </div>
   );
 };

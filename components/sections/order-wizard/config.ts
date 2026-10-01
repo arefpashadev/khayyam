@@ -50,20 +50,17 @@ export type MoodKey = "tech" | "minimal" | "friendly" | "luxury" | "bold";
 export type ThemeKey = "light" | "tinted" | "dark";
 export type RadiusKey = "sharp" | "soft" | "round";
 export type TypeKey = "light" | "balanced" | "heavy";
-export type SiteLayout = "split" | "centered" | "fullbleed";
-export type AppLayout = "cards" | "list" | "feed";
-export type LayoutKey = SiteLayout | AppLayout;
 export type PreviewTarget = "top" | "hero" | "features" | string;
 
 export type WizardConfig = {
   brandName: string;
+  tagline: string;
   industry: IndustryKey;
   mood: MoodKey | null;
   color: string;
   theme: ThemeKey;
   radius: RadiusKey;
   type: TypeKey;
-  layout: LayoutKey;
   sections: string[];
   references: string[];
   notes: string;
@@ -79,18 +76,28 @@ export type MotionKey = "none" | "subtle" | "lively";
 /* Steps                                                               */
 /* ------------------------------------------------------------------ */
 
-export type StepKey = "brand" | "mood" | "color" | "shape" | "layout" | "sections" | "extras" | "references";
+export type StepKey = "industry" | "design" | "brand" | "mood" | "color" | "shape" | "sections" | "extras" | "references";
 
-export const steps: { key: StepKey; title: string; question: (kind: OrderKind) => string; hint: string; target: PreviewTarget }[] = [
-  { key: "brand", title: "کسب‌وکار", question: () => "اسم برندتان چیست و در چه حوزه‌ای کار می‌کنید؟", hint: "متن‌ها و آیکون‌های پیش‌نمایش بر اساس حوزه شما عوض می‌شوند.", target: "top" },
-  { key: "mood", title: "حس کلی", question: (kind) => `${kind === "app" ? "اپلیکیشن" : "سایت"} شما چه حسی داشته باشد؟`, hint: "یک نقطه شروع انتخاب کنید؛ در مرحله‌های بعد جزئیاتش را تغییر می‌دهید.", target: "hero" },
-  { key: "color", title: "رنگ", question: () => "رنگ اصلی و حالت نمایش را انتخاب کنید", hint: "رنگ اصلی روی دکمه‌ها، آیکون‌ها و بخش‌های مهم می‌نشیند.", target: "hero" },
-  { key: "shape", title: "فرم و نوشتار", question: () => "گوشه‌ها و نوشته‌ها چطور باشند؟", hint: "گوشه‌های گرد صمیمی‌ترند، گوشه‌های تیز رسمی‌تر.", target: "features" },
-  { key: "layout", title: "چیدمان", question: (kind) => (kind === "app" ? "صفحه اصلی اپ چطور چیده شود؟" : "بخش اول سایت چطور چیده شود؟"), hint: "اولین چیزی که کاربر می‌بیند همین بخش است.", target: "hero" },
-  { key: "sections", title: "امکانات", question: (kind) => (kind === "app" ? "اپ شما چه امکاناتی لازم دارد؟" : "سایت شما چه بخش‌هایی داشته باشد؟"), hint: "هر گزینه را بزنید تا جایش را در پیش‌نمایش ببینید.", target: "features" },
-  { key: "extras", title: "جزئیات فنی", question: () => "حرکت و امکانات فنی چطور باشد؟", hint: "بعضی امکانات پشت صحنه کار می‌کنند و در پیش‌نمایش دیده نمی‌شوند؛ کنارشان علامت زده‌ایم.", target: "hero" },
-  { key: "references", title: "الهام", question: () => "از کدام سایت‌ها یا اپ‌ها خوشتان می‌آید؟", hint: "لینک چند نمونه را بگذارید تا طراح دقیق‌تر سلیقه‌تان را بشناسد.", target: "top" },
+/**
+ * The flow has two phases:
+ * - "gallery": pick the field, then a ready-made design for it (full-screen galleries)
+ * - "editor": fine-tune that design with the live preview next to you
+ */
+export type StepPhase = "gallery" | "editor";
+
+export const steps: { key: StepKey; phase: StepPhase; title: string; question: (kind: OrderKind) => string; hint: string; target: PreviewTarget }[] = [
+  { key: "industry", phase: "gallery", title: "حوزه کاری", question: (kind) => `${kind === "app" ? "اپلیکیشن" : "سایت"} شما برای چه کسب‌وکاری است؟`, hint: "هر حوزه طرح‌ها، متن‌ها و بخش‌های مخصوص خودش را دارد.", target: "top" },
+  { key: "design", phase: "gallery", title: "طرح", question: () => "کدام طرح به سلیقه شما نزدیک‌تر است؟", hint: "۳۰ طرح مخصوص حوزه شما. نزدیک‌ترین را انتخاب کنید؛ همه‌چیزش در مرحله‌های بعد قابل تغییر است.", target: "top" },
+  { key: "brand", phase: "editor", title: "نام برند", question: () => "اسم برندتان چیست؟", hint: "اسم و شعار روی لوگو، عنوان صفحه و آدرس سایت می‌نشیند.", target: "top" },
+  { key: "mood", phase: "editor", title: "حس کلی", question: (kind) => `${kind === "app" ? "اپلیکیشن" : "سایت"} شما چه حسی داشته باشد؟`, hint: "یک نقطه شروع انتخاب کنید؛ در مرحله‌های بعد جزئیاتش را تغییر می‌دهید.", target: "hero" },
+  { key: "color", phase: "editor", title: "رنگ", question: () => "رنگ اصلی و حالت نمایش را انتخاب کنید", hint: "رنگ اصلی روی دکمه‌ها، آیکون‌ها و بخش‌های مهم می‌نشیند.", target: "hero" },
+  { key: "shape", phase: "editor", title: "فرم و نوشتار", question: () => "گوشه‌ها و نوشته‌ها چطور باشند؟", hint: "گوشه‌های گرد صمیمی‌ترند، گوشه‌های تیز رسمی‌تر.", target: "features" },
+  { key: "sections", phase: "editor", title: "بخش‌ها", question: (kind) => (kind === "app" ? "اپ شما چه امکاناتی لازم دارد؟" : "سایت شما چه بخش‌هایی داشته باشد؟"), hint: "هر گزینه را بزنید تا جایش را در پیش‌نمایش ببینید.", target: "features" },
+  { key: "extras", phase: "editor", title: "جزئیات فنی", question: () => "حرکت و امکانات فنی چطور باشد؟", hint: "بعضی امکانات پشت صحنه کار می‌کنند و در پیش‌نمایش دیده نمی‌شوند؛ کنارشان علامت زده‌ایم.", target: "hero" },
+  { key: "references", phase: "editor", title: "الهام", question: () => "از کدام سایت‌ها یا اپ‌ها خوشتان می‌آید؟", hint: "لینک چند نمونه را بگذارید تا طراح دقیق‌تر سلیقه‌تان را بشناسد.", target: "top" },
 ];
+
+export const firstEditorStep = steps.findIndex((step) => step.phase === "editor");
 
 /* ------------------------------------------------------------------ */
 /* Industries — drive the preview copy                                 */
@@ -241,18 +248,6 @@ export const moods: { value: MoodKey; label: string; description: string; tokens
   { value: "bold", label: "پرانرژی و جسور", description: "نوشته‌های درشت، رنگ تند", tokens: { color: "#e5486f", theme: "light", radius: "round", type: "heavy" } },
 ];
 
-export const siteLayouts: { value: SiteLayout; label: string }[] = [
-  { value: "split", label: "متن کنار تصویر" },
-  { value: "centered", label: "وسط‌چین" },
-  { value: "fullbleed", label: "تصویر تمام‌عرض" },
-];
-
-export const appLayouts: { value: AppLayout; label: string }[] = [
-  { value: "cards", label: "کارتی" },
-  { value: "list", label: "فهرستی" },
-  { value: "feed", label: "فید و استوری" },
-];
-
 export const siteSections: { value: string; label: string; icon: LucideIcon }[] = [
   { value: "features", label: "خدمات و ویژگی‌ها", icon: Lightbulb },
   { value: "gallery", label: "گالری و نمونه‌کار", icon: Images },
@@ -275,10 +270,10 @@ export const appFeatures: { value: string; label: string; icon: LucideIcon }[] =
 
 export const getDefaultConfig = (kind: OrderKind): WizardConfig => ({
   brandName: "",
+  tagline: "",
   industry: "shop",
   mood: "tech",
   ...moods[0].tokens,
-  layout: kind === "app" ? "cards" : "split",
   sections: kind === "app" ? ["search", "cart", "notifications"] : ["features", "testimonials", "contact"],
   references: ["", "", ""],
   notes: "",

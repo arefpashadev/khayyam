@@ -5,57 +5,65 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 
 import { faNumber, type OrderKind } from "./config";
-import { useWizard } from "./store";
-
-const TOUR_KEY = "khayyam:order-wizard-tour:v1";
+import { useWizard, type TourName } from "./store";
 
 type TourStep = { target: string | null; icon: LucideIcon; title: string; text: (kind: OrderKind) => string };
 
-const tourSteps: TourStep[] = [
-  {
-    target: null,
-    icon: Sparkles,
-    title: "خوش آمدید",
-    text: (kind) => `در چند دقیقه ${kind === "app" ? "اپلیکیشن" : "سایت"} خودتان را می‌چینید و همان لحظه نتیجه را می‌بینید. یک تور کوتاه نشانتان می‌دهیم همه‌چیز کجاست.`,
-  },
-  { target: "stage", icon: MousePointerClick, title: "پیش‌نمایش زنده", text: (kind) => (kind === "app" ? "هر انتخابی که بکنید همین‌جا روی گوشی دیده می‌شود." : "هر انتخابی که بکنید همین‌جا روی لپ‌تاپ و گوشی دیده می‌شود. پیش‌نمایش خودش به بخشی که عوض شده می‌رود.") },
-  { target: "panel", icon: ListChecks, title: "چند سوال ساده", text: () => "به سوال‌ها جواب دهید. هر وقت خواستید می‌توانید برگردید و انتخاب‌ها را عوض کنید." },
-  { target: "designs", icon: LayoutTemplate, title: "صدها طرح آماده", text: () => "طرح‌های مخصوص حوزه کاری شما اینجاست. نزدیک‌ترین را انتخاب کنید؛ بقیه‌اش را برایتان شخصی‌سازی می‌کنیم." },
-  { target: "next", icon: Send, title: "ثبت درخواست", text: () => "آخر کار درخواست را ثبت کنید. مشاور ما با خلاصه انتخاب‌هایتان با شما تماس می‌گیرد." },
-];
+const tours: Record<TourName, TourStep[]> = {
+  intro: [
+    {
+      target: null,
+      icon: Sparkles,
+      title: "خوش آمدید",
+      text: (kind) => `در سه قدم ${kind === "app" ? "اپلیکیشن" : "سایت"} خودتان را می‌سازید: حوزه کاری را انتخاب می‌کنید، از میان طرح‌های مخصوص آن یکی را برمی‌دارید و بعد هر جزئیاتش را با پیش‌نمایش زنده تغییر می‌دهید.`,
+    },
+    { target: "gallery-steps", icon: ListChecks, title: "سه قدم ساده", text: () => "همیشه می‌بینید کجای کار هستید و می‌توانید به قدم قبلی برگردید." },
+    { target: "industry-grid", icon: MousePointerClick, title: "از حوزه کاری شروع کنید", text: () => "هر حوزه ۳۰ طرح، متن و بخش‌های مخصوص خودش را دارد؛ فروشگاه شبیه فروشگاه است و رستوران شبیه رستوران." },
+  ],
+  editor: [
+    { target: "stage", icon: MousePointerClick, title: "پیش‌نمایش زنده", text: (kind) => (kind === "app" ? "هر تغییری بدهید همین‌جا روی گوشی دیده می‌شود." : "هر تغییری بدهید همین‌جا روی لپ‌تاپ و گوشی دیده می‌شود و پیش‌نمایش خودش به همان بخش می‌رود.") },
+    { target: "tabs", icon: ListChecks, title: "هر تب، یک بخش", text: () => "نام برند، حس کلی، رنگ، فرم، بخش‌ها و امکانات فنی را تب به تب تنظیم کنید. ترتیب اجباری نیست." },
+    { target: "panel", icon: ListChecks, title: "تنظیمات هر بخش", text: () => "گزینه‌ها را بزنید و نتیجه را همان لحظه ببینید." },
+    { target: "change-design", icon: LayoutTemplate, title: "تغییر طرح", text: () => "هر وقت خواستید به گالری برگردید و طرح دیگری انتخاب کنید؛ انتخاب‌هایتان حفظ می‌شود." },
+    { target: "submit", icon: Send, title: "ثبت درخواست", text: () => "آخر کار درخواست را ثبت کنید. همه این مقادیر بعداً هم طبق خواسته شما قابل تغییر است." },
+  ],
+};
+
+const storageKey = (name: TourName) => `khayyam:order-wizard-tour:${name}:v2`;
 
 const CARD_WIDTH = 320;
 const CARD_HEIGHT = 200;
 const GAP = 14;
 
-export const markTourSeen = () => {
+const markTourSeen = (name: TourName) => {
   try {
-    localStorage.setItem(TOUR_KEY, "1");
+    localStorage.setItem(storageKey(name), "1");
   } catch {
     /* storage can be unavailable (private mode); the tour just shows again */
   }
 };
 
-export const Tour = ({ kind }: { kind: OrderKind }) => {
-  const step = useWizard((state) => state.tour);
+export const Tour = ({ kind, name }: { kind: OrderKind; name: TourName }) => {
+  const tour = useWizard((state) => state.tour);
   const setTour = useWizard((state) => state.setTour);
+  const step = tour?.name === name ? tour.step : null;
   const reduce = useReducedMotion();
   const [measured, setMeasured] = useState<{ target: string; rect: DOMRect } | null>(null);
-  const items = tourSteps.filter((item) => !item.target || typeof document === "undefined" || document.querySelector(`[data-tour="${item.target}"]`));
+  const items = tours[name].filter((item) => !item.target || typeof document === "undefined" || document.querySelector(`[data-tour="${item.target}"]`));
   const current = step === null ? null : items[Math.min(step, items.length - 1)];
 
   // First visit: open the tour after the screen has settled.
   useEffect(() => {
     let seen = false;
     try {
-      seen = localStorage.getItem(TOUR_KEY) === "1";
+      seen = localStorage.getItem(storageKey(name)) === "1";
     } catch {
       seen = false;
     }
     if (seen) return;
-    const timeout = window.setTimeout(() => setTour(0), 700);
+    const timeout = window.setTimeout(() => setTour({ name, step: 0 }), 700);
     return () => window.clearTimeout(timeout);
-  }, [setTour]);
+  }, [name, setTour]);
 
   // Track the highlighted element's position.
   useEffect(() => {
@@ -74,7 +82,7 @@ export const Tour = ({ kind }: { kind: OrderKind }) => {
   }, [current?.target]);
 
   const close = () => {
-    markTourSeen();
+    markTourSeen(name);
     setTour(null);
   };
 
@@ -82,13 +90,13 @@ export const Tour = ({ kind }: { kind: OrderKind }) => {
     if (step === null) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        markTourSeen();
+        markTourSeen(name);
         setTour(null);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [step, setTour]);
+  }, [name, step, setTour]);
 
   if (step === null || !current) return null;
 
@@ -167,10 +175,10 @@ export const Tour = ({ kind }: { kind: OrderKind }) => {
               <button
                 type="button"
                 autoFocus
-                onClick={() => (isLast ? close() : setTour(step + 1))}
+                onClick={() => (isLast ? close() : setTour({ name, step: step + 1 }))}
                 className="ms-auto h-10 rounded-xl bg-[#14202b] px-5 text-[13px] font-extrabold text-white transition-colors hover:bg-[#078ef0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078ef0]"
               >
-                {!current.target ? "شروع تور" : isLast ? "متوجه شدم" : "بعدی"}
+                {!current.target ? "نشانم بده" : isLast ? "شروع کنیم" : "بعدی"}
               </button>
             </div>
           </div>

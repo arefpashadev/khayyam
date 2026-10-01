@@ -6,11 +6,10 @@ import { useState, type ReactNode } from "react";
 
 import { Link } from "@/i18n/navigation";
 
-import { buildPreviewVars, faNumber, mix } from "../config";
+import { buildPreviewVars, faNumber, mix, steps } from "../config";
 import { useWizard } from "../store";
 import { useIsSmallScreen } from "../use-small-screen";
 import { AppPreview } from "./app-preview";
-import { DesignSheet } from "./design-sheet";
 import { FitScene, Laptop, LAPTOP, Phone, PHONE } from "./devices";
 import { SitePreview } from "./site-preview";
 
@@ -41,25 +40,32 @@ const Composition = ({ laptop, phone, small }: { laptop: ReactNode; phone: React
   );
 };
 
-type DeskView = "both" | "laptop" | "phone";
+export type DeskView = "both" | "laptop" | "phone";
 
-const deskViews: { value: DeskView; label: string; icon: typeof LaptopIcon }[] = [
+export const deskViews: { value: DeskView; label: string; icon: typeof LaptopIcon }[] = [
   { value: "both", label: "هر دو", icon: MonitorSmartphone },
   { value: "laptop", label: "لپ‌تاپ", icon: LaptopIcon },
   { value: "phone", label: "موبایل", icon: Smartphone },
 ];
 
 const pill = "flex h-9 items-center gap-2 rounded-full bg-white/85 px-3.5 text-[12px] font-bold text-[#4d5b65] shadow-[0_1px_2px_rgba(20,32,43,0.08)] backdrop-blur";
+const designStep = steps.findIndex((step) => step.key === "design");
 
-export const PreviewStage = () => {
+/**
+ * The live preview canvas.
+ * - mobile: its own small toolbar (exit, help, change design), laptop + phone side by side
+ * - studio (desktop): chrome lives in the top bar; the floating panel sits over the right side,
+ *   so the scene is laid out in the space left of it, with a view switch floating at the bottom.
+ */
+export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
   const kind = useWizard((state) => state.kind);
   const config = useWizard((state) => state.config);
   const setTour = useWizard((state) => state.setTour);
+  const goTo = useWizard((state) => state.goTo);
   const isSmall = useIsSmallScreen();
-  const [designsOpen, setDesignsOpen] = useState(false);
   const [deskView, setDeskView] = useState<DeskView>("both");
   const address = config.brandName.trim().replace(/\s+/g, "-") || "your-brand";
-  const view: DeskView = kind === "app" ? "phone" : isSmall ? "both" : deskView;
+  const view: DeskView = kind === "app" ? "phone" : studio ? deskView : "both";
 
   const phone = <Phone>{kind === "app" ? <AppPreview config={config} /> : <SitePreview config={config} compact />}</Phone>;
   const laptop = (
@@ -68,60 +74,49 @@ export const PreviewStage = () => {
     </Laptop>
   );
 
-  // The stage picks up a whisper of the brand colour so it feels like the client's space.
+  // The canvas picks up a whisper of the brand colour so it feels like the client's space.
   const tint = mix(config.color, "#eef2f4", 0.86);
 
   return (
-    <div className="relative size-full" style={{ ...buildPreviewVars(config), background: `radial-gradient(110% 85% at 50% 42%, #fbfcfc 0%, ${tint} 72%, ${mix(config.color, "#dfe5e8", 0.9)} 100%)` }}>
-      {/* soft dot grid, desktop only */}
-      <div className="pointer-events-none absolute inset-0 hidden opacity-60 lg:block" style={{ backgroundImage: "radial-gradient(rgba(20,32,43,0.07) 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
+    <div className="relative size-full" style={{ ...buildPreviewVars(config), background: `radial-gradient(110% 85% at 40% 45%, #fbfcfc 0%, ${tint} 70%, ${mix(config.color, "#dfe5e8", 0.9)} 100%)` }}>
+      {studio && <div className="pointer-events-none absolute inset-0 opacity-60" style={{ backgroundImage: "radial-gradient(rgba(20,32,43,0.07) 1px, transparent 1px)", backgroundSize: "24px 24px" }} />}
 
-      <div className="absolute inset-x-3 top-4 z-10 flex items-center gap-2 lg:inset-x-6 lg:top-5">
-        <Link href="/" aria-label="خروج" className={`${pill} size-9 justify-center px-0 hover:text-[#14202b] lg:hidden`}>
-          <X className="size-4" aria-hidden="true" />
-        </Link>
-        <span className={pill}>
-          <span className="relative flex size-1.5">
-            <span className="absolute hidden size-full rounded-full bg-[#22c27a] opacity-60 lg:motion-safe:inline-flex lg:motion-safe:animate-ping" />
-            <span className="relative inline-flex size-1.5 rounded-full bg-[#22c27a]" />
-          </span>
-          پیش‌نمایش زنده
-        </span>
-        <button type="button" onClick={() => setTour(0)} aria-label="راهنما" className={`${pill} size-9 justify-center px-0 hover:text-[#14202b] lg:hidden`}>
-          <CircleHelp className="size-4" aria-hidden="true" />
-        </button>
-
-        {kind === "site" && !isSmall && (
-          <div role="radiogroup" aria-label="نمایش" className="absolute left-1/2 flex -translate-x-1/2 gap-0.5 rounded-full bg-white/85 p-1 shadow-[0_1px_2px_rgba(20,32,43,0.08)] backdrop-blur">
-            {deskViews.map((option) => {
-              const selected = deskView === option.value;
-              return (
-                <button key={option.value} type="button" role="radio" aria-checked={selected} onClick={() => setDeskView(option.value)} className="relative flex h-7 items-center gap-1.5 rounded-full px-3 text-[12px] font-bold outline-none focus-visible:ring-2 focus-visible:ring-[#078ef0]">
-                  {selected && <motion.span layoutId="pv-desk-view" className="absolute inset-0 rounded-full bg-[#14202b]" transition={{ type: "spring", bounce: 0.15, duration: 0.35 }} />}
-                  <option.icon className={`relative size-3.5 ${selected ? "text-white" : "text-[#7a868d]"}`} aria-hidden="true" />
-                  <span className={`relative ${selected ? "text-white" : "text-[#5b6872]"}`}>{option.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {kind === "site" && (
+      {!studio && (
+        <div className="absolute inset-x-3 top-4 z-10 flex items-center gap-2">
+          <Link href="/" aria-label="خروج" className={`${pill} size-9 justify-center px-0`}>
+            <X className="size-4" aria-hidden="true" />
+          </Link>
+          <button type="button" onClick={() => setTour({ name: "editor", step: 0 })} aria-label="راهنما" className={`${pill} size-9 justify-center px-0`}>
+            <CircleHelp className="size-4" aria-hidden="true" />
+          </button>
           <button
             type="button"
-            data-tour="designs"
-            onClick={() => setDesignsOpen(true)}
-            aria-haspopup="dialog"
-            className="ms-auto flex h-9 items-center gap-2 rounded-full bg-[#14202b] px-4 text-[12px] font-bold text-white shadow-sm transition hover:bg-[#078ef0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078ef0] active:scale-95"
+            data-tour="change-design"
+            onClick={() => goTo(designStep)}
+            className="ms-auto flex h-9 items-center gap-2 rounded-full bg-[#14202b] px-4 text-[12px] font-bold text-white shadow-sm active:scale-95"
           >
-            <LayoutTemplate className="size-4" aria-hidden="true" /> طرح‌ها
-            <span className="rounded-full bg-white/15 px-1.5 py-px text-[11px]">{faNumber(config.variant + 1)}</span>
+            <LayoutTemplate className="size-4" aria-hidden="true" /> طرح {faNumber(config.variant + 1)}
+            <span className="text-white/60">تغییر</span>
           </button>
-        )}
-      </div>
-      <DesignSheet open={designsOpen} onClose={() => setDesignsOpen(false)} />
+        </div>
+      )}
 
-      <div className="absolute inset-0 px-3 pb-3 pt-16 lg:px-10 lg:pb-8 lg:pt-20">
+      {studio && kind === "site" && (
+        <div role="radiogroup" aria-label="نمایش" className="absolute bottom-6 z-10 flex -translate-x-1/2 gap-0.5 rounded-full bg-white/90 p-1 shadow-[0_8px_24px_-12px_rgba(20,32,43,0.35)] backdrop-blur" style={{ left: "calc((100% - 420px) / 2)" }}>
+          {deskViews.map((option) => {
+            const selected = deskView === option.value;
+            return (
+              <button key={option.value} type="button" role="radio" aria-checked={selected} onClick={() => setDeskView(option.value)} className="relative flex h-8 items-center gap-1.5 rounded-full px-3.5 text-[12px] font-bold outline-none focus-visible:ring-2 focus-visible:ring-[#078ef0]">
+                {selected && <motion.span layoutId="pv-desk-view" className="absolute inset-0 rounded-full bg-[#14202b]" transition={{ type: "spring", bounce: 0.15, duration: 0.35 }} />}
+                <option.icon className={`relative size-4 ${selected ? "text-white" : "text-[#7a868d]"}`} aria-hidden="true" />
+                <span className={`relative ${selected ? "text-white" : "text-[#5b6872]"}`}>{option.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      <div data-tour="stage" className={`absolute ${studio ? "bottom-20 left-10 right-[460px] top-8" : "inset-0 px-3 pb-3 pt-16"}`}>
         {view === "phone" ? (
           <FitScene width={PHONE.width} height={PHONE.height}>{phone}</FitScene>
         ) : view === "laptop" ? (
