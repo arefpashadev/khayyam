@@ -130,6 +130,7 @@ const SubmittedPanel = ({ kind }: { kind: OrderKind }) => {
     { label: "حالت", value: themes.find((item) => item.value === config.theme)?.label },
     { label: "گوشه‌ها", value: radii.find((item) => item.value === config.radius)?.label },
     { label: "نوشته‌ها", value: typeStyles.find((item) => item.value === config.type)?.label },
+    ...(kind === "site" ? [{ label: "طرح", value: `طرح ${faNumber(config.variant + 1)}` }] : []),
     { label: "چیدمان", value: [...siteLayouts, ...appLayouts].find((item) => item.value === config.layout)?.label },
     { label: kind === "app" ? "امکانات" : "بخش‌ها", value: sectionLabels.join("، ") || "هیچ" },
     { label: "نمونه‌ها", value: references.length ? `${faNumber(references.length)} لینک` : "ندارد" },

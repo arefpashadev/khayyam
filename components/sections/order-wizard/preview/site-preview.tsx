@@ -64,6 +64,34 @@ const HeroArt = ({ config, tall }: { config: WizardConfig; tall?: boolean }) => 
     );
   }
 
+  if (art === "bars") {
+    return (
+      <div className={`${frame} flex items-end justify-center gap-[4%] bg-(--pv-soft) px-[10%] pt-[18%]`}>
+        {[0.45, 0.7, 0.55, 0.95, 0.75].map((height, index) => (
+          <div key={index} className="relative flex-1 rounded-t-(--pv-r-card)" style={{ height: `${height * 100}%`, backgroundColor: index === 3 ? "var(--pv-primary)" : shade(0.35 + index * 0.08) }}>
+            {index === 3 && (
+              <span className="absolute -top-[18%] left-1/2 flex aspect-square w-[150%] -translate-x-1/2 items-center justify-center rounded-full bg-(--pv-bg) shadow-xl">
+                <Icon className="size-1/2 text-(--pv-primary)" aria-hidden="true" />
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (art === "frame") {
+    return (
+      <div className={`${frame} p-[7%]`}>
+        <div className="absolute inset-[7%] translate-x-[4%] translate-y-[5%] rounded-(--pv-r-card) border-2 border-(--pv-primary)" />
+        <div className="relative flex size-full items-center justify-center rounded-(--pv-r-card)" style={{ backgroundColor: shade(0.3) }}>
+          <Icon className="size-1/4 text-(--pv-primary)" strokeWidth={1.3} aria-hidden="true" />
+          <span className="absolute -bottom-3 right-[8%] rounded-(--pv-r-ctrl) bg-(--pv-primary) px-3 py-1.5 text-[12px] font-bold text-(--pv-on-primary) shadow-lg">{features[0].label}</span>
+        </div>
+      </div>
+    );
+  }
+
   if (art === "stack") {
     return (
       <div className={`${frame} flex items-center justify-center bg-(--pv-surface)`}>

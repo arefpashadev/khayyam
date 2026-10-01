@@ -1,14 +1,15 @@
 "use client";
 
-import { Shuffle, X } from "lucide-react";
-import type { ReactNode } from "react";
+import { LayoutTemplate, X } from "lucide-react";
+import { useState, type ReactNode } from "react";
 
 import { Link } from "@/i18n/navigation";
 
-import { buildPreviewVars } from "../config";
+import { buildPreviewVars, faNumber } from "../config";
 import { useWizard } from "../store";
 import { useIsSmallScreen } from "../use-small-screen";
 import { AppPreview } from "./app-preview";
+import { DesignSheet } from "./design-sheet";
 import { FitScene, Laptop, LAPTOP, Phone, PHONE } from "./devices";
 import { SitePreview } from "./site-preview";
 
@@ -43,7 +44,7 @@ export const PreviewStage = () => {
   const kind = useWizard((state) => state.kind);
   const config = useWizard((state) => state.config);
   const isSmall = useIsSmallScreen();
-  const shuffle = useWizard((state) => state.shuffle);
+  const [designsOpen, setDesignsOpen] = useState(false);
   const address = config.brandName.trim().replace(/\s+/g, "-") || "your-brand";
 
   const phone = <Phone>{kind === "app" ? <AppPreview config={config} /> : <SitePreview config={config} compact />}</Phone>;
@@ -66,12 +67,15 @@ export const PreviewStage = () => {
       {kind === "site" && (
         <button
           type="button"
-          onClick={shuffle}
+          onClick={() => setDesignsOpen(true)}
+          aria-haspopup="dialog"
           className="absolute left-3 top-4 z-10 flex h-8 items-center gap-1.5 rounded-full bg-[#14202b] px-3.5 text-[11px] font-bold text-white shadow-sm transition hover:bg-[#078ef0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078ef0] active:scale-95 lg:left-5 lg:top-5"
         >
-          <Shuffle className="size-3.5" aria-hidden="true" /> طرح دیگر
+          <LayoutTemplate className="size-3.5" aria-hidden="true" /> طرح‌ها
+          <span className="rounded-full bg-white/15 px-1.5 py-px text-[10px]">{faNumber(config.variant + 1)}</span>
         </button>
       )}
+      <DesignSheet open={designsOpen} onClose={() => setDesignsOpen(false)} />
 
       <div className="absolute inset-0 px-3 pb-3 pt-14 lg:px-6 lg:pb-6 lg:pt-14">
         {kind === "app" ? (

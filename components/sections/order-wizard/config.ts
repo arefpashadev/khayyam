@@ -340,21 +340,32 @@ export const faNumber = (value: number) => new Intl.NumberFormat("fa-IR").format
 /* Design archetypes — the same answers can produce many distinct looks */
 /* ------------------------------------------------------------------ */
 
+export const archetypeOptions = {
+  nav: ["classic", "centered", "floating"],
+  art: ["orbs", "mosaic", "rings", "stack", "bars", "frame"],
+  cards: ["outlined", "filled", "numbered"],
+  pattern: [false, true],
+} as const;
+
 export type Archetype = {
-  nav: "classic" | "centered" | "floating";
-  art: "orbs" | "mosaic" | "rings" | "stack";
-  cards: "outlined" | "filled" | "numbered";
+  nav: (typeof archetypeOptions.nav)[number];
+  art: (typeof archetypeOptions.art)[number];
+  cards: (typeof archetypeOptions.cards)[number];
   pattern: boolean;
 };
 
-const pick = (seed: number, salt: number, size: number) => Math.floor(Math.abs(Math.sin(seed * 12.9898 + salt * 78.233) * 43758.5453) % 1 * size);
+/** Every combination of the options above: 3 × 6 × 3 × 2 = 108 designs. */
+export const ARCHETYPE_COUNT = archetypeOptions.nav.length * archetypeOptions.art.length * archetypeOptions.cards.length * archetypeOptions.pattern.length;
 
-export const getArchetype = (seed: number): Archetype => {
-  if (seed === 0) return { nav: "classic", art: "orbs", cards: "outlined", pattern: false };
+/** Mixed-radix decode: design number → its parts. Design 0 is the classic default. */
+export const getArchetype = (variant: number): Archetype => {
+  const index = ((variant % ARCHETYPE_COUNT) + ARCHETYPE_COUNT) % ARCHETYPE_COUNT;
+  const { nav, art, cards, pattern } = archetypeOptions;
+  // Hero art changes fastest and nav next, so neighbouring designs in the list look clearly different.
   return {
-    nav: (["classic", "centered", "floating"] as const)[pick(seed, 1, 3)],
-    art: (["orbs", "mosaic", "rings", "stack"] as const)[pick(seed, 2, 4)],
-    cards: (["outlined", "filled", "numbered"] as const)[pick(seed, 3, 3)],
-    pattern: pick(seed, 4, 2) === 1,
+    art: art[index % art.length],
+    nav: nav[Math.floor(index / art.length) % nav.length],
+    cards: cards[Math.floor(index / (art.length * nav.length)) % cards.length],
+    pattern: pattern[Math.floor(index / (art.length * nav.length * cards.length)) % pattern.length],
   };
 };
