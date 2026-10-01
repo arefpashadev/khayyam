@@ -1,4 +1,4 @@
-import { BatteryFull, Heart, House, Search, Signal, UserRound, Wifi } from "lucide-react";
+import { Heart, House, Search, UserRound } from "lucide-react";
 import type { CSSProperties } from "react";
 
 import { appFeatures, industries, mix, type WizardConfig } from "../config";
@@ -19,17 +19,7 @@ export const AppPreview = ({ config }: { config: WizardConfig }) => {
 
   return (
     <div dir="rtl" className="pv-root flex min-h-full flex-col bg-(--pv-bg) font-sans text-(--pv-text)">
-      {/* status bar */}
       <div className="sticky top-0 z-10 bg-(--pv-bg)">
-        <div className="flex items-center justify-between px-8 pb-2 pt-4 text-[14px] font-bold" dir="ltr">
-          <span>9:41</span>
-          <span className="h-7 w-28 rounded-full bg-[#14202b]" />
-          <span className="flex items-center gap-1">
-            <Signal className="size-4" aria-hidden="true" />
-            <Wifi className="size-4" aria-hidden="true" />
-            <BatteryFull className="size-5" aria-hidden="true" />
-          </span>
-        </div>
         <div className="flex items-center justify-between px-5 py-3">
           <div>
             <span className="block text-[12px] text-(--pv-muted)">سلام، خوش آمدید</span>
