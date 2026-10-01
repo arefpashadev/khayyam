@@ -1,242 +1,186 @@
 "use client";
 
-import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  Eye,
-  Layers3,
-  ListChecks,
-  Palette as PaletteIcon,
-  UserRound,
-} from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
+import { ArrowLeft, ArrowRight, Check, PencilLine, RotateCcw, X } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useEffect, useState } from "react";
 
-import { LivePreview } from "./live-preview";
-import {
-  complexityOptions,
-  getPresets,
-  palettes,
-  type ComplexityKey,
-  type OrderKind,
-  type PaletteKey,
-} from "./tokens";
+import { Link } from "@/i18n/navigation";
 
-const steps = [
-  { number: 1, title: "حس محصول", description: "حس برندت را انتخاب کن" },
-  { number: 2, title: "اطلاعات پروژه", description: "نیازها را انتخاب کن" },
-  { number: 3, title: "تعادل بصری", description: "میزان جزئیات را مشخص کن" },
-  { number: 4, title: "لحن طراحی", description: "رنگ و سبک را انتخاب کن" },
-];
-
-type MobileView = "form" | "preview";
+import { appFeatures, appLayouts, colors, faNumber, getDefaultConfig, industries, radii, siteLayouts, siteSections, steps, themes, typeStyles, type OrderKind } from "./config";
+import { PreviewStage } from "./preview";
+import { stepPanels } from "./steps";
+import { useWizard } from "./store";
 
 export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
-  const [step, setStep] = useState(1);
-  const [visual, setVisual] = useState(0);
-  const [complexity, setComplexity] = useState<ComplexityKey>("balanced");
-  const [palette, setPalette] = useState<PaletteKey>("blue");
-  const [brandName, setBrandName] = useState("");
-  const [mobileView, setMobileView] = useState<MobileView>("form");
-  const isApp = kind === "app";
-  const presets = getPresets(kind);
+  // Seed the store for this kind before the first paint so the right preview shows immediately.
+  useState(() => {
+    useWizard.setState({ kind, step: 0, direction: 1, submitted: false, config: getDefaultConfig(kind), focus: { target: "top", tick: 0 } });
+    return true;
+  });
+
+  // This screen behaves like an app: lock the page behind it.
+  useEffect(() => {
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, []);
+
+  const step = useWizard((state) => state.step);
+  const submitted = useWizard((state) => state.submitted);
+  const goTo = useWizard((state) => state.goTo);
 
   return (
-    <main className="min-h-svh bg-white text-[#20262a]">
-      <section className="px-5 pb-6 pt-5 sm:px-8 lg:px-12">
-        <div className="mx-auto flex w-full max-w-[1420px] flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
-          <div className="text-right">
-            <h1 className="text-[32px] font-black leading-[1.35] tracking-[-0.03em] sm:text-[42px]">
-              ثبت سفارش <span className="text-[#078ef0]">{isApp ? "اپلیکیشن" : "سایت"}</span>
-            </h1>
-            <p className="mt-3 text-sm leading-7 text-[#536169] sm:text-base">
-              لطفاً با سلیقه خودتان بخش‌ها و طراحی مناسب {isApp ? "اپ" : "سایت"} را انتخاب کنید.
-            </p>
-          </div>
-          <div className="flex items-center gap-4 sm:flex-row-reverse">
-            <button type="button" aria-label="بازگشت" onClick={() => history.back()} className="flex size-10 items-center justify-center rounded-full transition hover:bg-white/60">
-              <ArrowLeft className="size-6" aria-hidden="true" />
-            </button>
-            <span className="flex size-12 items-center justify-center overflow-hidden rounded-full bg-white text-[#078ef0] ring-2 ring-white">
-              <UserRound className="size-6" aria-hidden="true" />
-            </span>
-            <div>
-              <strong className="block text-sm">عارف مرادی پاشا</strong>
-              <span className="mt-1 block text-[11px] text-[#748188]">مشاور پروژه شما</span>
-            </div>
-          </div>
-        </div>
-      </section>
+    <div dir="rtl" className="fixed inset-0 z-[100] flex flex-col overflow-hidden bg-[#e9eef1] font-sans text-[#14202b]">
+      {/* top bar */}
+      <header className="flex h-14 shrink-0 items-center gap-4 border-b border-black/6 bg-white px-4 lg:h-16 lg:px-6">
+        <Link href="/" aria-label="خروج" className="flex size-9 shrink-0 items-center justify-center rounded-full text-[#4d5b65] transition hover:bg-[#f1f4f6] focus-visible:outline-2 focus-visible:outline-[#078ef0]">
+          <X className="size-5" aria-hidden="true" />
+        </Link>
+        <strong className="hidden shrink-0 text-[15px] sm:block">{kind === "app" ? "ساخت اپلیکیشن" : "ساخت سایت"}</strong>
 
-      <nav aria-label="مراحل ثبت سفارش" className="border-b-8 border-[#dff7ff] bg-[#fbfbfc] px-5 py-6 sm:px-8">
-        <ol className="mx-auto grid w-full max-w-[1040px] grid-cols-4">
-          {steps.map((item, index) => {
-            const active = item.number === step;
-            const complete = item.number < step;
-            return (
-              <li key={item.number} className="relative text-center">
-                {index < steps.length - 1 && <span className={`absolute right-1/2 top-5 h-px w-full transition-colors duration-500 ${complete ? "bg-[#078ef0]" : "bg-[#b8e5fb]"}`} aria-hidden="true" />}
-                <button type="button" onClick={() => setStep(item.number)} className="relative z-10 inline-flex flex-col items-center outline-none">
-                  <span className={`flex size-10 items-center justify-center rounded-full text-lg font-black transition ${active ? "bg-[#078ef0] text-white" : complete ? "bg-[#ccefff] text-[#078ef0]" : "bg-[#f1eff5] text-[#252b2f]"}`}>
-                    {complete ? <Check className="size-5" aria-hidden="true" /> : new Intl.NumberFormat("fa-IR").format(item.number)}
-                  </span>
-                  <strong className="mt-2 hidden text-xs sm:block sm:text-sm">{item.title}</strong>
-                  <span className="mt-1 hidden text-[10px] text-[#89949a] md:block">{item.description}</span>
+        <nav aria-label="مراحل" className="mx-auto flex w-full max-w-[560px] flex-col gap-1.5">
+          <ol className="flex gap-1">
+            {steps.map((item, index) => (
+              <li key={item.key} className="flex-1">
+                <button
+                  type="button"
+                  onClick={() => goTo(index)}
+                  aria-label={`${item.title}${index === step ? " (مرحله فعلی)" : ""}`}
+                  aria-current={index === step ? "step" : undefined}
+                  className="group block w-full py-1.5 outline-none"
+                >
+                  <span className={`block h-1.5 rounded-full transition-colors duration-300 group-focus-visible:ring-2 group-focus-visible:ring-[#078ef0] ${index < step || submitted ? "bg-[#14202b]" : index === step ? "bg-[#078ef0]" : "bg-[#dfe5e8] group-hover:bg-[#c7d0d5]"}`} />
                 </button>
               </li>
-            );
-          })}
-        </ol>
-      </nav>
+            ))}
+          </ol>
+        </nav>
 
-      {/* mobile tab switch between the form and the live preview */}
-      <div className="sticky top-0 z-20 flex gap-2 border-b border-[#edf0f2] bg-white/90 px-5 py-3 backdrop-blur sm:px-8 lg:hidden">
-        <button
-          type="button"
-          onClick={() => setMobileView("form")}
-          className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-2.5 text-xs font-extrabold transition ${mobileView === "form" ? "bg-[#078ef0] text-white" : "bg-[#f3f6f7] text-[#69767d]"}`}
-        >
-          <ListChecks className="size-4" aria-hidden="true" /> تنظیمات
-        </button>
-        <button
-          type="button"
-          onClick={() => setMobileView("preview")}
-          className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-2.5 text-xs font-extrabold transition ${mobileView === "preview" ? "bg-[#078ef0] text-white" : "bg-[#f3f6f7] text-[#69767d]"}`}
-        >
-          <Eye className="size-4" aria-hidden="true" /> پیش‌نمایش زنده
-        </button>
+        <span className="shrink-0 text-[12px] font-bold text-[#7a868d]">
+          {faNumber(step + 1)} از {faNumber(steps.length)}
+        </span>
+      </header>
+
+      <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
+        {/* control panel — right on desktop (RTL), bottom sheet on mobile */}
+        <aside className="order-2 flex max-h-[58dvh] w-full shrink-0 flex-col rounded-t-[28px] bg-white shadow-[0_-12px_40px_-20px_rgba(20,32,43,0.35)] lg:order-1 lg:max-h-none lg:w-[440px] lg:rounded-none lg:border-l lg:border-black/6 lg:shadow-none">
+          <span className="mx-auto mt-2.5 block h-1 w-10 rounded-full bg-[#dfe5e8] lg:hidden" aria-hidden="true" />
+          {submitted ? <SubmittedPanel kind={kind} /> : <StepPanel kind={kind} />}
+        </aside>
+
+        <main className="order-1 min-h-0 flex-1 p-3 pb-4 sm:p-5 lg:order-2 lg:p-8">
+          <PreviewStage />
+        </main>
       </div>
-
-      <section className="px-5 py-8 sm:px-8 lg:px-12 lg:py-12">
-        <div className="mx-auto grid w-full max-w-[1420px] gap-10 lg:grid-cols-[1fr_400px] lg:items-start">
-          {/* form column */}
-          <div className={mobileView === "preview" ? "hidden lg:block" : "block"}>
-            <WizardStepHeading step={step} kind={kind} />
-
-            {step === 1 && (
-              <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                {presets.map((option, index) => (
-                  <button type="button" key={option.title} onClick={() => setVisual(index)} className={`group overflow-hidden rounded-2xl border bg-white p-2 text-right transition hover:-translate-y-1 hover:shadow-lg ${visual === index ? "border-[#078ef0] ring-3 ring-[#078ef0]/12" : "border-[#dce4e8]"}`}>
-                    <div className="relative aspect-[1.48/1] overflow-hidden rounded-xl bg-[#e8f4f7]">
-                      <Image src={option.image} alt="" fill sizes="(max-width: 639px) calc(100vw - 40px), 32vw" className="object-cover transition duration-500 group-hover:scale-[1.03]" />
-                    </div>
-                    <div className="flex items-start gap-3 px-4 py-5">
-                      <span className={`mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border ${visual === index ? "border-[#078ef0] bg-[#078ef0] text-white" : "border-[#b9dff4]"}`}>
-                        {visual === index && <Check className="size-3" aria-hidden="true" />}
-                      </span>
-                      <span>
-                        <strong className="block text-lg">{option.title}</strong>
-                        <span className="mt-2 block text-xs leading-6 text-[#69767d]">{option.description}</span>
-                      </span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {step === 2 && <ProjectInfo kind={kind} brandName={brandName} onBrandNameChange={setBrandName} />}
-            {step === 3 && <ComplexityOptions value={complexity} onChange={setComplexity} />}
-            {step === 4 && <PaletteOptions value={palette} onChange={setPalette} />}
-
-            <div className="mt-14 flex items-center justify-between border-t border-[#edf0f2] pt-7 lg:mt-20">
-              <button type="button" disabled={step === 1} onClick={() => setStep((current) => Math.max(1, current - 1))} className="inline-flex min-h-12 min-w-[150px] items-center justify-center gap-3 rounded-xl border border-[#d6dde1] px-6 font-bold transition hover:bg-[#f7fafb] disabled:opacity-40">
-                <ArrowRight className="size-5" aria-hidden="true" /> قبلی
-              </button>
-              <button type="button" onClick={() => setStep((current) => Math.min(4, current + 1))} className="inline-flex min-h-12 min-w-[170px] items-center justify-center gap-3 rounded-xl bg-[#2ba6f3] px-7 font-extrabold text-white transition hover:bg-[#078ef0]">
-                {step === 4 ? "ثبت انتخاب‌ها" : "بعدی"}
-                {step < 4 && <ArrowLeft className="size-5" aria-hidden="true" />}
-              </button>
-            </div>
-          </div>
-
-          {/* live preview column */}
-          <div className={`${mobileView === "form" ? "hidden lg:block" : "block"} lg:sticky lg:top-28`}>
-            <LivePreview kind={kind} visualIndex={visual} paletteKey={palette} complexity={complexity} brandName={brandName} />
-          </div>
-        </div>
-      </section>
-    </main>
+    </div>
   );
 };
 
-const WizardStepHeading = ({ step, kind }: { step: number; kind: OrderKind }) => {
-  const copy = [
-    { title: `دوست دارید ${kind === "app" ? "اپلیکیشن" : "سایت"} چه حسی به مخاطب بدهد؟`, description: "سبکی را انتخاب کنید که به هویت برند و تجربه دلخواه شما نزدیک‌تر است." },
-    { title: "کمی درباره پروژه به ما بگویید", description: "این اطلاعات کمک می‌کند پیشنهاد دقیق‌تری برای شما آماده کنیم." },
-    { title: "چه میزان جزئیات و امکاناتی نیاز دارید؟", description: "تعادل مناسب میان سرعت، امکانات و بودجه را انتخاب کنید." },
-    { title: "کدام لحن رنگی به برند شما نزدیک‌تر است؟", description: "این انتخاب نقطه شروع طراحی است و بعداً قابل اصلاح خواهد بود." },
-  ][step - 1];
-  return <header className="text-right"><h2 className="text-[24px] font-black leading-[1.5] sm:text-[30px]">{new Intl.NumberFormat("fa-IR").format(step)}. {copy.title}</h2><p className="mt-4 text-sm leading-7 text-[#65747b] sm:text-base">{copy.description}</p></header>;
+const StepPanel = ({ kind }: { kind: OrderKind }) => {
+  const step = useWizard((state) => state.step);
+  const direction = useWizard((state) => state.direction);
+  const next = useWizard((state) => state.next);
+  const prev = useWizard((state) => state.prev);
+  const reduce = useReducedMotion();
+  const current = steps[step];
+  const Panel = stepPanels[current.key];
+  const isLast = step === steps.length - 1;
+  // RTL: moving forward slides content in from the left.
+  const offset = reduce ? 0 : 28;
+
+  return (
+    <>
+      <div className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-4 pt-2 lg:px-8 lg:pt-9">
+        <AnimatePresence mode="wait" initial={false} custom={direction}>
+          <motion.div
+            key={current.key}
+            custom={direction}
+            initial={{ opacity: 0, x: -direction * offset }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: direction * offset }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <span className="text-[12px] font-bold text-[#078ef0]">{current.title}</span>
+            <h1 className="mt-1 text-[18px] font-extrabold leading-[1.6] lg:mt-1.5 lg:text-[24px]">{current.question(kind)}</h1>
+            <p className="mt-1 text-[12px] leading-6 text-[#7a868d] lg:mt-1.5 lg:text-[13px]">{current.hint}</p>
+            <div className="mt-4 lg:mt-7">
+              <Panel />
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <footer className="flex shrink-0 items-center gap-2 border-t border-black/6 bg-white px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:px-8 lg:py-5">
+        <button
+          type="button"
+          onClick={prev}
+          disabled={step === 0}
+          className="flex h-12 items-center gap-2 rounded-xl px-4 text-[14px] font-bold text-[#4d5b65] transition hover:bg-[#f1f4f6] focus-visible:outline-2 focus-visible:outline-[#078ef0] disabled:pointer-events-none disabled:opacity-30"
+        >
+          <ArrowRight className="size-4" aria-hidden="true" /> قبلی
+        </button>
+        <button
+          type="button"
+          onClick={next}
+          className="ms-auto flex h-12 min-w-[150px] items-center justify-center gap-2 rounded-xl bg-[#14202b] px-6 text-[14px] font-extrabold text-white transition hover:bg-[#078ef0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078ef0] active:scale-[0.98]"
+        >
+          {isLast ? "ثبت درخواست" : "بعدی"}
+          {isLast ? <Check className="size-4" aria-hidden="true" /> : <ArrowLeft className="size-4" aria-hidden="true" />}
+        </button>
+      </footer>
+    </>
+  );
 };
 
-const ProjectInfo = ({
-  kind,
-  brandName,
-  onBrandNameChange,
-}: {
-  kind: OrderKind;
-  brandName: string;
-  onBrandNameChange: (value: string) => void;
-}) => (
-  <div className="mt-10 grid gap-5 sm:grid-cols-2">
-    <WizardField label="نام برند یا پروژه" placeholder="مثلاً خیام" value={brandName} onChange={onBrandNameChange} />
-    <WizardField label="حوزه فعالیت" placeholder="مثلاً فروشگاه آنلاین" />
-    <WizardField label="مخاطب اصلی" placeholder="مشتریان شما چه کسانی هستند؟" />
-    <WizardField label={kind === "app" ? "پلتفرم موردنظر" : "نوع سایت"} placeholder={kind === "app" ? "اندروید، iOS یا هر دو" : "فروشگاهی، شرکتی یا خدماتی"} />
-  </div>
-);
+const SubmittedPanel = ({ kind }: { kind: OrderKind }) => {
+  const config = useWizard((state) => state.config);
+  const goTo = useWizard((state) => state.goTo);
+  const restart = useWizard((state) => state.restart);
+  const sectionLabels = (kind === "app" ? appFeatures : siteSections).filter((item) => config.sections.includes(item.value)).map((item) => item.label);
+  const layoutLabel = [...siteLayouts, ...appLayouts].find((item) => item.value === config.layout)?.label;
+  const references = config.references.filter((item) => item.trim());
 
-const WizardField = ({
-  label,
-  placeholder,
-  value,
-  onChange,
-}: {
-  label: string;
-  placeholder: string;
-  value?: string;
-  onChange?: (value: string) => void;
-}) => (
-  <label className="block">
-    <span className="mb-2 block text-sm font-bold">{label}</span>
-    <input
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange ? (event) => onChange(event.target.value) : undefined}
-      className="min-h-13 w-full rounded-xl border border-[#d9e2e6] bg-[#fbfdfe] px-4 text-sm outline-none transition focus:border-[#078ef0] focus:ring-4 focus:ring-[#078ef0]/10"
-    />
-  </label>
-);
+  const summary = [
+    { label: "برند", value: config.brandName.trim() || "بدون نام" },
+    { label: "حوزه", value: industries[config.industry].label },
+    { label: "رنگ", value: colors.find((item) => item.value === config.color)?.label ?? config.color },
+    { label: "حالت", value: themes.find((item) => item.value === config.theme)?.label },
+    { label: "گوشه‌ها", value: radii.find((item) => item.value === config.radius)?.label },
+    { label: "نوشته‌ها", value: typeStyles.find((item) => item.value === config.type)?.label },
+    { label: "چیدمان", value: layoutLabel },
+    { label: kind === "app" ? "امکانات" : "بخش‌ها", value: sectionLabels.join("، ") || "هیچ" },
+    { label: "نمونه‌ها", value: references.length ? `${faNumber(references.length)} لینک` : "ندارد" },
+  ];
 
-const ComplexityOptions = ({ value, onChange }: { value: ComplexityKey; onChange: (value: ComplexityKey) => void }) => (
-  <div className="mt-10 grid gap-5 sm:grid-cols-3">
-    {complexityOptions.map((option) => (
-      <ChoiceCard key={option.value} active={value === option.value} onClick={() => onChange(option.value)} icon={<Layers3 />} title={option.title} text={option.text} />
-    ))}
-  </div>
-);
+  return (
+    <>
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-4 pt-5 lg:px-8 lg:pt-10">
+        <span className="flex size-12 items-center justify-center rounded-full bg-[#22c27a] text-white">
+          <Check className="size-6" strokeWidth={3} aria-hidden="true" />
+        </span>
+        <h1 className="mt-4 text-[22px] font-extrabold leading-[1.6]">درخواست شما ثبت شد</h1>
+        <p className="mt-1.5 text-[13px] leading-6 text-[#7a868d]">طرح اولیه بر اساس همین انتخاب‌ها آماده می‌شود و مشاور پروژه برای جزئیات با شما تماس می‌گیرد.</p>
 
-const PaletteOptions = ({ value, onChange }: { value: PaletteKey; onChange: (value: PaletteKey) => void }) => (
-  <div className="mt-10 grid gap-5 sm:grid-cols-3">
-    {palettes.map((option) => (
-      <button type="button" key={option.key} onClick={() => onChange(option.key)} className={`rounded-2xl border bg-white p-6 text-right transition hover:-translate-y-1 hover:shadow-lg ${value === option.key ? "border-[#078ef0] ring-3 ring-[#078ef0]/12" : "border-[#dce4e8]"}`}>
-        <PaletteIcon className="size-6 text-[#078ef0]" aria-hidden="true" />
-        <div className="mt-6 flex gap-2">
-          <span className="h-14 flex-1 rounded-lg" style={{ backgroundColor: option.primary }} />
-          <span className="h-14 flex-1 rounded-lg" style={{ backgroundColor: option.primarySoft }} />
-          <span className="h-14 flex-1 rounded-lg" style={{ backgroundColor: option.deep }} />
-        </div>
-        <strong className="mt-5 block text-lg">{option.title}</strong>
-      </button>
-    ))}
-  </div>
-);
+        <dl className="mt-6 divide-y divide-black/6 rounded-2xl border border-[#e2e8eb]">
+          {summary.map((row) => (
+            <div key={row.label} className="flex items-start justify-between gap-4 px-4 py-3 text-[13px]">
+              <dt className="shrink-0 text-[#7a868d]">{row.label}</dt>
+              <dd className="text-left font-bold leading-6">{row.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
 
-const ChoiceCard = ({ active, onClick, icon, title, text }: { active: boolean; onClick: () => void; icon: React.ReactElement; title: string; text: string }) => (
-  <button type="button" onClick={onClick} className={`rounded-2xl border bg-white p-7 text-right transition hover:-translate-y-1 hover:shadow-lg ${active ? "border-[#078ef0] ring-3 ring-[#078ef0]/12" : "border-[#dce4e8]"}`}>
-    <span className="flex size-12 items-center justify-center rounded-xl bg-[#eef8ff] text-[#078ef0] [&_svg]:size-6">{icon}</span>
-    <strong className="mt-6 block text-lg">{title}</strong>
-    <span className="mt-3 block text-sm leading-7 text-[#68757c]">{text}</span>
-  </button>
-);
+      <footer className="flex shrink-0 items-center gap-2 border-t border-black/6 px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:px-8 lg:py-5">
+        <button type="button" onClick={restart} className="flex h-12 items-center gap-2 rounded-xl px-4 text-[14px] font-bold text-[#4d5b65] transition hover:bg-[#f1f4f6]">
+          <RotateCcw className="size-4" aria-hidden="true" /> از اول
+        </button>
+        <button type="button" onClick={() => goTo(0)} className="ms-auto flex h-12 items-center gap-2 rounded-xl bg-[#14202b] px-6 text-[14px] font-extrabold text-white transition hover:bg-[#078ef0]">
+          <PencilLine className="size-4" aria-hidden="true" /> ویرایش انتخاب‌ها
+        </button>
+      </footer>
+    </>
+  );
+};

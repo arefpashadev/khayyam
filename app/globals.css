@@ -126,3 +126,35 @@ body {
     animation: none !important;
   }
 }
+
+/* ---------- order wizard live preview ---------- */
+.pv-root,
+.pv-root * {
+  transition-property: background-color, color, border-color, border-radius, fill, opacity;
+  transition-duration: 450ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pv-scroller {
+  scrollbar-width: none;
+}
+.pv-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.pv-section {
+  outline: 3px solid transparent;
+  outline-offset: -3px;
+  transition-property: background-color, color, border-color, border-radius, outline-color;
+  transition-duration: 450ms;
+}
+.pv-section[data-flash="true"] {
+  outline-color: var(--pv-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pv-root,
+  .pv-root * {
+    transition: none !important;
+  }
+}
