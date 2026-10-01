@@ -4,6 +4,7 @@ import { BatteryFull, Signal, Wifi } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 import { useWizard } from "../store";
+import { isSmallScreen } from "../use-small-screen";
 
 /** Real CSS-pixel sizes; the stage scales the whole composition down to fit. */
 export const LAPTOP = { width: 1560, height: 872 };
@@ -23,7 +24,8 @@ const Screen = ({ children, className = "" }: { children: ReactNode; className?:
     const top = !target || focus.target === "hero" ? 0 : Math.max(0, target.offsetTop - 24);
     scroller.scrollTo({ top, behavior: reduced ? "auto" : "smooth" });
 
-    if (!target) return;
+    // Phones already get enough motion from the scroll; skip the highlight there.
+    if (!target || isSmallScreen()) return;
     target.dataset.flash = "true";
     const timeout = window.setTimeout(() => delete target.dataset.flash, 1100);
     return () => {
@@ -98,7 +100,7 @@ export const FitScene = ({ width, height, children }: { width: number; height: n
     <div ref={ref} className="relative size-full">
       {scale > 0 && (
         <div className="absolute left-1/2 top-1/2" style={{ width: width * scale, height: height * scale, transform: "translate(-50%, -50%)" }}>
-          <div className="absolute left-0 top-0 origin-top-left" style={{ width, height, transform: `scale(${scale})` }}>
+          <div className="absolute left-0 top-0 origin-top-left" dir="ltr" style={{ width, height, transform: `scale(${scale})` }}>
             {children}
           </div>
         </div>

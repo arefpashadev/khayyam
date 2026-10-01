@@ -101,21 +101,21 @@ const MoodStep = () => {
   const update = useWizard((state) => state.update);
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="grid grid-cols-2 gap-1.5 lg:grid-cols-1">
       {moods.map((item) => {
         const selected = mood === item.value;
         return (
-          <Tile key={item.value} selected={selected} onClick={() => update({ mood: item.value, ...item.tokens }, "hero")} className="flex items-center gap-3 p-2 pe-3">
+          <Tile key={item.value} selected={selected} onClick={() => update({ mood: item.value, ...item.tokens }, "hero")} className="flex items-center gap-2 p-1.5 lg:gap-3 lg:p-2 lg:pe-3">
             {/* a tiny live sample of the mood */}
-            <span style={buildPreviewVars(item.tokens)} className="flex h-10 w-16 shrink-0 flex-col justify-center gap-1.5 rounded-lg bg-(--pv-bg) px-2 ring-1 ring-black/8">
+            <span style={buildPreviewVars(item.tokens)} className="flex h-9 w-11 shrink-0 flex-col justify-center gap-1.5 rounded-lg bg-(--pv-bg) px-1.5 ring-1 ring-black/8 lg:h-10 lg:w-16 lg:px-2">
               <span className="block w-4/5 rounded-full bg-(--pv-text)" style={{ height: item.tokens.type === "heavy" ? 5 : 4, opacity: item.tokens.type === "light" ? 0.4 : 0.85 }} />
-              <span className="block h-2.5 w-7 rounded-(--pv-r-ctrl) bg-(--pv-primary)" />
+              <span className="block h-2.5 w-6 rounded-(--pv-r-ctrl) bg-(--pv-primary)" />
             </span>
-            <span className="flex-1">
-              <strong className="block text-[13px]">{item.label}</strong>
-              <span className="block text-[11px] text-[#7a868d]">{item.description}</span>
+            <span className="min-w-0 flex-1">
+              <strong className="block text-[12px] leading-5 lg:text-[13px]">{item.label}</strong>
+              <span className="hidden text-[11px] text-[#7a868d] lg:block">{item.description}</span>
             </span>
-            <span className={`flex size-5 items-center justify-center rounded-full transition ${selected ? "bg-[#14202b] text-white" : "ring-1 ring-[#d3dadf]"}`}>{selected && <Check className="size-3" strokeWidth={3} aria-hidden="true" />}</span>
+            <span className={`hidden size-5 items-center justify-center rounded-full transition lg:flex ${selected ? "bg-[#14202b] text-white" : "ring-1 ring-[#d3dadf]"}`}>{selected && <Check className="size-3" strokeWidth={3} aria-hidden="true" />}</span>
           </Tile>
         );
       })}

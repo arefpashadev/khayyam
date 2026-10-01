@@ -1,15 +1,15 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Check, PencilLine, RotateCcw, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, PencilLine, RotateCcw } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 
-import { Link } from "@/i18n/navigation";
 
 import { appFeatures, appLayouts, colors, faNumber, getDefaultConfig, industries, radii, siteLayouts, siteSections, steps, themes, typeStyles, type OrderKind } from "./config";
 import { PreviewStage } from "./preview";
 import { stepPanels } from "./steps";
 import { useWizard } from "./store";
+import { useIsSmallScreen } from "./use-small-screen";
 
 export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
   // Seed the store for this kind before the first paint so the right preview shows immediately.
@@ -31,9 +31,9 @@ export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
 
   return (
     <div dir="rtl" className="fixed inset-0 z-[100] flex flex-col overflow-hidden bg-[#e6ebee] font-sans text-[#14202b] lg:flex-row">
+      <ProgressLine />
       {/* controls — side panel on desktop (right, RTL), bottom sheet on mobile */}
-      <aside className="order-2 flex max-h-[54dvh] w-full shrink-0 flex-col rounded-t-[22px] bg-white shadow-[0_-10px_30px_-18px_rgba(20,32,43,0.35)] lg:order-1 lg:h-full lg:max-h-none lg:w-[360px] lg:rounded-none lg:border-l lg:border-black/6 lg:shadow-none xl:w-[380px]">
-        <PanelHeader kind={kind} />
+      <aside className="order-2 flex max-h-[50dvh] w-full shrink-0 flex-col rounded-t-[22px] bg-white shadow-[0_-10px_30px_-18px_rgba(20,32,43,0.35)] lg:order-1 lg:h-full lg:max-h-none lg:w-[360px] lg:rounded-none lg:border-l lg:border-black/6 lg:shadow-none xl:w-[380px]">
         {submitted ? <SubmittedPanel kind={kind} /> : <StepPanel kind={kind} />}
       </aside>
 
@@ -44,36 +44,24 @@ export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
   );
 };
 
-const PanelHeader = ({ kind }: { kind: OrderKind }) => {
+/** One hairline across the very top of the screen; invisible hit areas jump to a step. */
+const ProgressLine = () => {
   const step = useWizard((state) => state.step);
   const submitted = useWizard((state) => state.submitted);
   const goTo = useWizard((state) => state.goTo);
   const progress = submitted ? 100 : ((step + 1) / steps.length) * 100;
 
   return (
-    <div className="shrink-0 px-5 pt-3 lg:px-6 lg:pt-5">
-      <div className="flex items-center gap-2">
-        <Link href="/" aria-label="خروج" className="-ms-1.5 flex size-8 items-center justify-center rounded-full text-[#5b6872] transition hover:bg-[#f1f4f6] focus-visible:outline-2 focus-visible:outline-[#078ef0]">
-          <X className="size-[18px]" aria-hidden="true" />
-        </Link>
-        <strong className="text-[13px]">{kind === "app" ? "ساخت اپلیکیشن" : "ساخت سایت"}</strong>
-        <span className="ms-auto text-[12px] font-bold tabular-nums text-[#8a959b]">
-          {faNumber(step + 1)} از {faNumber(steps.length)}
-        </span>
-      </div>
-
-      {/* one thin progress line; invisible hit areas let you jump to any step */}
-      <div className="relative mt-2.5 h-[3px] rounded-full bg-[#e8edf0]">
-        <motion.div className="absolute inset-y-0 right-0 rounded-full bg-[#078ef0]" initial={false} animate={{ width: `${progress}%` }} transition={{ type: "spring", bounce: 0, duration: 0.5 }} />
-        <ol className="absolute inset-x-0 -top-2 flex h-[19px]">
-          {steps.map((item, index) => (
-            <li key={item.key} className="flex-1">
-              <button type="button" onClick={() => goTo(index)} aria-label={item.title} aria-current={index === step ? "step" : undefined} className="block size-full outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-[#078ef0]" />
-            </li>
-          ))}
-        </ol>
-      </div>
-    </div>
+    <nav aria-label="مراحل" className="absolute inset-x-0 top-0 z-30 h-[3px] bg-black/5">
+      <div className="absolute inset-y-0 right-0 bg-[#078ef0] transition-[width] duration-500 ease-out" style={{ width: `${progress}%` }} />
+      <ol className="absolute inset-x-0 top-0 flex h-3">
+        {steps.map((item, index) => (
+          <li key={item.key} className="flex-1">
+            <button type="button" onClick={() => goTo(index)} aria-label={item.title} aria-current={index === step ? "step" : undefined} className="block size-full outline-none focus-visible:bg-[#078ef0]/30" />
+          </li>
+        ))}
+      </ol>
+    </nav>
   );
 };
 
@@ -83,17 +71,20 @@ const StepPanel = ({ kind }: { kind: OrderKind }) => {
   const next = useWizard((state) => state.next);
   const prev = useWizard((state) => state.prev);
   const reduce = useReducedMotion();
+  const isSmall = useIsSmallScreen();
   const current = steps[step];
   const Panel = stepPanels[current.key];
   const isLast = step === steps.length - 1;
-  const offset = reduce ? 0 : 24; // RTL: forward slides in from the left
+  // RTL: forward slides in from the left. Phones switch instantly — less movement.
+  const still = reduce || isSmall;
+  const offset = still ? 0 : 24;
 
   return (
     <>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-4 pt-4 lg:px-6 lg:pt-7">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-3 pt-4 lg:px-6 lg:pt-8">
         <AnimatePresence mode="wait" initial={false} custom={direction}>
-          <motion.div key={current.key} initial={{ opacity: 0, x: -direction * offset }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: direction * offset }} transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}>
-            <h1 className="text-[17px] font-extrabold leading-[1.65] lg:text-[19px]">{current.question(kind)}</h1>
+          <motion.div key={current.key} initial={{ opacity: 0, x: -direction * offset }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: direction * offset }} transition={{ duration: still ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}>
+            <h1 className="text-[16px] font-extrabold leading-[1.65] lg:text-[19px]">{current.question(kind)}</h1>
             <p className="mt-1 hidden text-[12px] leading-6 text-[#8a959b] lg:block">{current.hint}</p>
             <div className="mt-3 lg:mt-5">
               <Panel />
@@ -102,7 +93,7 @@ const StepPanel = ({ kind }: { kind: OrderKind }) => {
         </AnimatePresence>
       </div>
 
-      <footer className="flex shrink-0 items-center gap-2 px-5 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 lg:px-6 lg:pb-6">
+      <footer className="flex shrink-0 items-center gap-2 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 lg:px-6 lg:pb-6">
         <button
           type="button"
           onClick={prev}
@@ -146,7 +137,7 @@ const SubmittedPanel = ({ kind }: { kind: OrderKind }) => {
 
   return (
     <>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-4 pt-4 lg:px-6 lg:pt-7">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-3 pt-4 lg:px-6 lg:pt-8">
         <div className="flex items-center gap-3">
           <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#22c27a] text-white">
             <Check className="size-5" strokeWidth={3} aria-hidden="true" />
@@ -163,7 +154,7 @@ const SubmittedPanel = ({ kind }: { kind: OrderKind }) => {
           ))}
         </dl>
       </div>
-      <footer className="flex shrink-0 items-center gap-2 px-5 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 lg:px-6 lg:pb-6">
+      <footer className="flex shrink-0 items-center gap-2 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 lg:px-6 lg:pb-6">
         <button type="button" onClick={restart} aria-label="از اول" className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#f1f4f6] text-[#4d5b65] transition hover:bg-[#e6ebee]">
           <RotateCcw className="size-[18px]" aria-hidden="true" />
         </button>
