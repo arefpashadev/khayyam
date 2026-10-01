@@ -67,15 +67,19 @@ export type WizardConfig = {
   sections: string[];
   references: string[];
   notes: string;
-  /** Seed for the design archetype mix; "another design" bumps it. */
+  /** Design number inside the chosen industry's catalogue (see designs.ts). */
   variant: number;
+  motion: MotionKey;
+  extras: string[];
 };
+
+export type MotionKey = "none" | "subtle" | "lively";
 
 /* ------------------------------------------------------------------ */
 /* Steps                                                               */
 /* ------------------------------------------------------------------ */
 
-export type StepKey = "brand" | "mood" | "color" | "shape" | "layout" | "sections" | "references";
+export type StepKey = "brand" | "mood" | "color" | "shape" | "layout" | "sections" | "extras" | "references";
 
 export const steps: { key: StepKey; title: string; question: (kind: OrderKind) => string; hint: string; target: PreviewTarget }[] = [
   { key: "brand", title: "کسب‌وکار", question: () => "اسم برندتان چیست و در چه حوزه‌ای کار می‌کنید؟", hint: "متن‌ها و آیکون‌های پیش‌نمایش بر اساس حوزه شما عوض می‌شوند.", target: "top" },
@@ -84,6 +88,7 @@ export const steps: { key: StepKey; title: string; question: (kind: OrderKind) =
   { key: "shape", title: "فرم و نوشتار", question: () => "گوشه‌ها و نوشته‌ها چطور باشند؟", hint: "گوشه‌های گرد صمیمی‌ترند، گوشه‌های تیز رسمی‌تر.", target: "features" },
   { key: "layout", title: "چیدمان", question: (kind) => (kind === "app" ? "صفحه اصلی اپ چطور چیده شود؟" : "بخش اول سایت چطور چیده شود؟"), hint: "اولین چیزی که کاربر می‌بیند همین بخش است.", target: "hero" },
   { key: "sections", title: "امکانات", question: (kind) => (kind === "app" ? "اپ شما چه امکاناتی لازم دارد؟" : "سایت شما چه بخش‌هایی داشته باشد؟"), hint: "هر گزینه را بزنید تا جایش را در پیش‌نمایش ببینید.", target: "features" },
+  { key: "extras", title: "جزئیات فنی", question: () => "حرکت و امکانات فنی چطور باشد؟", hint: "بعضی امکانات پشت صحنه کار می‌کنند و در پیش‌نمایش دیده نمی‌شوند؛ کنارشان علامت زده‌ایم.", target: "hero" },
   { key: "references", title: "الهام", question: () => "از کدام سایت‌ها یا اپ‌ها خوشتان می‌آید؟", hint: "لینک چند نمونه را بگذارید تا طراح دقیق‌تر سلیقه‌تان را بشناسد.", target: "top" },
 ];
 
@@ -98,6 +103,7 @@ export type IndustryContent = {
   sub: string;
   cta: string;
   badge: string;
+  stats: [string, string][];
   features: { label: string; icon: LucideIcon }[];
 };
 
@@ -109,6 +115,7 @@ export const industries: Record<IndustryKey, IndustryContent> = {
     sub: "محصولات منتخب با ضمانت اصالت و ارسال به سراسر کشور",
     cta: "مشاهده محصولات",
     badge: "تخفیف فصل تا ۳۰٪",
+    stats: [["۲۰هزار+", "مشتری راضی"], ["۲۴ ساعته", "ارسال سریع"], ["۷ روز", "ضمانت بازگشت"]],
     features: [
       { label: "ارسال رایگان", icon: Truck },
       { label: "ضمانت بازگشت", icon: ShieldCheck },
@@ -123,6 +130,7 @@ export const industries: Record<IndustryKey, IndustryContent> = {
     sub: "از مشاوره تا اجرا، کنار تیم شما هستیم",
     cta: "درخواست مشاوره",
     badge: "بیش از ۱۲۰ پروژه موفق",
+    stats: [["۱۲۰+", "پروژه موفق"], ["۹۸٪", "رضایت مشتری"], ["۱۵ سال", "تجربه"]],
     features: [
       { label: "مشاوره تخصصی", icon: Lightbulb },
       { label: "اجرای پروژه", icon: Rocket },
@@ -137,6 +145,7 @@ export const industries: Record<IndustryKey, IndustryContent> = {
     sub: "منوی فصلی، رزرو آنلاین میز و سفارش بیرون‌بر",
     cta: "رزرو میز",
     badge: "منوی پاییزی رسید",
+    stats: [["۴۰+", "غذای منو"], ["۱۲", "سرآشپز"], ["۴٫۹", "امتیاز مهمانان"]],
     features: [
       { label: "منوی روز", icon: ChefHat },
       { label: "رزرو آنلاین", icon: CalendarCheck },
@@ -151,6 +160,7 @@ export const industries: Record<IndustryKey, IndustryContent> = {
     sub: "دوره‌های کاربردی با استادهای باتجربه و مدرک معتبر",
     cta: "شروع یادگیری",
     badge: "ثبت‌نام ترم جدید باز است",
+    stats: [["۸۵", "دوره فعال"], ["۳۰هزار", "دانشجو"], ["۹۲٪", "رضایت"]],
     features: [
       { label: "دوره ویدیویی", icon: CirclePlay },
       { label: "کلاس زنده", icon: Video },
@@ -165,6 +175,7 @@ export const industries: Record<IndustryKey, IndustryContent> = {
     sub: "نوبت‌دهی آنلاین و مشاوره با پزشکان متخصص",
     cta: "رزرو نوبت",
     badge: "مشاوره تصویری فعال شد",
+    stats: [["۶۰+", "پزشک متخصص"], ["۲۴/۷", "پاسخگویی"], ["۱۰۰هزار", "نوبت موفق"]],
     features: [
       { label: "نوبت آنلاین", icon: CalendarCheck },
       { label: "مشاوره تصویری", icon: Video },
@@ -179,6 +190,7 @@ export const industries: Record<IndustryKey, IndustryContent> = {
     sub: "طراح و توسعه‌دهنده محصولات دیجیتال",
     cta: "دیدن نمونه‌کارها",
     badge: "پذیرش پروژه جدید",
+    stats: [["۷ سال", "تجربه"], ["۵۰+", "پروژه"], ["۲۵", "مشتری"]],
     features: [
       { label: "نمونه‌کارها", icon: Images },
       { label: "خدمات", icon: Briefcase },
@@ -271,6 +283,8 @@ export const getDefaultConfig = (kind: OrderKind): WizardConfig => ({
   references: ["", "", ""],
   notes: "",
   variant: 0,
+  motion: "subtle",
+  extras: kind === "app" ? ["otp", "push"] : ["seo", "admin"],
 });
 
 /* ------------------------------------------------------------------ */
@@ -337,35 +351,31 @@ export const buildPreviewVars = (config: Pick<WizardConfig, "color" | "theme" | 
 export const faNumber = (value: number) => new Intl.NumberFormat("fa-IR").format(value);
 
 /* ------------------------------------------------------------------ */
-/* Design archetypes — the same answers can produce many distinct looks */
+/* Technical extras                                                    */
 /* ------------------------------------------------------------------ */
 
-export const archetypeOptions = {
-  nav: ["classic", "centered", "floating"],
-  art: ["orbs", "mosaic", "rings", "stack", "bars", "frame"],
-  cards: ["outlined", "filled", "numbered"],
-  pattern: [false, true],
-} as const;
+export const motionLevels: { value: MotionKey; label: string }[] = [
+  { value: "none", label: "بدون حرکت" },
+  { value: "subtle", label: "ملایم" },
+  { value: "lively", label: "پرجنب‌وجوش" },
+];
 
-export type Archetype = {
-  nav: (typeof archetypeOptions.nav)[number];
-  art: (typeof archetypeOptions.art)[number];
-  cards: (typeof archetypeOptions.cards)[number];
-  pattern: boolean;
-};
+/** `visible` extras show up in the preview; the rest work behind the scenes. */
+export const siteExtras: { value: string; label: string; description: string; icon: LucideIcon; visible: boolean }[] = [
+  { value: "seo", label: "سئو", description: "دیده شدن در نتایج گوگل", icon: Search, visible: false },
+  { value: "admin", label: "پنل مدیریت", description: "ویرایش محتوا بدون برنامه‌نویس", icon: Briefcase, visible: false },
+  { value: "multilang", label: "چندزبانه", description: "نسخه انگلیسی و عربی", icon: Newspaper, visible: true },
+  { value: "chat", label: "چت آنلاین", description: "گفتگو با بازدیدکننده‌ها", icon: MessageCircle, visible: true },
+  { value: "darkmode", label: "حالت شب", description: "دکمه تغییر روشن و تیره", icon: Lightbulb, visible: true },
+  { value: "payment", label: "پرداخت آنلاین", description: "درگاه بانکی امن", icon: CreditCard, visible: false },
+  { value: "analytics", label: "آمار بازدید", description: "گزارش رفتار کاربران", icon: ChartColumn, visible: false },
+];
 
-/** Every combination of the options above: 3 × 6 × 3 × 2 = 108 designs. */
-export const ARCHETYPE_COUNT = archetypeOptions.nav.length * archetypeOptions.art.length * archetypeOptions.cards.length * archetypeOptions.pattern.length;
-
-/** Mixed-radix decode: design number → its parts. Design 0 is the classic default. */
-export const getArchetype = (variant: number): Archetype => {
-  const index = ((variant % ARCHETYPE_COUNT) + ARCHETYPE_COUNT) % ARCHETYPE_COUNT;
-  const { nav, art, cards, pattern } = archetypeOptions;
-  // Hero art changes fastest and nav next, so neighbouring designs in the list look clearly different.
-  return {
-    art: art[index % art.length],
-    nav: nav[Math.floor(index / art.length) % nav.length],
-    cards: cards[Math.floor(index / (art.length * nav.length)) % cards.length],
-    pattern: pattern[Math.floor(index / (art.length * nav.length * cards.length)) % pattern.length],
-  };
-};
+export const appExtras: { value: string; label: string; description: string; icon: LucideIcon; visible: boolean }[] = [
+  { value: "otp", label: "ورود با شماره", description: "کد یک‌بارمصرف پیامکی", icon: Lock, visible: false },
+  { value: "push", label: "نوتیفیکیشن", description: "پیام روی صفحه گوشی", icon: Bell, visible: true },
+  { value: "payment", label: "پرداخت درون‌برنامه", description: "درگاه بانکی امن", icon: CreditCard, visible: false },
+  { value: "offline", label: "حالت آفلاین", description: "کار بدون اینترنت", icon: ShieldCheck, visible: false },
+  { value: "multilang", label: "چندزبانه", description: "نسخه انگلیسی و عربی", icon: Newspaper, visible: false },
+  { value: "admin", label: "پنل مدیریت", description: "مدیریت کاربران و محتوا", icon: Briefcase, visible: false },
+];

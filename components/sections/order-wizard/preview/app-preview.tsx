@@ -1,4 +1,4 @@
-import { Heart, House, Search, UserRound } from "lucide-react";
+import { Bell, Heart, House, Search, UserRound } from "lucide-react";
 import type { CSSProperties } from "react";
 
 import { appFeatures, industries, mix, type WizardConfig } from "../config";
@@ -18,7 +18,7 @@ export const AppPreview = ({ config }: { config: WizardConfig }) => {
   const tile = (amount: number) => ({ backgroundColor: mix(config.color, config.theme === "dark" ? "#0f151c" : "#ffffff", amount) });
 
   return (
-    <div dir="rtl" className="pv-root flex min-h-full flex-col bg-(--pv-bg) font-sans text-(--pv-text)">
+    <div dir="rtl" data-motion={config.motion} className="pv-root flex min-h-full flex-col bg-(--pv-bg) font-sans text-(--pv-text)">
       <div className="sticky top-0 z-10 bg-(--pv-bg)">
         <div className="flex items-center justify-between px-5 py-3">
           <div>
@@ -31,7 +31,18 @@ export const AppPreview = ({ config }: { config: WizardConfig }) => {
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-5 px-5 pb-6">
+      <div key={config.motion} className="pv-rise flex flex-1 flex-col gap-5 px-5 pb-6">
+        {config.extras.includes("push") && (
+          <div className="pv-float flex items-center gap-3 rounded-(--pv-r-card) bg-(--pv-surface) p-3 shadow-lg ring-1 ring-(--pv-border)">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-primary) text-(--pv-on-primary)">
+              <Bell className="size-4" aria-hidden="true" />
+            </span>
+            <span className="text-[12px] leading-5">
+              <strong className="block">{name}</strong>
+              <span className="text-(--pv-muted)">{content.badge}</span>
+            </span>
+          </div>
+        )}
         {config.sections.includes("search") && (
           <div data-pv="search" className="pv-section flex h-12 items-center gap-3 rounded-(--pv-r-ctrl) border border-(--pv-border) bg-(--pv-surface) px-4 text-[13px] text-(--pv-muted)">
             <Search className="size-4" aria-hidden="true" /> جستجو در {name}

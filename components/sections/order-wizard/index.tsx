@@ -1,20 +1,39 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Check, PencilLine, RotateCcw } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Blocks,
+  Building2,
+  Check,
+  CircleHelp,
+  LayoutTemplate,
+  Link2,
+  Palette,
+  PencilLine,
+  RotateCcw,
+  Settings2,
+  Shapes,
+  Sparkles,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 
+import { Link } from "@/i18n/navigation";
 
 import { appFeatures, appLayouts, colors, faNumber, getDefaultConfig, industries, radii, siteLayouts, siteSections, steps, themes, typeStyles, type OrderKind } from "./config";
 import { PreviewStage } from "./preview";
 import { stepPanels } from "./steps";
 import { useWizard } from "./store";
+import { Tour } from "./tour";
 import { useIsSmallScreen } from "./use-small-screen";
 
 export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
   // Seed the store for this kind before the first paint so the right preview shows immediately.
   useState(() => {
-    useWizard.setState({ kind, step: 0, direction: 1, submitted: false, config: getDefaultConfig(kind), focus: { target: "top", tick: 0 } });
+    useWizard.setState({ kind, step: 0, direction: 1, submitted: false, config: getDefaultConfig(kind), focus: { target: "top", tick: 0 }, tour: null });
     return true;
   });
 
@@ -32,14 +51,19 @@ export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
   return (
     <div dir="rtl" className="fixed inset-0 z-[100] flex flex-col overflow-hidden bg-[#e6ebee] font-sans text-[#14202b] lg:flex-row">
       <ProgressLine />
-      {/* controls — side panel on desktop (right, RTL), bottom sheet on mobile */}
-      <aside className="order-2 flex max-h-[50dvh] w-full shrink-0 flex-col rounded-t-[22px] bg-white shadow-[0_-10px_30px_-18px_rgba(20,32,43,0.35)] lg:order-1 lg:h-full lg:max-h-none lg:w-[360px] lg:rounded-none lg:border-l lg:border-black/6 lg:shadow-none xl:w-[380px]">
-        {submitted ? <SubmittedPanel kind={kind} /> : <StepPanel kind={kind} />}
+      {/* controls — rail + panel on desktop (right, RTL), bottom sheet on mobile */}
+      <aside
+        data-tour="panel"
+        className="order-2 flex max-h-[50dvh] w-full shrink-0 rounded-t-[22px] bg-white shadow-[0_-10px_30px_-18px_rgba(20,32,43,0.35)] lg:order-1 lg:h-full lg:max-h-none lg:w-[440px] lg:rounded-none lg:shadow-[-1px_0_0_rgba(20,32,43,0.06)]"
+      >
+        <StepRail kind={kind} />
+        <div className="flex min-w-0 flex-1 flex-col">{submitted ? <SubmittedPanel kind={kind} /> : <StepPanel kind={kind} />}</div>
       </aside>
 
-      <main className="relative order-1 min-h-0 flex-1 lg:order-2">
+      <main data-tour="stage" className="relative order-1 min-h-0 flex-1 lg:order-2">
         <PreviewStage />
       </main>
+      <Tour kind={kind} />
     </div>
   );
 };
@@ -52,7 +76,7 @@ const ProgressLine = () => {
   const progress = submitted ? 100 : ((step + 1) / steps.length) * 100;
 
   return (
-    <nav aria-label="مراحل" className="absolute inset-x-0 top-0 z-30 h-[3px] bg-black/5">
+    <nav aria-label="مراحل" className="absolute inset-x-0 top-0 z-30 h-[3px] bg-black/5 lg:hidden">
       <div className="absolute inset-y-0 right-0 bg-[#078ef0] transition-[width] duration-500 ease-out" style={{ width: `${progress}%` }} />
       <ol className="absolute inset-x-0 top-0 flex h-3">
         {steps.map((item, index) => (
@@ -61,6 +85,65 @@ const ProgressLine = () => {
           </li>
         ))}
       </ol>
+    </nav>
+  );
+};
+
+const stepIcons: Record<(typeof steps)[number]["key"], LucideIcon> = {
+  brand: Building2,
+  mood: Sparkles,
+  color: Palette,
+  shape: Shapes,
+  layout: LayoutTemplate,
+  sections: Blocks,
+  extras: Settings2,
+  references: Link2,
+};
+
+/** Desktop navigation: every step as an icon with its name on hover, plus help and exit. */
+const StepRail = ({ kind }: { kind: OrderKind }) => {
+  const step = useWizard((state) => state.step);
+  const submitted = useWizard((state) => state.submitted);
+  const goTo = useWizard((state) => state.goTo);
+  const setTour = useWizard((state) => state.setTour);
+  const rail = "group relative flex size-11 items-center justify-center rounded-2xl transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#078ef0]";
+  const tip = "pointer-events-none absolute right-full z-10 mr-3 whitespace-nowrap rounded-lg bg-[#14202b] px-2.5 py-1.5 text-[12px] font-bold text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100";
+
+  return (
+    <nav aria-label="مراحل" className="hidden w-[72px] shrink-0 flex-col items-center gap-1 border-l border-black/6 bg-[#fafbfc] py-5 lg:flex">
+      <span className="mb-4 flex size-11 items-center justify-center rounded-2xl bg-[#14202b] text-[18px] font-black text-white" aria-label={kind === "app" ? "ساخت اپلیکیشن" : "ساخت سایت"}>
+        خ
+      </span>
+      <ol className="flex flex-col gap-1">
+        {steps.map((item, index) => {
+          const Icon = stepIcons[item.key];
+          const done = index < step || submitted;
+          const current = index === step && !submitted;
+          return (
+            <li key={item.key}>
+              <button type="button" onClick={() => goTo(index)} aria-current={current ? "step" : undefined} aria-label={item.title} className={`${rail} ${current ? "bg-[#e6f2fc] text-[#078ef0]" : done ? "text-[#14202b] hover:bg-[#eef2f4]" : "text-[#a8b2b8] hover:bg-[#eef2f4] hover:text-[#5b6872]"}`}>
+                <Icon className="size-[19px]" aria-hidden="true" />
+                {done && (
+                  <span className="absolute bottom-1.5 left-1.5 flex size-3.5 items-center justify-center rounded-full bg-[#22c27a] text-white ring-2 ring-[#fafbfc]">
+                    <Check className="size-2" strokeWidth={4} aria-hidden="true" />
+                  </span>
+                )}
+                <span className={tip}>{item.title}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+      <div className="mt-auto flex flex-col gap-1">
+        <button type="button" onClick={() => setTour(0)} aria-label="راهنما" className={`${rail} text-[#8a959b] hover:bg-[#eef2f4] hover:text-[#14202b]`}>
+          <CircleHelp className="size-[19px]" aria-hidden="true" />
+          <span className={tip}>راهنما</span>
+        </button>
+        <Link href="/" aria-label="خروج" className={`${rail} text-[#8a959b] hover:bg-[#eef2f4] hover:text-[#14202b]`}>
+          <X className="size-[19px]" aria-hidden="true" />
+          <span className={tip}>خروج</span>
+        </Link>
+      </div>
     </nav>
   );
 };
@@ -84,7 +167,11 @@ const StepPanel = ({ kind }: { kind: OrderKind }) => {
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-3 pt-4 lg:px-6 lg:pt-8">
         <AnimatePresence mode="wait" initial={false} custom={direction}>
           <motion.div key={current.key} initial={{ opacity: 0, x: -direction * offset }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: direction * offset }} transition={{ duration: still ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}>
-            <h1 className="text-[16px] font-extrabold leading-[1.65] lg:text-[19px]">{current.question(kind)}</h1>
+            <span className="mb-1.5 hidden text-[12px] font-bold text-[#078ef0] lg:block">
+              {current.title}
+              <span className="ms-2 font-normal text-[#a3aeb4]">مرحله {faNumber(step + 1)} از {faNumber(steps.length)}</span>
+            </span>
+            <h1 className="text-[16px] font-extrabold leading-[1.65] lg:text-[21px]">{current.question(kind)}</h1>
             <p className="mt-1 hidden text-[12px] leading-6 text-[#8a959b] lg:block">{current.hint}</p>
             <div className="mt-3 lg:mt-5">
               <Panel />
@@ -106,6 +193,7 @@ const StepPanel = ({ kind }: { kind: OrderKind }) => {
         <button
           type="button"
           onClick={next}
+          data-tour="next"
           className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-[#14202b] text-[13px] font-extrabold text-white transition hover:bg-[#078ef0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078ef0] active:scale-[0.98]"
         >
           {isLast ? "ثبت درخواست" : `بعدی: ${steps[step + 1].title}`}

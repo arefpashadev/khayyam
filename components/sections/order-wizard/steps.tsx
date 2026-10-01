@@ -1,11 +1,12 @@
 "use client";
 
-import { Check, Link2, Moon, Droplet, Sun } from "lucide-react";
+import { Check, Droplet, EyeOff, Link2, Moon, Sparkles, Sun, Wind, Zap } from "lucide-react";
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
 
 import {
   appFeatures,
+  appExtras,
   appLayouts,
   buildPreviewVars,
   colors,
@@ -13,6 +14,8 @@ import {
   industries,
   moods,
   radii,
+  motionLevels,
+  siteExtras,
   siteLayouts,
   siteSections,
   themes,
@@ -263,6 +266,54 @@ const SectionsStep = () => {
   );
 };
 
+const ExtrasStep = () => {
+  const kind = useWizard((state) => state.kind);
+  const motionLevel = useWizard((state) => state.config.motion);
+  const extras = useWizard((state) => state.config.extras);
+  const update = useWizard((state) => state.update);
+  const options = kind === "app" ? appExtras : siteExtras;
+  const motionIcons = { none: <Wind className="size-3.5" />, subtle: <Sparkles className="size-3.5" />, lively: <Zap className="size-3.5" /> };
+
+  return (
+    <div className="flex flex-col gap-5">
+      <Segmented id="seg-motion" label="انیمیشن و حرکت" value={motionLevel} onChange={(value) => update({ motion: value }, "hero")} options={motionLevels.map((level) => ({ ...level, icon: motionIcons[level.value] }))} />
+      <div>
+        <Label>امکانات فنی</Label>
+        <div className="grid grid-cols-2 gap-1.5 lg:grid-cols-1">
+          {options.map((option) => {
+            const selected = extras.includes(option.value);
+            return (
+              <Tile
+                key={option.value}
+                selected={selected}
+                onClick={() => update({ extras: selected ? extras.filter((item) => item !== option.value) : [...extras, option.value] }, option.visible ? "top" : undefined)}
+                className="flex items-center gap-2.5 p-2.5 lg:gap-3 lg:p-3"
+              >
+                <option.icon className={`size-4 shrink-0 ${selected ? "text-[#078ef0]" : "text-[#8a959b]"}`} aria-hidden="true" />
+                <span className="min-w-0 flex-1">
+                  <strong className="flex items-center gap-1.5 text-[12px] leading-5 lg:text-[13px]">
+                    {option.label}
+                    {!option.visible && (
+                      <span className="hidden items-center gap-0.5 rounded-full bg-black/5 px-1.5 text-[10px] font-normal text-[#7a868d] lg:inline-flex" title="در پیش‌نمایش دیده نمی‌شود">
+                        <EyeOff className="size-2.5" aria-hidden="true" /> پشت صحنه
+                      </span>
+                    )}
+                  </strong>
+                  <span className="hidden text-[11px] text-[#8a959b] lg:block">{option.description}</span>
+                </span>
+                <span className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${selected ? "bg-[#078ef0]" : "bg-[#d6dde1]"}`} aria-hidden="true">
+                  {/* RTL switch: off sits on the right, on slides to the left */}
+                  <span className="absolute top-0.5 size-4 rounded-full bg-white shadow transition-[left]" style={{ left: selected ? 2 : 18 }} />
+                </span>
+              </Tile>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ReferencesStep = () => {
   const references = useWizard((state) => state.config.references);
   const notes = useWizard((state) => state.config.notes);
@@ -303,5 +354,6 @@ export const stepPanels: Record<StepKey, () => ReactNode> = {
   shape: ShapeStep,
   layout: LayoutStep,
   sections: SectionsStep,
+  extras: ExtrasStep,
   references: ReferencesStep,
 };

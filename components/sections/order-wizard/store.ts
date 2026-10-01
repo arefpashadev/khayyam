@@ -17,6 +17,9 @@ type WizardState = {
   update: (patch: Partial<WizardConfig>, target?: PreviewTarget) => void;
   toggleSection: (value: string) => void;
   setVariant: (variant: number) => void;
+  /** Onboarding tour step; null when closed. */
+  tour: number | null;
+  setTour: (step: number | null) => void;
   submit: () => void;
   restart: () => void;
 };
@@ -30,6 +33,8 @@ export const useWizard = create<WizardState>((set, get) => ({
   submitted: false,
   config: getDefaultConfig("site"),
   focus: { target: "top", tick: 0 },
+  tour: null,
+  setTour: (tour) => set({ tour }),
 
   init: (kind) => set({ kind, step: 0, direction: 1, submitted: false, config: getDefaultConfig(kind), focus: { target: "top", tick: 0 } }),
 
