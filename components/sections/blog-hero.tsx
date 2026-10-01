@@ -24,7 +24,7 @@ export const BlogHero = () => {
       />
 
       <div className="mx-auto flex min-h-[560px] w-full max-w-[1180px] items-end px-5 pb-12 pt-24 sm:min-h-[650px] sm:px-8 sm:pb-16 lg:min-h-[720px] lg:px-10 lg:pb-14">
-        <div className="w-full text-right" dir="rtl">
+        <div className="w-full text-right">
           <h1
             id="featured-blog-title"
             className="max-w-[1050px] text-[35px] font-black leading-[1.35] tracking-[-0.035em] text-balance sm:text-[48px] lg:text-[60px]"

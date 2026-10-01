@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export const BlogArticleDetail = () => {
   return (
-    <article className=" px-5 pb-24 pt-16 sm:px-8 sm:pb-28 sm:pt-20 lg:pb-36 lg:pt-24" dir="rtl">
+    <article className="px-5 pb-24 pt-16 sm:px-8 sm:pb-28 sm:pt-20 lg:pb-36 lg:pt-24">
       <header className="mx-auto w-full max-w-[1100px] text-center">
         <p className="text-sm font-bold text-[#078ef0]">هوش مصنوعی و اتوماسیون</p>
         <h1 className="mx-auto mt-5 max-w-[900px] text-[32px] font-black leading-[1.45] tracking-[-0.03em] text-[#171c20] sm:text-[43px] lg:text-[50px]">

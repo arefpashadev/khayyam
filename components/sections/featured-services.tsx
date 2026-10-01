@@ -37,10 +37,10 @@ export const FeaturedServices = () => {
     <section
       id="featured-services"
       aria-labelledby="featured-services-title"
-      className="bg-[#073b91] bg-[radial-gradient(circle_at_18%_10%,#079cfb_0%,transparent_43%),radial-gradient(circle_at_82%_92%,#079cfb_0%,transparent_44%)] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:pb-36 lg:pt-[118px]"
+      className="bg-[#075fc4] bg-[linear-gradient(135deg,#061a50_0%,#075fc4_48%,#0aa7ff_100%)] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:pb-36 lg:pt-[118px]"
     >
       <div className="mx-auto w-full max-w-[1160px]">
-        <header dir="rtl" className="text-right text-white">
+        <header className="text-right text-white">
           <h2
             id="featured-services-title"
             className="text-[34px] font-extrabold leading-[1.4] tracking-[-0.025em] sm:text-[42px] lg:text-[40px]"
@@ -54,10 +54,7 @@ export const FeaturedServices = () => {
           </p>
         </header>
 
-        <div
-          dir="rtl"
-          className="mt-14 grid gap-5 md:grid-cols-2 lg:mt-16 lg:grid-cols-3 lg:gap-2"
-        >
+        <div className="mt-14 grid gap-5 md:grid-cols-2 lg:mt-16 lg:grid-cols-3 lg:gap-2">
           {featuredServices.map((service) => (
             <article
               key={service.title}
@@ -73,7 +70,7 @@ export const FeaturedServices = () => {
                 />
               </div>
 
-              <div dir="rtl" className="flex min-h-[292px] flex-col px-6 py-8 text-right sm:px-8">
+              <div className="flex min-h-[292px] flex-col px-6 py-8 text-right sm:px-8">
                 <h3 className="text-[29px] font-bold leading-[1.4] text-[#090909] sm:text-[31px]">
                   {service.title}
                 </h3>

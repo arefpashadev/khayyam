@@ -82,9 +82,10 @@ export const AiRelatedBlogs = ({
 }) => {
   return (
     <section
+      id="blog"
       aria-labelledby={showHeader ? "ai-related-blogs-title" : undefined}
       aria-label={showHeader ? undefined : "مقالات وبلاگ"}
-      className={` ${
+      className={`px-5 sm:px-8 ${
         showHeader
           ? "py-24 sm:py-28 lg:py-36"
           : "pb-24 pt-5 sm:pb-28 lg:pb-36"
@@ -92,7 +93,7 @@ export const AiRelatedBlogs = ({
     >
       <div className="mx-auto w-full max-w-[1100px]">
         {showHeader && (
-          <header className="text-right" dir="rtl">
+          <header className="text-right">
             <h2
               id="ai-related-blogs-title"
               className="text-[30px] font-black leading-[1.4] tracking-[-0.025em] text-[#171b1f] sm:text-[38px]"
@@ -105,7 +106,7 @@ export const AiRelatedBlogs = ({
           </header>
         )}
 
-        <div className={`${showHeader ? "mt-12 sm:mt-16" : ""} grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-16`} dir="rtl">
+        <div className={`${showHeader ? "mt-12 sm:mt-16" : ""} grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-16`}>
           {articles.slice(0, limit).map((article, index) => (
             <article key={article.title} className="group min-w-0">
               <Link
@@ -120,7 +121,6 @@ export const AiRelatedBlogs = ({
                     fill
                     sizes="(max-width: 639px) calc(100vw - 40px), (max-width: 1023px) 46vw, 340px"
                     className="object-cover transition duration-500 group-hover:scale-[1.04]"
-                    priority={index < 3}
                   />
                 </div>
 
@@ -152,7 +152,6 @@ export const AiRelatedBlogs = ({
           <nav
             aria-label="صفحه‌بندی مقالات"
             className="mt-20 flex items-center justify-center gap-3 sm:mt-28"
-            dir="ltr"
           >
             <PaginationButton label="صفحه قبل">
               <ChevronLeft className="size-4" aria-hidden="true" />

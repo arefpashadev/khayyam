@@ -1,10 +1,12 @@
 "use client";
 
+import { Select } from "@base-ui/react/select";
 import {
-  ArrowLeft,
   Box,
   Calculator,
   ChartNoAxesColumnIncreasing,
+  Check,
+  ChevronDown,
   CircleHelp,
   Clock3,
   CreditCard,
@@ -72,29 +74,29 @@ export const AiProjectEstimator = () => {
 
   return (
     <section
+      id="project-estimator"
       aria-labelledby="project-estimator-title"
-      className="bg-[#50acf0] px-5 py-24 sm:px-8 sm:py-28 lg:py-32"
+      className="bg-[#50acf0] px-5 py-24 sm:px-8 lg:min-h-[1165px] lg:px-12 lg:pb-[156px] lg:pt-[99px]"
     >
-      <div className="mx-auto w-full max-w-[1100px]">
-        <div className="text-right text-[#12181d]" dir="rtl">
+      <div className="mx-auto w-full max-w-[1226px]">
+        <div className="text-right text-[#12181d]">
           <h2
             id="project-estimator-title"
-            className="text-[29px] font-black leading-[1.45] tracking-[-0.025em] sm:text-[36px]"
+            className="text-[29px] font-black leading-[1.45] tracking-[-0.025em] sm:text-[36px] lg:text-[40px]"
           >
             ایده‌ات رو بده، حساب‌وکتابش با خیام
           </h2>
-          <p className="mt-5 text-sm font-medium leading-7 text-white sm:text-base">
+          <p className="mt-5 text-sm font-medium leading-7 text-white sm:text-base lg:text-[19px]">
             فقط چندتا انتخاب ساده؛ چند ثانیه بعد یه تخمین از هزینه و زمان پروژه‌ات داری.
           </p>
         </div>
 
-        <div className="mt-14 grid gap-8 lg:mt-20 lg:grid-cols-[0.8fr_1.1fr] lg:items-stretch lg:gap-16">
+        <div className="mt-14 grid gap-8 lg:mt-[108px] lg:grid-cols-[minmax(0,1fr)_481px] lg:items-stretch lg:gap-[82px]">
           <aside
-            className="order-2 overflow-hidden rounded-xl bg-white p-2 shadow-[0_14px_35px_rgba(0,86,157,0.12)] lg:order-1"
-            dir="rtl"
+            className="order-2 overflow-hidden rounded-xl bg-white p-2 shadow-[0_14px_35px_rgba(0,86,157,0.12)] lg:h-[684px]"
             aria-live="polite"
           >
-            <div className="flex min-h-[300px] flex-col items-center justify-center rounded-lg bg-[#0798f2] px-6 py-10 text-center text-white lg:min-h-[380px]">
+            <div className="flex min-h-[300px] flex-col items-center justify-center rounded-lg bg-[#0798f2] px-6 py-10 text-center text-white [&>*]:invisible lg:min-h-[422px]">
               <Calculator aria-hidden="true" className="size-11 opacity-90" strokeWidth={1.5} />
               <span className="mt-5 text-sm text-white/80">برآورد اولیه هزینه پروژه</span>
               <strong className="mt-3 text-4xl font-black sm:text-5xl">
@@ -106,7 +108,7 @@ export const AiProjectEstimator = () => {
               </span>
             </div>
 
-            <div className="grid grid-cols-3 divide-x divide-x-reverse divide-[#9bd2f8] px-2 py-5 text-center">
+            <div className="grid grid-cols-3 divide-x divide-x-reverse divide-[#9bd2f8] px-2 py-5 text-center lg:h-[126px] lg:items-center">
               <div className="px-2">
                 <Clock3 className="mx-auto size-5 text-[#078ef0]" aria-hidden="true" />
                 <span className="mt-2 block text-xs text-[#5f6970]">زمان تحویل</span>
@@ -142,13 +144,13 @@ export const AiProjectEstimator = () => {
             </div>
           </aside>
 
-          <div className="order-1 rounded-xl bg-white p-5 shadow-[0_14px_35px_rgba(0,86,157,0.12)] sm:p-7 lg:order-2" dir="rtl">
+          <div className="order-1 rounded-xl bg-white p-5 shadow-[0_14px_35px_rgba(0,86,157,0.12)] sm:p-7 lg:h-[684px] lg:px-[30px] lg:py-[34px]">
             <EstimatorSelect label="نوع سرویس" icon={<Box />} value={service} onChange={setService} />
             <EstimatorOptions label="سطح پیچیدگی" icon={<ChartNoAxesColumnIncreasing />} options={complexities} value={complexity} onChange={setComplexity} />
             <EstimatorOptions label="زمان تحویل" icon={<Clock3 />} options={deliveries} value={delivery} onChange={setDelivery} />
             <EstimatorOptions label="روش پرداخت" icon={<CreditCard />} options={payments} value={payment} onChange={setPayment} />
 
-            <div className="mt-7 flex items-center gap-3 rounded-lg border border-[#24a863] bg-[#f4fcf8] px-4 py-4 text-[#18884f]">
+            <div className="mt-8 flex min-h-[86px] items-center gap-3 rounded-lg border border-[#24a863] bg-[#f4fcf8] px-4 py-4 text-[#18884f]">
               <ShieldCheck className="size-6 shrink-0" aria-hidden="true" />
               <div>
                 <strong className="text-sm">بدون کارمزد</strong>
@@ -174,32 +176,61 @@ export const AiProjectEstimator = () => {
 type Option = { value: string; label: string };
 
 const EstimatorOptions = ({ label, icon, options, value, onChange }: { label: string; icon: React.ReactElement; options: Option[]; value: string; onChange: (value: string) => void }) => (
-  <fieldset className="mt-7 first:mt-0">
-    <legend className="mb-2 flex w-full items-center gap-3 text-sm font-extrabold text-[#343b40]">
-      <span className="flex size-11 items-center justify-center rounded-lg bg-[#f4f7ff] text-[#087fff] [&_svg]:size-5">{icon}</span>
-      {label}
-    </legend>
-    <div className="grid overflow-hidden rounded-lg border border-[#94baff]" style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}>
-      {options.map((option) => (
-        <button key={option.value} type="button" aria-pressed={value === option.value} onClick={() => onChange(option.value)} className={`min-h-11 border-l border-[#b9cefa] px-2 text-xs transition last:border-l-0 ${value === option.value ? "bg-[#0798f2] font-bold text-white" : "bg-white text-[#535d64] hover:bg-[#f2f8ff]"}`}>
-          {option.label}
-        </button>
-      ))}
+  <div role="group" aria-label={label} className="mt-7 flex flex-row-reverse items-end gap-5 first:mt-0">
+    <div className="min-w-0 flex-1">
+      <span className="mb-2 block w-full text-sm font-extrabold text-[#343b40]">
+        {label}
+      </span>
+      <div className="grid min-h-12 overflow-hidden rounded-lg border border-[#94baff]" style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}>
+        {options.map((option) => (
+          <button key={option.value} type="button" aria-pressed={value === option.value} onClick={() => onChange(option.value)} className={`min-h-11 border-l border-[#b9cefa] px-2 text-xs transition last:border-l-0 ${value === option.value ? "bg-[#0798f2] font-bold text-white" : "bg-white text-[#535d64] hover:bg-[#f2f8ff]"}`}>
+            {option.label}
+          </button>
+        ))}
+      </div>
     </div>
-  </fieldset>
+    <span className="flex size-12 items-center justify-center rounded-lg bg-[#f4f7ff] text-[#087fff] [&_svg]:size-5">{icon}</span>
+  </div>
 );
 
 const EstimatorSelect = ({ label, icon, value, onChange }: { label: string; icon: React.ReactElement; value: string; onChange: (value: string) => void }) => (
-  <label className="block">
-    <span className="mb-2 flex items-center gap-3 text-sm font-extrabold text-[#343b40]">
-      <span className="flex size-11 items-center justify-center rounded-lg bg-[#f4f7ff] text-[#087fff] [&_svg]:size-5">{icon}</span>
-      {label}
-    </span>
-    <span className="relative block">
-      <select value={value} onChange={(event) => onChange(event.target.value)} className="min-h-11 w-full appearance-none rounded-lg border border-[#94baff] bg-white px-4 text-sm text-[#535d64] outline-none transition focus:border-[#078ef0] focus:ring-4 focus:ring-[#078ef0]/10">
-        {services.map((item) => <option value={item.value} key={item.value}>{item.label}</option>)}
-      </select>
-      <ArrowLeft className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 -rotate-90 text-[#30383e]" aria-hidden="true" />
-    </span>
-  </label>
+  <div className="flex flex-row-reverse items-end gap-5">
+    <div className="min-w-0 flex-1">
+      <span className="mb-2 block text-sm font-extrabold text-[#343b40]">{label}</span>
+      <Select.Root
+        items={services}
+        value={value}
+        onValueChange={(nextValue) => nextValue && onChange(nextValue)}
+      >
+        <Select.Trigger className="group flex min-h-12 w-full items-center justify-between rounded-lg border border-[#94baff] bg-white px-4 text-sm text-[#535d64] outline-none transition hover:border-[#078ef0] data-pressed:border-[#078ef0] data-pressed:ring-4 data-pressed:ring-[#078ef0]/10 focus-visible:border-[#078ef0] focus-visible:ring-4 focus-visible:ring-[#078ef0]/10">
+          <Select.Value />
+          <Select.Icon className="text-[#30383e] transition-transform duration-200 group-data-pressed:rotate-180">
+            <ChevronDown className="size-4" aria-hidden="true" />
+          </Select.Icon>
+        </Select.Trigger>
+
+        <Select.Portal>
+          <Select.Positioner className="z-50 outline-none" sideOffset={6} align="start">
+            <Select.Popup className="min-w-[var(--anchor-width)] origin-[var(--transform-origin)] overflow-hidden rounded-xl border border-[#b7d5ff] bg-white p-1.5 text-[#3f4a52] shadow-[0_18px_45px_rgba(0,75,145,0.18)] outline-none transition-[transform,opacity] duration-150 data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0" dir="rtl">
+              <Select.List className="space-y-1">
+                {services.map((item) => (
+                  <Select.Item
+                    key={item.value}
+                    value={item.value}
+                    className="grid min-h-11 cursor-pointer grid-cols-[1fr_20px] items-center gap-3 rounded-lg px-3 text-sm outline-none transition-colors data-highlighted:bg-[#eef7ff] data-highlighted:text-[#087fe8] data-selected:bg-[#0798f2] data-selected:font-bold data-selected:text-white"
+                  >
+                    <Select.ItemText>{item.label}</Select.ItemText>
+                    <Select.ItemIndicator className="flex items-center justify-center">
+                      <Check className="size-4" aria-hidden="true" />
+                    </Select.ItemIndicator>
+                  </Select.Item>
+                ))}
+              </Select.List>
+            </Select.Popup>
+          </Select.Positioner>
+        </Select.Portal>
+      </Select.Root>
+    </div>
+    <span className="flex size-12 items-center justify-center rounded-lg bg-[#f4f7ff] text-[#087fff] [&_svg]:size-5">{icon}</span>
+  </div>
 );

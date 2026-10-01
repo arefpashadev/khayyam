@@ -32,7 +32,7 @@ export const BlogPostList = () => {
       aria-label="تازه‌ترین مقالات وبلاگ"
       className="px-5 pb-24 sm:px-8 sm:pb-28 lg:pb-36"
     >
-      <div className="mx-auto w-full max-w-[1100px] space-y-14 sm:space-y-20" dir="rtl">
+      <div className="mx-auto w-full max-w-[1100px] space-y-14 sm:space-y-20">
         {posts.map((post, index) => (
           <article
             key={post.title}

@@ -17,7 +17,7 @@ const Footer = () => {
     <footer className="px-4 pb-5 sm:px-6 sm:pb-7">
       <div
         className="mx-auto w-full max-w-[1240px] overflow-hidden rounded-2xl bg-[#030303] px-6 py-10 text-white shadow-[0_16px_40px_rgba(1,22,42,0.14)] sm:px-10 lg:px-14 lg:pb-6 lg:pt-12"
-        dir="rtl"
+
       >
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.45fr_0.75fr_0.75fr_1.35fr] lg:gap-12">
           <div className="text-right">

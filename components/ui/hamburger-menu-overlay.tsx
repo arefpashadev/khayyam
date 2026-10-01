@@ -155,7 +155,7 @@ export const HamburgerMenuOverlay = ({
                   href={item.href}
                   onClick={() => handleItemClick(item)}
                   className={cn(
-                    "group flex w-full flex-row-reverse items-center justify-between rounded-xl px-5 py-3 text-right text-2xl font-semibold transition-colors hover:bg-white/15 sm:text-3xl",
+                    "group flex w-full items-center justify-between rounded-xl px-5 py-3 text-start text-2xl font-semibold transition-colors hover:bg-white/15 sm:text-3xl",
                     menuItemClassName,
                   )}
                   style={{ color: textColor }}
@@ -169,7 +169,7 @@ export const HamburgerMenuOverlay = ({
                   fullWidth
                   onClick={() => handleItemClick(item)}
                   className={cn(
-                    "h-auto flex-row-reverse justify-between border-0 bg-transparent px-5 py-3 text-right text-2xl shadow-none hover:bg-white/15 sm:text-3xl",
+                    "h-auto justify-between border-0 bg-transparent px-5 py-3 text-start text-2xl shadow-none hover:bg-white/15 sm:text-3xl",
                     menuItemClassName,
                   )}
                   variant="ghost"

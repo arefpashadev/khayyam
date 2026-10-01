@@ -25,15 +25,9 @@ export const ServicesHero = () => {
       aria-labelledby="services-title"
       className="bg-[#e1f8ff] px-5 pb-16 pt-12 sm:px-8 sm:pb-20 sm:pt-16 lg:px-12 lg:pb-[110px] lg:pt-[70px]"
     >
-      <div
-        dir="ltr"
-        className="mx-auto grid w-full max-w-[1160px] gap-5 lg:grid-cols-[1.67fr_1fr] lg:gap-8"
-      >
+      <div className="mx-auto grid w-full max-w-[1160px] gap-5 lg:grid-cols-[1.67fr_1fr] lg:gap-8">
         <div className="flex flex-col gap-6 lg:col-start-2 lg:row-start-1 lg:gap-0">
-          <header
-            dir="rtl"
-            className="flex flex-col justify-center px-1 pb-6 text-right sm:px-4 lg:min-h-[385px] lg:justify-start lg:px-4 lg:pb-5 lg:pt-10"
-          >
+          <header className="flex flex-col justify-center px-1 pb-6 text-right sm:px-4 lg:min-h-[385px] lg:justify-start lg:px-4 lg:pb-5 lg:pt-10">
             <h1
               id="services-title"
               className="text-[34px] font-extrabold leading-[1.45] tracking-[-0.025em] text-[#171717] sm:text-[42px] lg:text-[40px]"
@@ -51,7 +45,6 @@ export const ServicesHero = () => {
 
           <Link
             href="/createsite"
-            dir="rtl"
             aria-label="مشاهده خدمات طراحی و توسعه وب‌سایت"
             className="group relative isolate min-h-[390px] overflow-hidden rounded-[28px] bg-white p-7 text-right outline-none focus-visible:ring-4 focus-visible:ring-[#1bb7c3]/35 sm:min-h-[420px] sm:p-10 lg:min-h-[422px]"
           >
@@ -90,7 +83,6 @@ export const ServicesHero = () => {
         <div className="flex flex-col gap-5 lg:col-start-1 lg:row-start-1 lg:gap-9 lg:pt-[99px]">
           <Link
             href="/createapp"
-            dir="rtl"
             aria-label="مشاهده خدمات توسعه اپلیکیشن موبایل"
             className="group relative min-h-[350px] overflow-hidden rounded-[28px] bg-[#3b2478] p-7 text-right text-white outline-none focus-visible:ring-4 focus-visible:ring-[#7c58d5]/40 sm:min-h-[390px] sm:p-10 lg:min-h-0 lg:aspect-[2.11/1]"
           >
@@ -124,7 +116,6 @@ export const ServicesHero = () => {
           <div className="grid gap-5 sm:grid-cols-2">
             <Link
               href="/ai"
-              dir="rtl"
               aria-label="مشاهده خدمات اتوماسیون کسب‌وکار"
               className="group relative min-h-[350px] overflow-hidden rounded-[26px] bg-[#111a26] p-7 text-right text-white outline-none focus-visible:ring-4 focus-visible:ring-[#fa7a3f]/35 sm:aspect-square sm:min-h-0 lg:p-7"
             >
@@ -157,7 +148,6 @@ export const ServicesHero = () => {
 
             <Link
               href="/ai"
-              dir="rtl"
               aria-label="مشاهده راهکارهای هوش مصنوعی"
               className="group relative min-h-[350px] overflow-hidden rounded-[26px] bg-[#07818d] p-7 text-right text-white outline-none focus-visible:ring-4 focus-visible:ring-[#55d6df]/35 sm:aspect-square sm:min-h-0 lg:p-7"
             >

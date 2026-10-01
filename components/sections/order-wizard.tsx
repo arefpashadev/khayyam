@@ -41,7 +41,7 @@ export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
   const isApp = kind === "app";
 
   return (
-    <main className="min-h-svh bg-white text-[#20262a]" dir="rtl">
+    <main className="min-h-svh bg-white text-[#20262a]">
       <section className="px-5 pb-6 pt-5 sm:px-8 lg:px-12">
         <div className="mx-auto flex w-full max-w-[1220px] flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
           <div className="text-right">
@@ -68,7 +68,7 @@ export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
       </section>
 
       <nav aria-label="مراحل ثبت سفارش" className="border-b-8 border-[#dff7ff] bg-[#fbfbfc] px-5 py-6 sm:px-8">
-        <ol className="mx-auto grid w-full max-w-[1040px] grid-cols-4" dir="rtl">
+        <ol className="mx-auto grid w-full max-w-[1040px] grid-cols-4">
           {steps.map((item, index) => {
             const active = item.number === step;
             const complete = item.number < step;

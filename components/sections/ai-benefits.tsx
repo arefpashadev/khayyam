@@ -22,7 +22,7 @@ const benefits: Benefit[] = [
 export const AiBenefits = () => (
   <section aria-labelledby="ai-benefits-title" className="px-5 py-24 sm:px-8 sm:py-28 lg:py-32">
     <div className="mx-auto w-full max-w-[1050px]">
-      <div className="text-right" dir="rtl">
+      <div className="text-right">
         <h2 id="ai-benefits-title" className="text-[28px] font-black leading-[1.45] tracking-[-0.02em] text-[#171b1f] sm:text-[34px]">
           همکاری با خیام چه چیزی را برای شما بهتر می‌کند؟
         </h2>
@@ -30,7 +30,7 @@ export const AiBenefits = () => (
           از اجرای سریع‌تر تا راهکارهای اختصاصی، خیام کمک می‌کند هوش مصنوعی و فناوری را ساده‌تر، کاربردی‌تر و به‌صرفه‌تر وارد کسب‌وکارتان کنید.
         </p>
       </div>
-      <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4 lg:gap-5" dir="rtl">
+      <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4 lg:gap-5">
         {benefits.map(({ title, description, Icon }) => (
           <article key={title} className="group flex min-h-[235px] flex-col rounded-2xl border border-white/90 bg-white/90 px-6 py-7 text-right shadow-[0_12px_35px_rgba(27,81,104,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(27,81,104,0.11)]">
             <span className="flex size-12 items-center justify-center rounded-full bg-[#f1f6ff] text-[#087fff] transition-colors group-hover:bg-[#e4f0ff]">

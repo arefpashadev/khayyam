@@ -39,7 +39,7 @@ export const BlogSuggestedPosts = () => {
       aria-labelledby="suggested-posts-title"
       className="px-5 pb-28 pt-8 sm:px-8 sm:pb-32 lg:pb-40 lg:pt-12"
     >
-      <div className="mx-auto w-full max-w-[1100px]" dir="rtl">
+      <div className="mx-auto w-full max-w-[1100px]">
         <header className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div className="text-right">
             <h2

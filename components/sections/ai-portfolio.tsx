@@ -12,7 +12,7 @@ const projects = [
 export const AiPortfolio = () => (
   <section aria-labelledby="ai-portfolio-title" className="min-h-[780px] bg-gradient-to-r from-[#12a8f6] via-[#0795ef] to-[#09237f] px-5 py-20 text-white sm:px-8 sm:py-24 lg:min-h-[850px] lg:py-28">
     <div className="mx-auto w-full max-w-[920px]">
-      <div className="text-right" dir="rtl">
+      <div className="text-right">
         <h2 id="ai-portfolio-title" className="text-[28px] font-black leading-tight sm:text-[34px]">نمونه‌کارها</h2>
         <p className="mt-5 text-sm leading-7 text-white/90 sm:text-base">چند نمونه از پروژه‌هایی که برای کسب‌وکارها طراحی کرده‌ایم</p>
       </div>
@@ -22,7 +22,7 @@ export const AiPortfolio = () => (
             <div className="relative aspect-[1.42/1] overflow-hidden bg-[#e8f4f7]">
               <Image src={project.image} alt={`نمایی از پروژه ${project.title}`} fill sizes="(max-width: 639px) calc(100vw - 40px), (max-width: 1023px) 45vw, 290px" priority={index < 3} className="object-cover" />
             </div>
-            <div className="flex min-h-[76px] items-center justify-between gap-4 px-4 py-3" dir="rtl">
+            <div className="flex min-h-[76px] items-center justify-between gap-4 px-4 py-3">
               <div className="min-w-0 text-right">
                 <h3 className="text-sm font-bold sm:text-base">{project.title}</h3>
                 <p className="mt-1 truncate text-xs text-[#69757c]">{project.description}</p>

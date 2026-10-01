@@ -16,7 +16,7 @@ export const BlogExplorer = () => {
       aria-labelledby="blog-page-title"
       className="px-5 py-20 sm:px-8 sm:py-24 lg:py-28"
     >
-      <div className="mx-auto w-full max-w-[1100px]" dir="rtl">
+      <div className="mx-auto w-full max-w-[1100px]">
         <header className="text-right">
           <h2
             id="blog-page-title"

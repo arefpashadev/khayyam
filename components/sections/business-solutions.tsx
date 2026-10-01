@@ -63,7 +63,7 @@ export const BusinessSolutions = () => {
       className="bg-[#e1f8ff] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:pb-36 lg:pt-[86px]"
     >
       <div className="mx-auto w-full max-w-[1160px]">
-        <header dir="rtl" className="mx-auto max-w-[760px] text-center">
+        <header className="mx-auto max-w-[760px] text-center">
           <h2
             id="business-solutions-title"
             className="text-[30px] font-extrabold leading-[1.5] tracking-[-0.025em] text-[#171717] sm:text-[38px] lg:text-[40px]"
@@ -84,7 +84,6 @@ export const BusinessSolutions = () => {
             return (
               <article
                 key={solution.title}
-                dir="rtl"
                 className="rounded-md border border-[#c9dce3] bg-white px-6 py-7 text-right shadow-[0_3px_12px_rgba(34,97,132,0.035)] sm:px-10 sm:py-9"
               >
                 <div className="flex items-center gap-3">
@@ -105,10 +104,7 @@ export const BusinessSolutions = () => {
                   {solution.description}
                 </p>
 
-                <div
-                  dir="ltr"
-                  className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center"
-                >
+                <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
                   <Link
                     href={solution.href}
                     className="inline-flex min-h-12 items-center justify-center rounded-md bg-[#0799ef] px-9 text-base font-bold text-white outline-none transition-colors hover:bg-[#007fcf] focus-visible:ring-4 focus-visible:ring-[#0799ef]/30"

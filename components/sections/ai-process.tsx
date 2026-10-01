@@ -12,11 +12,11 @@ const steps = [
 export const AiProcess = () => (
   <section aria-labelledby="ai-process-title" className="px-5 pb-28 pt-20 sm:px-8 sm:pb-32 sm:pt-24 lg:pb-40 lg:pt-28">
     <div className="mx-auto w-full max-w-[1050px]">
-      <div className="text-right" dir="rtl">
+      <div className="text-right">
         <h2 id="ai-process-title" className="text-[28px] font-black leading-[1.45] tracking-[-0.02em] text-[#171b1f] sm:text-[34px]">از روز اول، می‌دانید پروژه کجاست</h2>
         <p className="mt-5 max-w-[830px] text-sm leading-7 text-[#536169] sm:text-base sm:leading-8">مسیر انجام پروژه در خیام شفاف و مرحله‌به‌مرحله است؛ از شناخت نیاز تا طراحی، اجرا، تحویل و پشتیبانی.</p>
       </div>
-      <ol className="mt-12 grid list-none grid-cols-1 gap-5 p-0 sm:grid-cols-2 lg:mt-14 lg:grid-cols-3" dir="rtl">
+      <ol className="mt-12 grid list-none grid-cols-1 gap-5 p-0 sm:grid-cols-2 lg:mt-14 lg:grid-cols-3">
         {steps.map((step) => (
           <li key={step.number} className="group overflow-hidden rounded-2xl border border-white bg-white/95 p-2 shadow-[0_12px_32px_rgba(27,81,104,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(27,81,104,0.12)]">
             <article>
