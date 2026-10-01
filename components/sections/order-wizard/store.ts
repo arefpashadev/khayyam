@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { getDefaultConfig, steps, type OrderKind, type PreviewTarget, type WizardConfig } from "./config";
+import { getArchetype, getDefaultConfig, steps, type OrderKind, type PreviewTarget, type WizardConfig } from "./config";
 
 type WizardState = {
   kind: OrderKind;
@@ -18,6 +18,7 @@ type WizardState = {
   toggleSection: (value: string) => void;
   submit: () => void;
   restart: () => void;
+  shuffle: () => void;
 };
 
 const focusFor = (step: number, tick: number) => ({ target: steps[step].target, tick: tick + 1 });
@@ -66,4 +67,13 @@ export const useWizard = create<WizardState>((set, get) => ({
 
   submit: () => set({ submitted: true }),
   restart: () => get().init(get().kind),
+  shuffle: () =>
+    set((state) => {
+      // Re-roll until the archetype actually looks different from the current one.
+      const current = JSON.stringify(getArchetype(state.config.variant));
+      let variant = state.config.variant;
+      do variant += 1 + Math.floor(Math.random() * 7);
+      while (JSON.stringify(getArchetype(variant)) === current);
+      return { config: { ...state.config, variant }, focus: { target: "hero", tick: state.focus.tick + 1 } };
+    }),
 }));

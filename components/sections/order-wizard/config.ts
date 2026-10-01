@@ -67,6 +67,8 @@ export type WizardConfig = {
   sections: string[];
   references: string[];
   notes: string;
+  /** Seed for the design archetype mix; "another design" bumps it. */
+  variant: number;
 };
 
 /* ------------------------------------------------------------------ */
@@ -268,6 +270,7 @@ export const getDefaultConfig = (kind: OrderKind): WizardConfig => ({
   sections: kind === "app" ? ["search", "cart", "notifications"] : ["features", "testimonials", "contact"],
   references: ["", "", ""],
   notes: "",
+  variant: 0,
 });
 
 /* ------------------------------------------------------------------ */
@@ -332,3 +335,26 @@ export const buildPreviewVars = (config: Pick<WizardConfig, "color" | "theme" | 
 };
 
 export const faNumber = (value: number) => new Intl.NumberFormat("fa-IR").format(value);
+
+/* ------------------------------------------------------------------ */
+/* Design archetypes — the same answers can produce many distinct looks */
+/* ------------------------------------------------------------------ */
+
+export type Archetype = {
+  nav: "classic" | "centered" | "floating";
+  art: "orbs" | "mosaic" | "rings" | "stack";
+  cards: "outlined" | "filled" | "numbered";
+  pattern: boolean;
+};
+
+const pick = (seed: number, salt: number, size: number) => Math.floor(Math.abs(Math.sin(seed * 12.9898 + salt * 78.233) * 43758.5453) % 1 * size);
+
+export const getArchetype = (seed: number): Archetype => {
+  if (seed === 0) return { nav: "classic", art: "orbs", cards: "outlined", pattern: false };
+  return {
+    nav: (["classic", "centered", "floating"] as const)[pick(seed, 1, 3)],
+    art: (["orbs", "mosaic", "rings", "stack"] as const)[pick(seed, 2, 4)],
+    cards: (["outlined", "filled", "numbered"] as const)[pick(seed, 3, 3)],
+    pattern: pick(seed, 4, 2) === 1,
+  };
+};

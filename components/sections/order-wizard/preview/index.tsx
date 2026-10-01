@@ -1,6 +1,6 @@
 "use client";
 
-import { X } from "lucide-react";
+import { Shuffle, X } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { Link } from "@/i18n/navigation";
@@ -13,46 +13,27 @@ import { FitScene, Laptop, LAPTOP, Phone, PHONE } from "./devices";
 import { SitePreview } from "./site-preview";
 
 /**
- * Laptop + phone compositions.
- * Wide screens: real-size laptop with the phone leaning on its left edge.
- * Phones: a smaller laptop on top and the phone standing in front of it — taller than wide,
- * so it uses the portrait space instead of shrinking everything to fit the width.
+ * Laptop and phone side by side, bottoms aligned. On phones the laptop is drawn smaller
+ * so the phone next to it stays readable.
  */
 const Composition = ({ laptop, phone, small }: { laptop: ReactNode; phone: ReactNode; small: boolean }) => {
-  if (small) {
-    const scale = 0.5;
-    const laptopWidth = LAPTOP.width * scale;
-    const laptopHeight = LAPTOP.height * scale;
-    const overlap = 110;
-    const width = laptopWidth;
-    const height = laptopHeight + PHONE.height - overlap;
-    return (
-      <FitScene width={width} height={height}>
-        <div className="relative" dir="ltr" style={{ width, height }}>
-          <div className="absolute left-0 top-0" style={{ width: laptopWidth, height: laptopHeight }}>
-            {/* explicit size: in RTL an overflowing child would otherwise hang off to the left */}
-            <div className="absolute left-0 top-0 origin-top-left" style={{ width: LAPTOP.width, height: LAPTOP.height, transform: `scale(${scale})` }}>
-              {laptop}
-            </div>
-          </div>
-          <div className="absolute bottom-0" style={{ left: 48 }}>
-            {phone}
-          </div>
-        </div>
-      </FitScene>
-    );
-  }
+  const scale = small ? 0.45 : 1;
+  const gap = small ? 28 : 64;
+  const laptopWidth = LAPTOP.width * scale;
+  const laptopHeight = LAPTOP.height * scale;
+  const width = laptopWidth + gap + PHONE.width;
+  const height = Math.max(laptopHeight, PHONE.height);
 
-  const overlap = 254;
-  const width = PHONE.width - overlap + LAPTOP.width;
-  const height = LAPTOP.height + 40;
   return (
     <FitScene width={width} height={height}>
       <div className="relative" dir="ltr" style={{ width, height }}>
-        <div className="absolute top-0" style={{ left: PHONE.width - overlap }}>
-          {laptop}
+        <div className="absolute bottom-0 left-0" style={{ width: laptopWidth, height: laptopHeight }}>
+          {/* explicit size so the scaled laptop anchors to the top-left corner */}
+          <div className="absolute left-0 top-0 origin-top-left" style={{ width: LAPTOP.width, height: LAPTOP.height, transform: `scale(${scale})` }}>
+            {laptop}
+          </div>
         </div>
-        <div className="absolute bottom-0 left-0">{phone}</div>
+        <div className="absolute bottom-0 right-0">{phone}</div>
       </div>
     </FitScene>
   );
@@ -62,6 +43,7 @@ export const PreviewStage = () => {
   const kind = useWizard((state) => state.kind);
   const config = useWizard((state) => state.config);
   const isSmall = useIsSmallScreen();
+  const shuffle = useWizard((state) => state.shuffle);
   const address = config.brandName.trim().replace(/\s+/g, "-") || "your-brand";
 
   const phone = <Phone>{kind === "app" ? <AppPreview config={config} /> : <SitePreview config={config} compact />}</Phone>;
@@ -80,6 +62,16 @@ export const PreviewStage = () => {
           پیش‌نمایش زنده
         </span>
       </div>
+
+      {kind === "site" && (
+        <button
+          type="button"
+          onClick={shuffle}
+          className="absolute left-3 top-4 z-10 flex h-8 items-center gap-1.5 rounded-full bg-[#14202b] px-3.5 text-[11px] font-bold text-white shadow-sm transition hover:bg-[#078ef0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078ef0] active:scale-95 lg:left-5 lg:top-5"
+        >
+          <Shuffle className="size-3.5" aria-hidden="true" /> طرح دیگر
+        </button>
+      )}
 
       <div className="absolute inset-0 px-3 pb-3 pt-14 lg:px-6 lg:pb-6 lg:pt-14">
         {kind === "app" ? (

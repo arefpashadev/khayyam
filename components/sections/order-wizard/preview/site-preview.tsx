@@ -1,7 +1,7 @@
 import { ChevronDown, Menu, Quote, Star } from "lucide-react";
 import type { CSSProperties, ReactNode } from "react";
 
-import { faNumber, industries, mix, type WizardConfig } from "../config";
+import { faNumber, getArchetype, industries, mix, type WizardConfig } from "../config";
 
 const heading = (size: number): CSSProperties => ({
   fontSize: `calc(${size}px * var(--pv-hs))`,
@@ -25,11 +25,65 @@ const SectionTitle = ({ title, compact }: { title: string; compact: boolean }) =
   </h2>
 );
 
-/** Abstract hero artwork built from the brand colour — no stock photos. */
+/** Hero artwork built from the brand colour — no stock photos. The archetype picks the composition. */
 const HeroArt = ({ config, tall }: { config: WizardConfig; tall?: boolean }) => {
+  const { art } = getArchetype(config.variant);
   const Icon = industries[config.industry].icon;
+  const features = industries[config.industry].features;
+  const shade = (amount: number) => mix(config.color, config.theme === "dark" ? "#0f151c" : "#ffffff", amount);
+  const frame = `relative w-full overflow-hidden rounded-(--pv-r-card) ${tall ? "aspect-[4/3.4]" : "aspect-[16/7]"}`;
+
+  if (art === "mosaic") {
+    return (
+      <div className={`${frame} grid grid-cols-3 grid-rows-3 gap-2.5`}>
+        <div className="col-span-2 row-span-2 flex items-center justify-center rounded-(--pv-r-card) bg-(--pv-primary)">
+          <Icon className="size-1/3 text-(--pv-on-primary)" strokeWidth={1.4} aria-hidden="true" />
+        </div>
+        {[0.55, 0.3, 0.75, 0.45, 0.2].map((amount, index) => (
+          <div key={index} className="rounded-(--pv-r-card)" style={{ backgroundColor: shade(amount) }} />
+        ))}
+      </div>
+    );
+  }
+
+  if (art === "rings") {
+    return (
+      <div className={`${frame} bg-(--pv-soft)`}>
+        {[92, 70, 48].map((size) => (
+          <span key={size} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-(--pv-primary)" style={{ width: `${size}%`, aspectRatio: "1", opacity: 0.18 + (92 - size) / 160 }} />
+        ))}
+        <span className="absolute left-1/2 top-1/2 flex size-[26%] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-(--pv-primary)">
+          <Icon className="size-1/2 text-(--pv-on-primary)" strokeWidth={1.6} aria-hidden="true" />
+        </span>
+        {features.slice(0, 2).map((item, index) => (
+          <span key={item.label} className={`absolute flex items-center gap-2 rounded-(--pv-r-ctrl) bg-(--pv-bg) px-3 py-2 text-[12px] font-bold shadow-lg ${index === 0 ? "right-[6%] top-[14%]" : "bottom-[14%] left-[6%]"}`}>
+            <item.icon className="size-3.5 text-(--pv-primary)" aria-hidden="true" /> {item.label}
+          </span>
+        ))}
+      </div>
+    );
+  }
+
+  if (art === "stack") {
+    return (
+      <div className={`${frame} flex items-center justify-center bg-(--pv-surface)`}>
+        <div className="absolute h-[62%] w-[52%] -rotate-[9deg] rounded-(--pv-r-card)" style={{ backgroundColor: shade(0.55) }} />
+        <div className="absolute h-[62%] w-[52%] rotate-[6deg] rounded-(--pv-r-card)" style={{ backgroundColor: shade(0.25) }} />
+        <div className="relative flex h-[62%] w-[52%] flex-col justify-between rounded-(--pv-r-card) bg-(--pv-bg) p-[6%] shadow-2xl">
+          <span className="flex size-[28%] items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-primary)">
+            <Icon className="size-1/2 text-(--pv-on-primary)" aria-hidden="true" />
+          </span>
+          <div className="space-y-2">
+            <span className="block h-2.5 w-4/5 rounded-full bg-(--pv-text) opacity-80" />
+            <span className="block h-2 w-1/2 rounded-full bg-(--pv-muted) opacity-50" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={`relative w-full overflow-hidden rounded-(--pv-r-card) bg-(--pv-soft) ${tall ? "aspect-[4/3.4]" : "aspect-[16/7]"}`}>
+    <div className={`${frame} bg-(--pv-soft)`}>
       <div className="absolute -bottom-[18%] -left-[10%] size-[62%] rounded-full bg-(--pv-primary) opacity-90" />
       <div className="absolute -right-[6%] -top-[14%] size-[44%] rounded-full opacity-60" style={{ backgroundColor: mix(config.color, "#ffffff", 0.45) }} />
       <div className="absolute inset-0 flex items-center justify-center">
@@ -49,6 +103,10 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
   const name = config.brandName.trim() || "برند شما";
   const BrandIcon = content.icon;
   const has = (section: string) => config.sections.includes(section);
+  const archetype = getArchetype(config.variant);
+  const pattern: CSSProperties | undefined = archetype.pattern
+    ? { backgroundImage: "radial-gradient(var(--pv-border) 1.4px, transparent 1.4px)", backgroundSize: "22px 22px" }
+    : undefined;
 
   const heroText = (inverted = false) => (
     <div className={`flex flex-col gap-5 ${config.layout === "split" || compact ? "items-start text-right" : "items-center text-center"}`}>
@@ -67,32 +125,66 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
   return (
     <div dir="rtl" className="pv-root min-h-full bg-(--pv-bg) font-sans text-(--pv-text)">
       {/* navigation */}
-      <header className={`flex items-center justify-between border-b border-(--pv-border) ${compact ? "px-5 py-4" : "px-20 py-5"}`}>
-        <div className="flex items-center gap-2.5">
-          <span className="flex size-9 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-primary) text-(--pv-on-primary)">
-            <BrandIcon className="size-5" aria-hidden="true" />
-          </span>
-          <strong className="text-[17px]" style={{ fontWeight: "var(--pv-hw)" as CSSProperties["fontWeight"] }}>
-            {name}
-          </strong>
-        </div>
-        {compact ? (
-          <Menu className="size-6" aria-hidden="true" />
-        ) : (
-          <>
-            <nav className="flex items-center gap-8 text-[14px] text-(--pv-muted)">
-              <span className="font-bold text-(--pv-text)">خانه</span>
-              {content.features.slice(0, 3).map((item) => (
-                <span key={item.label}>{item.label}</span>
-              ))}
-            </nav>
-            <span className={`${primaryButton} h-10 px-5 text-[13px]`}>{content.cta}</span>
-          </>
-        )}
-      </header>
+      {(() => {
+        const logo = (
+          <div className="flex items-center gap-2.5">
+            <span className="flex size-9 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-primary) text-(--pv-on-primary)">
+              <BrandIcon className="size-5" aria-hidden="true" />
+            </span>
+            <strong className="text-[17px]" style={{ fontWeight: "var(--pv-hw)" as CSSProperties["fontWeight"] }}>
+              {name}
+            </strong>
+          </div>
+        );
+        const links = (
+          <nav className="flex items-center gap-8 text-[14px] text-(--pv-muted)">
+            <span className="font-bold text-(--pv-text)">خانه</span>
+            {content.features.slice(0, 3).map((item) => (
+              <span key={item.label}>{item.label}</span>
+            ))}
+          </nav>
+        );
+        const cta = <span className={`${primaryButton} h-10 px-5 text-[13px]`}>{content.cta}</span>;
+
+        if (compact) {
+          return (
+            <header className="flex items-center justify-between border-b border-(--pv-border) px-5 py-4">
+              {logo}
+              <Menu className="size-6" aria-hidden="true" />
+            </header>
+          );
+        }
+        if (archetype.nav === "centered") {
+          return (
+            <header className="grid grid-cols-3 items-center border-b border-(--pv-border) px-20 py-5">
+              {links}
+              <div className="flex justify-center">{logo}</div>
+              <div className="flex justify-end">{cta}</div>
+            </header>
+          );
+        }
+        if (archetype.nav === "floating") {
+          return (
+            <div className="px-20 pt-6">
+              <header className="flex items-center justify-between rounded-(--pv-r-card) border border-(--pv-border) bg-(--pv-surface) px-6 py-3 shadow-sm">
+                {logo}
+                {links}
+                {cta}
+              </header>
+            </div>
+          );
+        }
+        return (
+          <header className="flex items-center justify-between border-b border-(--pv-border) px-20 py-5">
+            {logo}
+            {links}
+            {cta}
+          </header>
+        );
+      })()}
 
       {/* hero */}
-      <section data-pv="hero" className="pv-section">
+      <section data-pv="hero" className="pv-section" style={config.layout === "fullbleed" ? undefined : pattern}>
         {config.layout === "fullbleed" ? (
           <div className={`relative overflow-hidden bg-(--pv-primary) ${compact ? "px-5 py-14" : "px-20 py-28"}`}>
             <div className="absolute -left-24 -top-24 size-96 rounded-full bg-white/10" />
@@ -118,15 +210,25 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
         <Section id="features" compact={compact} className="bg-(--pv-surface)">
           <SectionTitle title="چرا ما را انتخاب کنید" compact={compact} />
           <div className={`grid gap-4 ${compact ? "grid-cols-2" : "grid-cols-4"}`}>
-            {content.features.map(({ label, icon: Icon }) => (
-              <div key={label} className="flex flex-col gap-4 rounded-(--pv-r-card) border border-(--pv-border) bg-(--pv-bg) p-5">
-                <span className="flex size-11 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-soft) text-(--pv-primary)">
-                  <Icon className="size-5" aria-hidden="true" />
-                </span>
-                <strong className="text-[15px]">{label}</strong>
-                <span className="text-[12px] leading-6 text-(--pv-muted)">توضیح کوتاهی درباره این ویژگی و مزیتش برای مشتری.</span>
-              </div>
-            ))}
+            {content.features.map(({ label, icon: Icon }, index) =>
+              archetype.cards === "numbered" ? (
+                <div key={label} className="flex flex-col gap-3 border-t-2 border-(--pv-primary) pt-5">
+                  <span className="text-(--pv-primary)" style={heading(compact ? 26 : 34)}>
+                    {faNumber(index + 1).padStart(2, "۰")}
+                  </span>
+                  <strong className="text-[15px]">{label}</strong>
+                  <span className="text-[12px] leading-6 text-(--pv-muted)">توضیح کوتاهی درباره این ویژگی و مزیتش برای مشتری.</span>
+                </div>
+              ) : (
+                <div key={label} className={`flex flex-col gap-4 rounded-(--pv-r-card) p-5 ${archetype.cards === "filled" ? "bg-(--pv-soft)" : "border border-(--pv-border) bg-(--pv-bg)"}`}>
+                  <span className={`flex size-11 items-center justify-center rounded-(--pv-r-ctrl) text-(--pv-primary) ${archetype.cards === "filled" ? "bg-(--pv-bg)" : "bg-(--pv-soft)"}`}>
+                    <Icon className="size-5" aria-hidden="true" />
+                  </span>
+                  <strong className="text-[15px]">{label}</strong>
+                  <span className="text-[12px] leading-6 text-(--pv-muted)">توضیح کوتاهی درباره این ویژگی و مزیتش برای مشتری.</span>
+                </div>
+              ),
+            )}
           </div>
         </Section>
       )}

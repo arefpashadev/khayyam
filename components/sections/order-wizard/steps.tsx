@@ -28,11 +28,12 @@ import { useWizard } from "./store";
 /* ------------------------------------------------------------------ */
 
 const ring = "outline-none focus-visible:ring-2 focus-visible:ring-[#078ef0] focus-visible:ring-offset-1";
-const idle = "border-transparent bg-[#f3f5f7] hover:bg-[#eaeef1]";
-const active = "border-[#14202b] bg-white shadow-[0_1px_0_1px_#14202b]";
+// No borders: selection is a soft tinted background, hover a slightly deeper grey.
+const idle = "bg-[#f5f7f8] hover:bg-[#edf1f3]";
+const active = "bg-[#e6f2fc] text-[#0a5a9c]";
 
 const Tile = ({ selected, onClick, children, className = "", label }: { selected: boolean; onClick: () => void; children: ReactNode; className?: string; label?: string }) => (
-  <button type="button" aria-pressed={selected} aria-label={label} onClick={onClick} className={`relative rounded-xl border text-right transition duration-150 active:scale-[0.97] ${ring} ${selected ? active : idle} ${className}`}>
+  <button type="button" aria-pressed={selected} aria-label={label} onClick={onClick} className={`relative rounded-xl text-right transition-colors duration-150 ${ring} ${selected ? active : idle} ${className}`}>
     {children}
   </button>
 );
@@ -43,13 +44,13 @@ function Segmented<T extends string>({ id, label, options, value, onChange }: { 
   return (
     <div>
       <Label>{label}</Label>
-      <div role="radiogroup" aria-label={label} className="grid gap-1 rounded-xl bg-[#f0f3f5] p-1" style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}>
+      <div role="radiogroup" aria-label={label} className="grid gap-1 rounded-xl bg-[#f3f5f7] p-1" style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}>
         {options.map((option) => {
           const selected = option.value === value;
           return (
             <button key={option.value} type="button" role="radio" aria-checked={selected} onClick={() => onChange(option.value)} className={`relative flex h-10 items-center justify-center rounded-lg text-[12px] font-bold ${ring}`}>
-              {selected && <motion.span layoutId={id} className="absolute inset-0 rounded-lg bg-white shadow-[0_1px_3px_rgba(20,32,43,0.12)] ring-1 ring-black/5" transition={{ type: "spring", bounce: 0.18, duration: 0.35 }} />}
-              <span className={`relative flex items-center gap-1.5 transition-colors ${selected ? "text-[#14202b]" : "text-[#7a868d]"}`}>
+              {selected && <motion.span layoutId={id} className="absolute inset-0 rounded-lg bg-white shadow-[0_1px_2px_rgba(20,32,43,0.08)]" transition={{ type: "spring", bounce: 0.18, duration: 0.35 }} />}
+              <span className={`relative flex items-center gap-1.5 transition-colors ${selected ? "text-[#0a5a9c]" : "text-[#7a868d]"}`}>
                 {option.icon}
                 {option.label}
               </span>
@@ -62,7 +63,7 @@ function Segmented<T extends string>({ id, label, options, value, onChange }: { 
 }
 
 const field =
-  "w-full rounded-xl border border-transparent bg-[#f3f5f7] px-3.5 text-[13px] outline-none transition placeholder:text-[#a3aeb4] focus:border-[#14202b] focus:bg-white";
+  "w-full rounded-xl bg-[#f5f7f8] px-3.5 text-[13px] outline-none transition-colors placeholder:text-[#a3aeb4] hover:bg-[#edf1f3] focus:bg-[#e6f2fc]";
 
 /* ------------------------------------------------------------------ */
 /* Steps                                                               */
@@ -85,7 +86,7 @@ const BrandStep = () => {
             const item = industries[key];
             return (
               <Tile key={key} selected={config.industry === key} onClick={() => update({ industry: key }, "hero")} className="flex h-[68px] flex-col items-center justify-center gap-1.5 px-1 text-center">
-                <item.icon className={`size-[18px] ${config.industry === key ? "text-[#078ef0]" : "text-[#5b6872]"}`} aria-hidden="true" />
+                <item.icon className={`size-[18px] ${config.industry === key ? "text-[#078ef0]" : "text-[#6b7780]"}`} aria-hidden="true" />
                 <span className="text-[11px] font-bold leading-4">{item.label}</span>
               </Tile>
             );
@@ -115,7 +116,7 @@ const MoodStep = () => {
               <strong className="block text-[12px] leading-5 lg:text-[13px]">{item.label}</strong>
               <span className="hidden text-[11px] text-[#7a868d] lg:block">{item.description}</span>
             </span>
-            <span className={`hidden size-5 items-center justify-center rounded-full transition lg:flex ${selected ? "bg-[#14202b] text-white" : "ring-1 ring-[#d3dadf]"}`}>{selected && <Check className="size-3" strokeWidth={3} aria-hidden="true" />}</span>
+            <span className={`hidden size-5 items-center justify-center rounded-full transition lg:flex ${selected ? "bg-[#078ef0] text-white" : "bg-[#e9edf0]"}`}>{selected && <Check className="size-3" strokeWidth={3} aria-hidden="true" />}</span>
           </Tile>
         );
       })}
@@ -144,7 +145,7 @@ const ColorStep = () => {
                 aria-label={color.label}
                 title={color.label}
                 onClick={() => update({ color: color.value, mood: null })}
-                className={`flex aspect-square items-center justify-center rounded-full transition active:scale-90 ${ring} ${selected ? "shadow-[0_0_0_2px_#fff,0_0_0_4px_#14202b]" : "hover:scale-110"}`}
+                className={`flex aspect-square items-center justify-center rounded-full transition active:scale-90 ${ring} ${selected ? "scale-110" : "opacity-90 hover:opacity-100"}`}
                 style={{ backgroundColor: color.value }}
               >
                 {selected && <Check className="size-3.5 text-white" strokeWidth={3} aria-hidden="true" />}
@@ -211,7 +212,7 @@ const LayoutGlyph = ({ value }: { value: LayoutKey }) => {
       <div className="flex size-full flex-col gap-1 p-1.5"><div className="flex gap-1">{[0, 1, 2, 3].map((dot) => (<span key={dot} className="size-2 rounded-full bg-current" />))}</div><div className={`${block} w-full flex-1`} /></div>
     ),
   };
-  return <div className="h-12 w-full rounded-lg bg-white text-[#14202b] ring-1 ring-black/5">{glyphs[value]}</div>;
+  return <div className="h-12 w-full rounded-lg bg-white/80 text-current">{glyphs[value]}</div>;
 };
 
 const LayoutStep = () => {
@@ -249,9 +250,9 @@ const SectionsStep = () => {
               type="button"
               aria-pressed={selected}
               onClick={() => toggle(option.value)}
-              className={`flex h-9 items-center gap-1.5 rounded-full px-3 text-[12px] font-bold transition active:scale-95 ${ring} ${selected ? "bg-[#14202b] text-white" : "bg-[#f3f5f7] text-[#33414b] hover:bg-[#eaeef1]"}`}
+              className={`flex h-9 items-center gap-1.5 rounded-full px-3 text-[12px] font-bold transition active:scale-95 ${ring} ${selected ? "bg-[#e6f2fc] text-[#0a5a9c]" : "bg-[#f5f7f8] text-[#33414b] hover:bg-[#edf1f3]"}`}
             >
-              {selected ? <Check className="size-3.5" strokeWidth={3} aria-hidden="true" /> : <option.icon className="size-3.5 text-[#7a868d]" aria-hidden="true" />}
+              {selected ? <Check className="size-3.5" strokeWidth={3} aria-hidden="true" /> : <option.icon className="size-3.5 text-[#8a959b]" aria-hidden="true" />}
               {option.label}
             </button>
           );
