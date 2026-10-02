@@ -74,7 +74,7 @@ export const useWizard = create<WizardState>((set, get) => ({
     }),
 
   setVariant: (variant) => set((state) => ({ config: { ...state.config, variant }, focus: { target: "hero", tick: state.focus.tick + 1 } })),
-  setIndustry: (industry) => set((state) => ({ config: { ...state.config, industry, variant: 0 }, focus: { target: "top", tick: state.focus.tick + 1 } })),
+  setIndustry: (industry) => set((state) => ({ config: { ...state.config, industry, art: 0 }, focus: { target: "top", tick: state.focus.tick + 1 } })),
 
   submit: () => set({ submitted: true }),
   restart: () => get().init(get().kind),

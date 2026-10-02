@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { industries, mix, type WizardConfig } from "../config";
+import { industries, isDark, mix, type WizardConfig } from "../config";
 import type { HeroArtKey } from "../designs";
 
 /* Shared bits ------------------------------------------------------- */
@@ -56,7 +56,7 @@ const Avatar = ({ tone, size = "size-9" }: { tone: string; size?: string }) => (
 export const HeroArt = ({ art, config, tall }: { art: HeroArtKey; config: WizardConfig; tall?: boolean }) => {
   const content = industries[config.industry];
   const Icon = content.icon;
-  const shade = (amount: number) => mix(config.color, config.theme === "dark" ? "#0f151c" : "#ffffff", amount);
+  const shade = (amount: number) => mix(config.color, isDark(config.theme) ? "#0f151c" : "#ffffff", amount);
   const name = config.brandName.trim() || "برند شما";
   const frame = `relative w-full overflow-hidden rounded-(--pv-r-card) ${tall ? "aspect-[4/3.4]" : "aspect-[16/7]"}`;
 

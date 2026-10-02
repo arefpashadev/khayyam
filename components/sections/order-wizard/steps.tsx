@@ -1,55 +1,65 @@
 "use client";
 
-import { Check, Droplet, EyeOff, Info, Link2, Moon, Sparkles, Sun, Wind, Zap } from "lucide-react";
+import { Check, Droplet, EyeOff, Info, Link2, Moon, Pipette, Sparkles, Sun, Wind, Zap, Sunset } from "lucide-react";
 import { motion } from "motion/react";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 import {
-  appFeatures,
   appExtras,
+  appFeatures,
+  backdrops,
   buildPreviewVars,
   colors,
   faNumber,
   industries,
-  moods,
-  radii,
   motionLevels,
+  radii,
   siteExtras,
   siteSections,
+  suggestAccents,
   themes,
   typeStyles,
+  type IndustryKey,
   type StepKey,
+  type WizardConfig,
 } from "./config";
+import { APP_DESIGN_COUNT, artLabels, industryArts, SITE_DESIGN_COUNT, siteLayouts } from "./designs";
+import { Backdrop } from "./preview/site-preview";
+import { DesignThumb } from "./preview/thumbnail";
 import { useWizard } from "./store";
 
 /* ------------------------------------------------------------------ */
-/* Primitives                                                          */
+/* Primitives — dark studio controls, selection by soft tint only      */
 /* ------------------------------------------------------------------ */
 
-const ring = "outline-none focus-visible:ring-2 focus-visible:ring-[#078ef0] focus-visible:ring-offset-1";
-// No borders: selection is a soft tinted background, hover a slightly deeper grey.
-const idle = "bg-[#f5f7f8] hover:bg-[#edf1f3]";
-const active = "bg-[#e6f2fc] text-[#0a5a9c]";
+const ring = "outline-none focus-visible:ring-2 focus-visible:ring-[#4da3ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#111419]";
+const idle = "bg-[#171b22] text-[#c9d0d9] hover:bg-[#1d222b]";
+const active = "bg-[#4da3ff]/14 text-[#9ccbff]";
 
 const Tile = ({ selected, onClick, children, className = "", label }: { selected: boolean; onClick: () => void; children: ReactNode; className?: string; label?: string }) => (
-  <button type="button" aria-pressed={selected} aria-label={label} onClick={onClick} className={`relative rounded-xl text-right transition-colors duration-150 ${ring} ${selected ? active : idle} ${className}`}>
+  <button type="button" aria-pressed={selected} aria-label={label} onClick={onClick} className={`relative rounded-2xl text-right transition-colors duration-150 ${ring} ${selected ? active : idle} ${className}`}>
     {children}
   </button>
 );
 
-const Label = ({ children }: { children: ReactNode }) => <span className="mb-2 block text-[12px] font-bold text-[#6b7780]">{children}</span>;
+const Label = ({ children, hint }: { children: ReactNode; hint?: string }) => (
+  <span className="mb-2.5 flex items-baseline justify-between gap-2">
+    <span className="text-[12px] font-bold text-[#8a93a0]">{children}</span>
+    {hint && <span className="text-[11px] text-[#5d6573]">{hint}</span>}
+  </span>
+);
 
 function Segmented<T extends string>({ id, label, options, value, onChange }: { id: string; label: string; options: { value: T; label: string; icon?: ReactNode }[]; value: T; onChange: (value: T) => void }) {
   return (
     <div>
       <Label>{label}</Label>
-      <div role="radiogroup" aria-label={label} className="grid gap-1 rounded-xl bg-[#f3f5f7] p-1" style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}>
+      <div role="radiogroup" aria-label={label} className="grid gap-1 rounded-2xl bg-[#171b22] p-1" style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}>
         {options.map((option) => {
           const selected = option.value === value;
           return (
-            <button key={option.value} type="button" role="radio" aria-checked={selected} onClick={() => onChange(option.value)} className={`relative flex h-10 items-center justify-center rounded-lg text-[12px] font-bold ${ring}`}>
-              {selected && <motion.span layoutId={id} className="absolute inset-0 rounded-lg bg-white shadow-[0_1px_2px_rgba(20,32,43,0.08)]" transition={{ type: "spring", bounce: 0.18, duration: 0.35 }} />}
-              <span className={`relative flex items-center gap-1.5 transition-colors ${selected ? "text-[#0a5a9c]" : "text-[#7a868d]"}`}>
+            <button key={option.value} type="button" role="radio" aria-checked={selected} onClick={() => onChange(option.value)} className={`relative flex h-10 items-center justify-center rounded-xl text-[12px] font-bold ${ring}`}>
+              {selected && <motion.span layoutId={id} className="absolute inset-0 rounded-xl bg-[#262c37]" transition={{ type: "spring", bounce: 0.18, duration: 0.35 }} />}
+              <span className={`relative flex items-center gap-1.5 transition-colors ${selected ? "text-white" : "text-[#8a93a0]"}`}>
                 {option.icon}
                 {option.label}
               </span>
@@ -61,189 +71,119 @@ function Segmented<T extends string>({ id, label, options, value, onChange }: { 
   );
 }
 
-const field =
-  "w-full rounded-xl bg-[#f5f7f8] px-3.5 text-[13px] outline-none transition-colors placeholder:text-[#a3aeb4] hover:bg-[#edf1f3] focus:bg-[#e6f2fc]";
+const field = "w-full rounded-2xl bg-[#171b22] px-4 text-[13px] text-white outline-none transition-colors placeholder:text-[#5d6573] hover:bg-[#1d222b] focus:bg-[#1d222b] focus:ring-2 focus:ring-[#4da3ff]/50";
+
+/** Colour dot; the last one in a row opens the system colour picker for any colour. */
+const Swatch = ({ value, selected, label, onPick }: { value: string; selected: boolean; label: string; onPick: () => void }) => (
+  <button
+    type="button"
+    role="radio"
+    aria-checked={selected}
+    aria-label={label}
+    title={label}
+    onClick={onPick}
+    className={`relative flex aspect-square items-center justify-center rounded-full transition-transform active:scale-90 ${ring} ${selected ? "scale-110 shadow-[0_0_0_2px_#111419,0_0_0_4px_rgba(255,255,255,0.85)]" : "hover:scale-105"}`}
+    style={{ backgroundColor: value }}
+  >
+    {selected && <Check className="size-3.5 text-white mix-blend-difference" strokeWidth={3} aria-hidden="true" />}
+  </button>
+);
+
+const CustomColor = ({ value, onChange, label }: { value: string; onChange: (value: string) => void; label: string }) => (
+  <label className={`relative flex aspect-square cursor-pointer items-center justify-center rounded-full bg-[conic-gradient(from_0deg,#ff5f6d,#ffc371,#47e891,#3fb4ff,#a66cff,#ff5f6d)] ${ring}`} title={label}>
+    <span className="flex size-[62%] items-center justify-center rounded-full bg-[#111419]">
+      <Pipette className="size-3.5 text-white" aria-hidden="true" />
+    </span>
+    <input type="color" value={value} onChange={(event) => onChange(event.target.value)} aria-label={label} className="absolute inset-0 cursor-pointer opacity-0" />
+  </label>
+);
 
 /* ------------------------------------------------------------------ */
-/* Steps                                                               */
+/* 1. Palette                                                          */
 /* ------------------------------------------------------------------ */
 
-const BrandStep = () => {
+const PaletteStep = () => {
   const config = useWizard((state) => state.config);
   const update = useWizard((state) => state.update);
-  const content = industries[config.industry];
+  const accents = suggestAccents(config.color);
+  const toneIcons = { light: <Sun className="size-3.5" />, tinted: <Droplet className="size-3.5" />, dark: <Moon className="size-3.5" />, midnight: <Sunset className="size-3.5" /> };
+  const vars = buildPreviewVars(config) as Record<string, string>;
+  const strip = [
+    { label: "اصلی", value: config.color },
+    { label: "دوم", value: config.accent },
+    { label: "ملایم", value: vars["--pv-soft"] },
+    { label: "زمینه", value: vars["--pv-bg"] },
+    { label: "متن", value: vars["--pv-text"] },
+  ];
 
   return (
-    <div className="flex flex-col gap-5">
-      <label className="block">
-        <Label>نام برند</Label>
-        <input value={config.brandName} onChange={(event) => update({ brandName: event.target.value }, "top")} placeholder="مثلاً کافه خیام" maxLength={28} className={`${field} h-11 font-bold placeholder:font-normal`} />
-      </label>
-      <label className="block">
-        <Label>جمله اصلی صفحه (اختیاری)</Label>
-        <input value={config.tagline} onChange={(event) => update({ tagline: event.target.value }, "hero")} placeholder={content.headline} maxLength={48} className={`${field} h-11`} />
-        <span className="mt-1.5 block text-[11px] text-[#8a959b]">اگر خالی بماند، متن پیشنهادی ما نمایش داده می‌شود.</span>
-      </label>
-    </div>
-  );
-};
-
-const MoodStep = () => {
-  const mood = useWizard((state) => state.config.mood);
-  const update = useWizard((state) => state.update);
-
-  return (
-    <div className="grid grid-cols-2 gap-1.5 lg:grid-cols-1">
-      {moods.map((item) => {
-        const selected = mood === item.value;
-        return (
-          <Tile key={item.value} selected={selected} onClick={() => update({ mood: item.value, ...item.tokens }, "hero")} className="flex items-center gap-2 p-1.5 lg:gap-3 lg:p-2 lg:pe-3">
-            {/* a tiny live sample of the mood */}
-            <span style={buildPreviewVars(item.tokens)} className="flex h-9 w-11 shrink-0 flex-col justify-center gap-1.5 rounded-lg bg-(--pv-bg) px-1.5 ring-1 ring-black/8 lg:h-10 lg:w-16 lg:px-2">
-              <span className="block w-4/5 rounded-full bg-(--pv-text)" style={{ height: item.tokens.type === "heavy" ? 5 : 4, opacity: item.tokens.type === "light" ? 0.4 : 0.85 }} />
-              <span className="block h-2.5 w-6 rounded-(--pv-r-ctrl) bg-(--pv-primary)" />
+    <div className="flex flex-col gap-6">
+      {/* the palette being built */}
+      <div className="overflow-hidden rounded-2xl ring-1 ring-white/6">
+        <div className="flex h-16">
+          {strip.map((item) => (
+            <span key={item.label} className="flex-1 transition-colors duration-300" style={{ backgroundColor: item.value }} />
+          ))}
+        </div>
+        <div className="flex bg-[#171b22]">
+          {strip.map((item) => (
+            <span key={item.label} className="flex-1 px-1 py-2 text-center">
+              <span className="block text-[10px] text-[#8a93a0]">{item.label}</span>
+              <span className="block font-mono text-[10px] uppercase text-[#c9d0d9]" dir="ltr">{item.value}</span>
             </span>
-            <span className="min-w-0 flex-1">
-              <strong className="block text-[12px] leading-5 lg:text-[13px]">{item.label}</strong>
-              <span className="hidden text-[11px] text-[#7a868d] lg:block">{item.description}</span>
-            </span>
-            <span className={`hidden size-5 items-center justify-center rounded-full transition lg:flex ${selected ? "bg-[#078ef0] text-white" : "bg-[#e9edf0]"}`}>{selected && <Check className="size-3" strokeWidth={3} aria-hidden="true" />}</span>
-          </Tile>
-        );
-      })}
-    </div>
-  );
-};
+          ))}
+        </div>
+      </div>
 
-const ColorStep = () => {
-  const config = useWizard((state) => state.config);
-  const update = useWizard((state) => state.update);
-  const themeIcons = { light: <Sun className="size-3.5" />, tinted: <Droplet className="size-3.5" />, dark: <Moon className="size-3.5" /> };
-
-  return (
-    <div className="flex flex-col gap-5">
       <div>
-        <Label>رنگ اصلی</Label>
-        <div role="radiogroup" aria-label="رنگ اصلی" className="grid grid-cols-8 gap-2">
-          {colors.map((color) => {
-            const selected = config.color === color.value;
+        <Label hint="هر رنگی بخواهید">رنگ اصلی</Label>
+        <div role="radiogroup" aria-label="رنگ اصلی" className="grid grid-cols-9 gap-2">
+          {colors.map((color) => (
+            <Swatch key={color.value} value={color.value} label={color.label} selected={config.color === color.value} onPick={() => update({ color: color.value, accent: suggestAccents(color.value)[0].value })} />
+          ))}
+          <CustomColor value={config.color} label="رنگ دلخواه" onChange={(value) => update({ color: value })} />
+        </div>
+      </div>
+
+      <div>
+        <Label hint="پیشنهاد هماهنگ با رنگ اصلی">رنگ دوم</Label>
+        <div className="grid grid-cols-5 gap-2">
+          {accents.map((accent) => {
+            const selected = config.accent.toLowerCase() === accent.value.toLowerCase();
             return (
-              <button
-                key={color.value}
-                type="button"
-                role="radio"
-                aria-checked={selected}
-                aria-label={color.label}
-                title={color.label}
-                onClick={() => update({ color: color.value, mood: null })}
-                className={`flex aspect-square items-center justify-center rounded-full transition active:scale-90 ${ring} ${selected ? "scale-110" : "opacity-90 hover:opacity-100"}`}
-                style={{ backgroundColor: color.value }}
-              >
-                {selected && <Check className="size-3.5 text-white" strokeWidth={3} aria-hidden="true" />}
+              <button key={accent.label} type="button" aria-pressed={selected} onClick={() => update({ accent: accent.value })} className={`flex flex-col items-center gap-1.5 rounded-2xl p-2 transition-colors ${ring} ${selected ? active : idle}`}>
+                <span className="flex h-8 w-full overflow-hidden rounded-lg">
+                  <span className="flex-1" style={{ backgroundColor: config.color }} />
+                  <span className="flex-1" style={{ backgroundColor: accent.value }} />
+                </span>
+                <span className="text-[10.5px] font-bold">{accent.label}</span>
               </button>
             );
           })}
+          <div className="flex flex-col items-center gap-1.5 rounded-2xl bg-[#171b22] p-2">
+            <span className="w-8"><CustomColor value={config.accent} label="رنگ دوم دلخواه" onChange={(value) => update({ accent: value })} /></span>
+            <span className="text-[10.5px] font-bold text-[#c9d0d9]">دلخواه</span>
+          </div>
         </div>
       </div>
-      <Segmented id="seg-theme" label="حالت نمایش" value={config.theme} onChange={(theme) => update({ theme, mood: null })} options={themes.map((theme) => ({ ...theme, icon: themeIcons[theme.value] }))} />
-    </div>
-  );
-};
 
-const ShapeStep = () => {
-  const config = useWizard((state) => state.config);
-  const update = useWizard((state) => state.update);
-  const corner = { sharp: 2, soft: 6, round: 12 };
-  const weight = { light: 300, balanced: 700, heavy: 800 };
-
-  return (
-    <div className="flex flex-col gap-5">
-      <Segmented
-        id="seg-radius"
-        label="گوشه‌ها"
-        value={config.radius}
-        onChange={(radius) => update({ radius, mood: null })}
-        options={radii.map((radius) => ({ ...radius, icon: <span className="block size-3.5 border-2 border-current border-b-transparent border-l-transparent" style={{ borderTopRightRadius: corner[radius.value] }} /> }))}
-      />
-      <Segmented
-        id="seg-type"
-        label="نوشته‌ها"
-        value={config.type}
-        onChange={(type) => update({ type, mood: null })}
-        options={typeStyles.map((type) => ({ value: type.value, label: type.value === "heavy" ? "پررنگ" : type.label, icon: <span className="text-[15px] leading-none" style={{ fontWeight: weight[type.value] }}>آ</span> }))}
-      />
-    </div>
-  );
-};
-
-const SectionsStep = () => {
-  const kind = useWizard((state) => state.kind);
-  const sections = useWizard((state) => state.config.sections);
-  const toggle = useWizard((state) => state.toggleSection);
-  const options = kind === "app" ? appFeatures : siteSections;
-
-  return (
-    <div>
-      <div className="flex flex-wrap gap-1.5">
-        {options.map((option) => {
-          const selected = sections.includes(option.value);
-          return (
-            <button
-              key={option.value}
-              type="button"
-              aria-pressed={selected}
-              onClick={() => toggle(option.value)}
-              className={`flex h-9 items-center gap-1.5 rounded-full px-3 text-[12px] font-bold transition active:scale-95 ${ring} ${selected ? "bg-[#e6f2fc] text-[#0a5a9c]" : "bg-[#f5f7f8] text-[#33414b] hover:bg-[#edf1f3]"}`}
-            >
-              {selected ? <Check className="size-3.5" strokeWidth={3} aria-hidden="true" /> : <option.icon className="size-3.5 text-[#8a959b]" aria-hidden="true" />}
-              {option.label}
-            </button>
-          );
-        })}
-      </div>
-      <p className="mt-3 text-[11px] text-[#7a868d]">{faNumber(sections.length)} مورد انتخاب شده</p>
-    </div>
-  );
-};
-
-const ExtrasStep = () => {
-  const kind = useWizard((state) => state.kind);
-  const motionLevel = useWizard((state) => state.config.motion);
-  const extras = useWizard((state) => state.config.extras);
-  const update = useWizard((state) => state.update);
-  const options = kind === "app" ? appExtras : siteExtras;
-  const motionIcons = { none: <Wind className="size-3.5" />, subtle: <Sparkles className="size-3.5" />, lively: <Zap className="size-3.5" /> };
-
-  return (
-    <div className="flex flex-col gap-5">
-      <Segmented id="seg-motion" label="انیمیشن و حرکت" value={motionLevel} onChange={(value) => update({ motion: value }, "hero")} options={motionLevels.map((level) => ({ ...level, icon: motionIcons[level.value] }))} />
       <div>
-        <Label>امکانات فنی</Label>
-        <div className="grid grid-cols-2 gap-1.5 lg:grid-cols-1">
-          {options.map((option) => {
-            const selected = extras.includes(option.value);
+        <Label>فضای کلی</Label>
+        <div className="grid grid-cols-4 gap-2">
+          {themes.map((theme) => {
+            const selected = config.theme === theme.value;
             return (
-              <Tile
-                key={option.value}
-                selected={selected}
-                onClick={() => update({ extras: selected ? extras.filter((item) => item !== option.value) : [...extras, option.value] }, option.visible ? "top" : undefined)}
-                className="flex items-center gap-2.5 p-2.5 lg:gap-3 lg:p-3"
-              >
-                <option.icon className={`size-4 shrink-0 ${selected ? "text-[#078ef0]" : "text-[#8a959b]"}`} aria-hidden="true" />
-                <span className="min-w-0 flex-1">
-                  <strong className="flex items-center gap-1.5 text-[12px] leading-5 lg:text-[13px]">
-                    {option.label}
-                    {!option.visible && (
-                      <span className="hidden items-center gap-0.5 rounded-full bg-black/5 px-1.5 text-[10px] font-normal text-[#7a868d] lg:inline-flex" title="در پیش‌نمایش دیده نمی‌شود">
-                        <EyeOff className="size-2.5" aria-hidden="true" /> پشت صحنه
-                      </span>
-                    )}
-                  </strong>
-                  <span className="hidden text-[11px] text-[#8a959b] lg:block">{option.description}</span>
-                </span>
-                <span className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${selected ? "bg-[#078ef0]" : "bg-[#d6dde1]"}`} aria-hidden="true">
-                  {/* RTL switch: off sits on the right, on slides to the left */}
-                  <span className="absolute top-0.5 size-4 rounded-full bg-white shadow transition-[left]" style={{ left: selected ? 2 : 18 }} />
+              <Tile key={theme.value} selected={selected} onClick={() => update({ theme: theme.value })} className="p-1.5">
+                <div style={buildPreviewVars({ ...config, theme: theme.value })} className="flex h-14 flex-col justify-between rounded-xl bg-(--pv-bg) p-2">
+                  <span className="h-1.5 w-2/3 rounded-full bg-(--pv-text) opacity-70" />
+                  <span className="flex gap-1">
+                    <span className="h-3 w-5 rounded-[4px] bg-(--pv-primary)" />
+                    <span className="h-3 w-3 rounded-[4px] bg-(--pv-accent)" />
+                  </span>
+                </div>
+                <span className="mt-1.5 flex items-center justify-center gap-1 pb-0.5 text-[11px] font-bold">
+                  {toneIcons[theme.value]}
+                  {theme.label}
                 </span>
               </Tile>
             );
@@ -254,19 +194,300 @@ const ExtrasStep = () => {
   );
 };
 
+/* ------------------------------------------------------------------ */
+/* 2. Radius — each option is a complete little UI                     */
+/* ------------------------------------------------------------------ */
+
+const UiSpecimen = ({ config }: { config: WizardConfig }) => (
+  <div style={buildPreviewVars(config)} className="flex flex-col gap-2 rounded-xl bg-(--pv-bg) p-2.5 text-(--pv-text)">
+    <div className="flex items-center justify-between rounded-(--pv-r-ctrl) bg-(--pv-surface) px-2 py-1.5">
+      <span className="size-3 rounded-(--pv-r-ctrl) bg-(--pv-primary)" />
+      <span className="h-1 w-8 rounded-full bg-(--pv-text) opacity-30" />
+    </div>
+    <div className="flex items-center gap-2 rounded-(--pv-r-card) bg-(--pv-surface) p-2">
+      <span className="size-6 shrink-0 rounded-(--pv-r-ctrl) bg-(--pv-accent)" />
+      <span className="flex-1 space-y-1">
+        <span className="block h-1.5 w-full rounded-full bg-(--pv-text) opacity-60" />
+        <span className="block h-1 w-1/2 rounded-full bg-(--pv-text) opacity-25" />
+      </span>
+    </div>
+    <span className="h-5 rounded-(--pv-r-ctrl) border border-(--pv-border) bg-(--pv-bg)" />
+    <span className="flex gap-1.5">
+      <span className="h-5 flex-1 rounded-(--pv-r-ctrl) bg-(--pv-primary)" />
+      <span className="h-5 w-8 rounded-(--pv-r-ctrl) bg-(--pv-soft)" />
+    </span>
+  </div>
+);
+
+const RadiusStep = () => {
+  const config = useWizard((state) => state.config);
+  const update = useWizard((state) => state.update);
+
+  return (
+    <div className="grid grid-cols-2 gap-2.5">
+      {radii.map((radius) => {
+        const selected = config.radius === radius.value;
+        return (
+          <Tile key={radius.value} selected={selected} onClick={() => update({ radius: radius.value })} className="p-2">
+            <UiSpecimen config={{ ...config, radius: radius.value }} />
+            <span className="flex items-center justify-between px-1 pb-0.5 pt-2.5">
+              <span>
+                <strong className="block text-[13px]">{radius.label}</strong>
+                <span className="text-[11px] opacity-60">{radius.description}</span>
+              </span>
+              {selected && <span className="flex size-5 items-center justify-center rounded-full bg-[#4da3ff] text-white"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>}
+            </span>
+          </Tile>
+        );
+      })}
+    </div>
+  );
+};
+
+/* ------------------------------------------------------------------ */
+/* 3. Type                                                             */
+/* ------------------------------------------------------------------ */
+
+const TypeStep = () => {
+  const config = useWizard((state) => state.config);
+  const update = useWizard((state) => state.update);
+  const sample: Record<string, CSSProperties> = {
+    light: { fontWeight: 300, fontSize: 26, letterSpacing: 0 },
+    balanced: { fontWeight: 700, fontSize: 26, letterSpacing: "-0.01em" },
+    heavy: { fontWeight: 900, fontSize: 30, letterSpacing: "-0.03em" },
+  };
+
+  return (
+    <div className="flex flex-col gap-2.5">
+      {typeStyles.map((type) => {
+        const selected = config.type === type.value;
+        return (
+          <Tile key={type.value} selected={selected} onClick={() => update({ type: type.value })} className="flex items-center gap-4 p-4">
+            <span className="w-16 shrink-0 text-center leading-none text-white" style={{ ...sample[type.value], fontSize: 44 }}>آب</span>
+            <span className="min-w-0 flex-1">
+              <span className="block leading-tight text-white" style={sample[type.value]}>{type.sample}</span>
+              <span className="mt-1.5 block text-[11px] opacity-60">{type.label}</span>
+            </span>
+            {selected && <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#4da3ff] text-white"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>}
+          </Tile>
+        );
+      })}
+    </div>
+  );
+};
+
+/* ------------------------------------------------------------------ */
+/* 4. Backdrop + motion                                                */
+/* ------------------------------------------------------------------ */
+
+const BackdropStep = () => {
+  const config = useWizard((state) => state.config);
+  const update = useWizard((state) => state.update);
+  const motionIcons = { none: <Wind className="size-3.5" />, subtle: <Sparkles className="size-3.5" />, lively: <Zap className="size-3.5" /> };
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div>
+        <Label>پس‌زمینه بخش اول</Label>
+        <div className="grid grid-cols-2 gap-2.5">
+          {backdrops.map((backdrop, index) => {
+            const selected = config.backdrop === backdrop.value;
+            return (
+              <Tile key={backdrop.value} selected={selected} onClick={() => update({ backdrop: backdrop.value })} className={`p-1.5 ${index === backdrops.length - 1 ? "col-span-2" : ""}`}>
+                <div style={buildPreviewVars(config)} className="relative flex h-20 items-center justify-center overflow-hidden rounded-xl bg-(--pv-bg)">
+                  <Backdrop kind={backdrop.value} />
+                  <span className="relative flex flex-col items-center gap-1.5">
+                    <span className="h-2 w-20 rounded-full bg-(--pv-text) opacity-80" />
+                    <span className="h-3 w-10 rounded-(--pv-r-ctrl) bg-(--pv-primary)" />
+                  </span>
+                </div>
+                <span className="block pb-0.5 pt-2 text-center text-[12px] font-bold">{backdrop.label}</span>
+              </Tile>
+            );
+          })}
+        </div>
+      </div>
+      <Segmented id="seg-motion" label="انیمیشن و حرکت" value={config.motion} onChange={(value) => update({ motion: value })} options={motionLevels.map((level) => ({ ...level, icon: motionIcons[level.value] }))} />
+    </div>
+  );
+};
+
+/* ------------------------------------------------------------------ */
+/* 5. Business                                                         */
+/* ------------------------------------------------------------------ */
+
+const BusinessStep = () => {
+  const config = useWizard((state) => state.config);
+  const update = useWizard((state) => state.update);
+  const setIndustry = useWizard((state) => state.setIndustry);
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div>
+        <Label>حوزه فعالیت</Label>
+        <div className="grid grid-cols-3 gap-2">
+          {(Object.keys(industries) as IndustryKey[]).map((key) => {
+            const item = industries[key];
+            const selected = config.industry === key;
+            return (
+              <Tile key={key} selected={selected} onClick={() => setIndustry(key)} className="flex h-[76px] flex-col items-center justify-center gap-2 px-1 text-center">
+                <item.icon className="size-5" aria-hidden="true" />
+                <span className="text-[11.5px] font-bold leading-4">{item.label}</span>
+              </Tile>
+            );
+          })}
+        </div>
+      </div>
+      <label className="block">
+        <Label>نام برند</Label>
+        <input value={config.brandName} onChange={(event) => update({ brandName: event.target.value }, "top")} placeholder="مثلاً کافه خیام" maxLength={28} className={`${field} h-12 font-bold placeholder:font-normal`} />
+      </label>
+      <label className="block">
+        <Label hint="اختیاری">جمله اصلی صفحه</Label>
+        <input value={config.tagline} onChange={(event) => update({ tagline: event.target.value }, "hero")} placeholder={industries[config.industry].headline} maxLength={48} className={`${field} h-12`} />
+      </label>
+    </div>
+  );
+};
+
+/* ------------------------------------------------------------------ */
+/* 6. Design — the whole page                                          */
+/* ------------------------------------------------------------------ */
+
+const DesignStep = () => {
+  const kind = useWizard((state) => state.kind);
+  const config = useWizard((state) => state.config);
+  const setVariant = useWizard((state) => state.setVariant);
+  const update = useWizard((state) => state.update);
+  const count = kind === "app" ? APP_DESIGN_COUNT : SITE_DESIGN_COUNT;
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div>
+        <Label hint={`${faNumber(count)} چیدمان`}>چیدمان صفحه</Label>
+        <div className="grid grid-cols-2 gap-2.5">
+          {Array.from({ length: count }, (_, design) => {
+            const selected = design === config.variant;
+            return (
+              <button
+                key={design}
+                type="button"
+                aria-pressed={selected}
+                aria-label={kind === "app" ? `طرح ${faNumber(design + 1)}` : siteLayouts[design].label}
+                onClick={() => setVariant(design)}
+                className={`overflow-hidden rounded-2xl p-1.5 text-right transition-colors ${ring} ${selected ? active : idle}`}
+              >
+                <div className="overflow-hidden rounded-xl">
+                  <DesignThumb kind={kind} config={{ ...config, variant: design }} />
+                </div>
+                <span className="flex items-center justify-between px-1 pb-0.5 pt-2 text-[12px] font-bold">
+                  {kind === "app" ? `طرح ${faNumber(design + 1)}` : siteLayouts[design].label}
+                  {selected && <span className="flex size-5 items-center justify-center rounded-full bg-[#4da3ff] text-white"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div>
+        <Label>تصویر اصلی</Label>
+        <div className="flex flex-wrap gap-1.5">
+          {industryArts[config.industry].map((art, index) => (
+            <button key={art} type="button" aria-pressed={config.art === index} onClick={() => update({ art: index }, "hero")} className={`h-9 rounded-full px-3.5 text-[12px] font-bold transition-colors ${ring} ${config.art === index ? active : idle}`}>
+              {artLabels[art]}
+            </button>
+          ))}
+        </div>
+      </div>
+      <p className="flex gap-2 rounded-2xl bg-[#171b22] px-3.5 py-3 text-[11.5px] leading-6 text-[#8a93a0]">
+        <Info className="mt-1 size-3.5 shrink-0 text-[#4da3ff]" aria-hidden="true" />
+        این‌ها همه کارهایی نیست که می‌توانیم انجام دهیم. نزدیک‌ترین را انتخاب کنید؛ بعد از ثبت درخواست هر تغییری بخواهید اعمال می‌کنیم.
+      </p>
+    </div>
+  );
+};
+
+/* ------------------------------------------------------------------ */
+/* 7–9. Sections, extras, references                                   */
+/* ------------------------------------------------------------------ */
+
+const SectionsStep = () => {
+  const kind = useWizard((state) => state.kind);
+  const sections = useWizard((state) => state.config.sections);
+  const toggle = useWizard((state) => state.toggleSection);
+  const options = kind === "app" ? appFeatures : siteSections;
+
+  return (
+    <div>
+      <div className="flex flex-wrap gap-2">
+        {options.map((option) => {
+          const selected = sections.includes(option.value);
+          return (
+            <button key={option.value} type="button" aria-pressed={selected} onClick={() => toggle(option.value)} className={`flex h-10 items-center gap-2 rounded-full px-4 text-[12px] font-bold transition-colors active:scale-95 ${ring} ${selected ? active : idle}`}>
+              {selected ? <Check className="size-3.5" strokeWidth={3} aria-hidden="true" /> : <option.icon className="size-3.5 opacity-60" aria-hidden="true" />}
+              {option.label}
+            </button>
+          );
+        })}
+      </div>
+      <p className="mt-3 text-[11px] text-[#5d6573]">{faNumber(sections.length)} مورد انتخاب شده</p>
+    </div>
+  );
+};
+
+const ExtrasStep = () => {
+  const kind = useWizard((state) => state.kind);
+  const extras = useWizard((state) => state.config.extras);
+  const update = useWizard((state) => state.update);
+  const options = kind === "app" ? appExtras : siteExtras;
+
+  return (
+    <div className="grid grid-cols-2 gap-2 lg:grid-cols-1">
+      {options.map((option) => {
+        const selected = extras.includes(option.value);
+        return (
+          <Tile
+            key={option.value}
+            selected={selected}
+            onClick={() => update({ extras: selected ? extras.filter((item) => item !== option.value) : [...extras, option.value] }, option.visible ? "top" : undefined)}
+            className="flex items-center gap-3 p-3"
+          >
+            <option.icon className="size-4 shrink-0 opacity-80" aria-hidden="true" />
+            <span className="min-w-0 flex-1">
+              <strong className="flex items-center gap-1.5 text-[12.5px] leading-5">
+                {option.label}
+                {!option.visible && (
+                  <span className="hidden items-center gap-0.5 rounded-full bg-white/6 px-1.5 text-[10px] font-normal text-[#8a93a0] lg:inline-flex" title="در پیش‌نمایش دیده نمی‌شود">
+                    <EyeOff className="size-2.5" aria-hidden="true" /> پشت صحنه
+                  </span>
+                )}
+              </strong>
+              <span className="hidden text-[11px] text-[#8a93a0] lg:block">{option.description}</span>
+            </span>
+            <span className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${selected ? "bg-[#4da3ff]" : "bg-[#2a303b]"}`} aria-hidden="true">
+              {/* RTL switch: off sits on the right, on slides to the left */}
+              <span className="absolute top-0.5 size-4 rounded-full bg-white shadow transition-[left]" style={{ left: selected ? 2 : 18 }} />
+            </span>
+          </Tile>
+        );
+      })}
+    </div>
+  );
+};
+
 const ReferencesStep = () => {
   const references = useWizard((state) => state.config.references);
   const notes = useWizard((state) => state.config.notes);
   const update = useWizard((state) => state.update);
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1.5">
-        <Label>لینک نمونه‌ها (اختیاری)</Label>
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-2">
+        <Label hint="اختیاری">لینک نمونه‌ها</Label>
         {references.map((value, index) => (
           <label key={index} className="relative block">
             <span className="sr-only">لینک نمونه {faNumber(index + 1)}</span>
-            <Link2 className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[#a3aeb4]" aria-hidden="true" />
+            <Link2 className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-[#5d6573]" aria-hidden="true" />
             <input
               dir="ltr"
               type="url"
@@ -274,16 +495,16 @@ const ReferencesStep = () => {
               value={value}
               placeholder={["dribbble.com/...", "digikala.com", "..."][index]}
               onChange={(event) => update({ references: references.map((item, itemIndex) => (itemIndex === index ? event.target.value : item)) }, "top")}
-              className={`${field} h-10 pl-10 text-left`}
+              className={`${field} h-11 pl-11 text-left`}
             />
           </label>
         ))}
       </div>
       <label className="block">
         <Label>چه چیزی در آن‌ها دوست دارید؟</Label>
-        <textarea value={notes} rows={2} onChange={(event) => update({ notes: event.target.value }, "top")} placeholder="مثلاً رنگ‌های سایت اول و منوی ساده سایت دوم" className={`${field} resize-none py-2.5 leading-6`} />
+        <textarea value={notes} rows={3} onChange={(event) => update({ notes: event.target.value }, "top")} placeholder="مثلاً رنگ‌های سایت اول و منوی ساده سایت دوم" className={`${field} resize-none py-3 leading-6`} />
       </label>
-      <p className="flex gap-2 rounded-xl bg-[#fff7e8] px-3 py-2.5 text-[11.5px] leading-6 text-[#7a5a1c]">
+      <p className="flex gap-2 rounded-2xl bg-[#3a2c10]/60 px-3.5 py-3 text-[11.5px] leading-6 text-[#f2cf8a]">
         <Info className="mt-1 size-3.5 shrink-0" aria-hidden="true" />
         همه این مقادیر طبق خواسته شما قابل تغییر است. بعد از ثبت درخواست هم می‌توانید هر تغییری را برایمان بفرستید.
       </p>
@@ -291,12 +512,13 @@ const ReferencesStep = () => {
   );
 };
 
-/** Editor-phase panels; the gallery steps live in gallery.tsx. */
-export const stepPanels: Partial<Record<StepKey, () => ReactNode>> = {
-  brand: BrandStep,
-  mood: MoodStep,
-  color: ColorStep,
-  shape: ShapeStep,
+export const stepPanels: Record<StepKey, () => ReactNode> = {
+  palette: PaletteStep,
+  radius: RadiusStep,
+  type: TypeStep,
+  backdrop: BackdropStep,
+  business: BusinessStep,
+  design: DesignStep,
   sections: SectionsStep,
   extras: ExtrasStep,
   references: ReferencesStep,

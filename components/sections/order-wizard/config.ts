@@ -46,9 +46,9 @@ import type { CSSProperties } from "react";
 
 export type OrderKind = "site" | "app";
 export type IndustryKey = "shop" | "company" | "restaurant" | "education" | "health" | "personal";
-export type MoodKey = "tech" | "minimal" | "friendly" | "luxury" | "bold";
-export type ThemeKey = "light" | "tinted" | "dark";
-export type RadiusKey = "sharp" | "soft" | "round";
+export type ThemeKey = "light" | "tinted" | "dark" | "midnight";
+export type RadiusKey = "sharp" | "soft" | "round" | "pill";
+export type BackdropKey = "plain" | "aurora" | "grid" | "dots" | "glow";
 export type TypeKey = "light" | "balanced" | "heavy";
 export type PreviewTarget = "top" | "hero" | "features" | string;
 
@@ -56,16 +56,20 @@ export type WizardConfig = {
   brandName: string;
   tagline: string;
   industry: IndustryKey;
-  mood: MoodKey | null;
   color: string;
+  /** Second brand colour, used in gradients, highlights and badges. */
+  accent: string;
+  backdrop: BackdropKey;
   theme: ThemeKey;
   radius: RadiusKey;
   type: TypeKey;
   sections: string[];
   references: string[];
   notes: string;
-  /** Design number inside the chosen industry's catalogue (see designs.ts). */
+  /** Hero layout number (see designs.ts). */
   variant: number;
+  /** Which of the field's artworks the hero shows. */
+  art: number;
   motion: MotionKey;
   extras: string[];
 };
@@ -76,28 +80,20 @@ export type MotionKey = "none" | "subtle" | "lively";
 /* Steps                                                               */
 /* ------------------------------------------------------------------ */
 
-export type StepKey = "industry" | "design" | "brand" | "mood" | "color" | "shape" | "sections" | "extras" | "references";
+export type StepKey = "palette" | "radius" | "type" | "backdrop" | "business" | "design" | "sections" | "extras" | "references";
 
-/**
- * The flow has two phases:
- * - "gallery": pick the field, then a ready-made design for it (full-screen galleries)
- * - "editor": fine-tune that design with the live preview next to you
- */
-export type StepPhase = "gallery" | "editor";
-
-export const steps: { key: StepKey; phase: StepPhase; title: string; question: (kind: OrderKind) => string; hint: string; target: PreviewTarget }[] = [
-  { key: "industry", phase: "gallery", title: "حوزه کاری", question: (kind) => `${kind === "app" ? "اپلیکیشن" : "سایت"} شما برای چه کسب‌وکاری است؟`, hint: "هر حوزه طرح‌ها، متن‌ها و بخش‌های مخصوص خودش را دارد.", target: "top" },
-  { key: "design", phase: "gallery", title: "طرح", question: () => "کدام طرح به سلیقه شما نزدیک‌تر است؟", hint: "۳۰ طرح مخصوص حوزه شما. نزدیک‌ترین را انتخاب کنید؛ همه‌چیزش در مرحله‌های بعد قابل تغییر است.", target: "top" },
-  { key: "brand", phase: "editor", title: "نام برند", question: () => "اسم برندتان چیست؟", hint: "اسم و شعار روی لوگو، عنوان صفحه و آدرس سایت می‌نشیند.", target: "top" },
-  { key: "mood", phase: "editor", title: "حس کلی", question: (kind) => `${kind === "app" ? "اپلیکیشن" : "سایت"} شما چه حسی داشته باشد؟`, hint: "یک نقطه شروع انتخاب کنید؛ در مرحله‌های بعد جزئیاتش را تغییر می‌دهید.", target: "hero" },
-  { key: "color", phase: "editor", title: "رنگ", question: () => "رنگ اصلی و حالت نمایش را انتخاب کنید", hint: "رنگ اصلی روی دکمه‌ها، آیکون‌ها و بخش‌های مهم می‌نشیند.", target: "hero" },
-  { key: "shape", phase: "editor", title: "فرم و نوشتار", question: () => "گوشه‌ها و نوشته‌ها چطور باشند؟", hint: "گوشه‌های گرد صمیمی‌ترند، گوشه‌های تیز رسمی‌تر.", target: "features" },
-  { key: "sections", phase: "editor", title: "بخش‌ها", question: (kind) => (kind === "app" ? "اپ شما چه امکاناتی لازم دارد؟" : "سایت شما چه بخش‌هایی داشته باشد؟"), hint: "هر گزینه را بزنید تا جایش را در پیش‌نمایش ببینید.", target: "features" },
-  { key: "extras", phase: "editor", title: "جزئیات فنی", question: () => "حرکت و امکانات فنی چطور باشد؟", hint: "بعضی امکانات پشت صحنه کار می‌کنند و در پیش‌نمایش دیده نمی‌شوند؛ کنارشان علامت زده‌ایم.", target: "hero" },
-  { key: "references", phase: "editor", title: "الهام", question: () => "از کدام سایت‌ها یا اپ‌ها خوشتان می‌آید؟", hint: "لینک چند نمونه را بگذارید تا طراح دقیق‌تر سلیقه‌تان را بشناسد.", target: "top" },
+/** Small to big: colours and shapes first, then the business, then the whole page. */
+export const steps: { key: StepKey; title: string; question: (kind: OrderKind) => string; hint: string; target: PreviewTarget }[] = [
+  { key: "palette", title: "پالت رنگ", question: () => "پالت رنگی خودتان را بسازید", hint: "رنگ اصلی، رنگ دوم و فضای کلی. هر رنگی بخواهید می‌توانید انتخاب کنید.", target: "hero" },
+  { key: "radius", title: "گوشه‌ها", question: () => "گوشه‌های رابط کاربری چطور باشد؟", hint: "هر کارت یک رابط کامل با همان گوشه‌هاست؛ نتیجه روی کل طرح هم دیده می‌شود.", target: "showcase" },
+  { key: "type", title: "نوشته‌ها", question: () => "نوشته‌ها چه شخصیتی داشته باشند؟", hint: "وزن و اندازه تیترها حس برند را عوض می‌کند.", target: "hero" },
+  { key: "backdrop", title: "پس‌زمینه و حرکت", question: () => "پس‌زمینه و حرکت صفحه چطور باشد؟", hint: "از ساده تا شفق رنگی و درخشش؛ حرکت را هم همین‌جا تعیین کنید.", target: "hero" },
+  { key: "business", title: "کسب‌وکار", question: (kind) => `${kind === "app" ? "اپلیکیشن" : "سایت"} برای چه کسب‌وکاری است؟`, hint: "حوزه کاری، متن‌ها، تصویرها و بخش‌های مخصوص را تعیین می‌کند.", target: "top" },
+  { key: "design", title: "چیدمان", question: () => "کدام چیدمان را می‌پسندید؟", hint: "حالا همه انتخاب‌هایتان را در چیدمان‌های کامل ببینید.", target: "top" },
+  { key: "sections", title: "بخش‌ها", question: (kind) => (kind === "app" ? "اپ شما چه امکاناتی لازم دارد؟" : "صفحه چه بخش‌هایی داشته باشد؟"), hint: "هر گزینه را بزنید تا جایش را در پیش‌نمایش ببینید.", target: "features" },
+  { key: "extras", title: "امکانات فنی", question: () => "چه امکانات فنی لازم دارید؟", hint: "بعضی امکانات پشت صحنه کار می‌کنند و در پیش‌نمایش دیده نمی‌شوند؛ کنارشان علامت زده‌ایم.", target: "top" },
+  { key: "references", title: "الهام", question: () => "از کدام سایت‌ها یا اپ‌ها خوشتان می‌آید؟", hint: "لینک چند نمونه را بگذارید تا طراح دقیق‌تر سلیقه‌تان را بشناسد.", target: "top" },
 ];
-
-export const firstEditorStep = steps.findIndex((step) => step.phase === "editor");
 
 /* ------------------------------------------------------------------ */
 /* Industries — drive the preview copy                                 */
@@ -219,19 +215,21 @@ export const colors = [
   { value: "#ef7d3c", label: "نارنجی" },
   { value: "#b08a3e", label: "طلایی" },
   { value: "#16a37a", label: "سبز" },
-  { value: "#334155", label: "زغالی" },
+  { value: "#0f172a", label: "سرمه‌ای" },
 ];
 
 export const themes: { value: ThemeKey; label: string }[] = [
   { value: "light", label: "روشن" },
-  { value: "tinted", label: "رنگی ملایم" },
+  { value: "tinted", label: "رنگی" },
   { value: "dark", label: "تیره" },
+  { value: "midnight", label: "نیمه‌شب" },
 ];
 
-export const radii: { value: RadiusKey; label: string }[] = [
-  { value: "sharp", label: "تیز" },
-  { value: "soft", label: "نرم" },
-  { value: "round", label: "گرد" },
+export const radii: { value: RadiusKey; label: string; description: string }[] = [
+  { value: "sharp", label: "تیز", description: "رسمی و دقیق" },
+  { value: "soft", label: "نرم", description: "متعادل و آشنا" },
+  { value: "round", label: "گرد", description: "صمیمی و مدرن" },
+  { value: "pill", label: "کپسولی", description: "بازیگوش و نرم" },
 ];
 
 export const typeStyles: { value: TypeKey; label: string; sample: string }[] = [
@@ -240,12 +238,12 @@ export const typeStyles: { value: TypeKey; label: string; sample: string }[] = [
   { value: "heavy", label: "درشت و پررنگ", sample: "جسور و دیده‌شدنی" },
 ];
 
-export const moods: { value: MoodKey; label: string; description: string; tokens: Pick<WizardConfig, "color" | "theme" | "radius" | "type"> }[] = [
-  { value: "tech", label: "فناوری و اعتماد", description: "تمیز، دقیق، قابل اعتماد", tokens: { color: "#078ef0", theme: "light", radius: "soft", type: "balanced" } },
-  { value: "minimal", label: "مینیمال و آرام", description: "فضای خالی زیاد، بی‌حاشیه", tokens: { color: "#334155", theme: "light", radius: "sharp", type: "light" } },
-  { value: "friendly", label: "صمیمی و گرم", description: "گرد، رنگی، خودمانی", tokens: { color: "#ef7d3c", theme: "tinted", radius: "round", type: "balanced" } },
-  { value: "luxury", label: "لوکس و باوقار", description: "تیره، طلایی، کم‌حرف", tokens: { color: "#b08a3e", theme: "dark", radius: "sharp", type: "light" } },
-  { value: "bold", label: "پرانرژی و جسور", description: "نوشته‌های درشت، رنگ تند", tokens: { color: "#e5486f", theme: "light", radius: "round", type: "heavy" } },
+export const backdrops: { value: BackdropKey; label: string }[] = [
+  { value: "plain", label: "ساده" },
+  { value: "aurora", label: "شفق رنگی" },
+  { value: "glow", label: "درخشش" },
+  { value: "grid", label: "خطوط شبکه" },
+  { value: "dots", label: "نقطه‌ها" },
 ];
 
 export const siteSections: { value: string; label: string; icon: LucideIcon }[] = [
@@ -272,8 +270,13 @@ export const getDefaultConfig = (kind: OrderKind): WizardConfig => ({
   brandName: "",
   tagline: "",
   industry: "shop",
-  mood: "tech",
-  ...moods[0].tokens,
+  color: "#078ef0",
+  accent: "#7c3aed",
+  theme: "light",
+  radius: "round",
+  type: "balanced",
+  backdrop: "aurora",
+  art: 0,
   sections: kind === "app" ? ["search", "cart", "notifications"] : ["features", "testimonials", "contact"],
   references: ["", "", ""],
   notes: "",
@@ -308,17 +311,24 @@ const luminance = (hex: string) => {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 };
 
-export const buildPreviewVars = (config: Pick<WizardConfig, "color" | "theme" | "radius" | "type">): CSSProperties => {
+export const buildPreviewVars = (config: Pick<WizardConfig, "color" | "accent" | "theme" | "radius" | "type">): CSSProperties => {
   const primary = config.color;
+  const accent = config.accent;
   const onPrimary = luminance(primary) > 0.45 ? "#111827" : "#ffffff";
 
   const surfaces = {
     light: { bg: "#ffffff", surface: "#f5f7f8", text: "#16202a", muted: "#6b7780", border: "#e6eaec", soft: mix(primary, "#ffffff", 0.87) },
     tinted: { bg: mix(primary, "#ffffff", 0.93), surface: "#ffffff", text: "#16202a", muted: "#5f6b73", border: mix(primary, "#ffffff", 0.8), soft: mix(primary, "#ffffff", 0.82) },
     dark: { bg: "#0f151c", surface: "#18212b", text: "#eef2f5", muted: "#93a0aa", border: "#27323d", soft: mix(primary, "#0f151c", 0.72) },
+    midnight: { bg: "#06070d", surface: "#10121c", text: "#f1f2f7", muted: "#8d93a8", border: "#1d2133", soft: mix(primary, "#06070d", 0.66) },
   }[config.theme];
 
-  const radius = { sharp: { card: "4px", control: "3px" }, soft: { card: "14px", control: "10px" }, round: { card: "26px", control: "999px" } }[config.radius];
+  const radius = {
+    sharp: { card: "3px", control: "3px" },
+    soft: { card: "12px", control: "9px" },
+    round: { card: "22px", control: "14px" },
+    pill: { card: "30px", control: "999px" },
+  }[config.radius];
 
   const type = {
     light: { weight: 300, scale: 0.96, tracking: "0em" },
@@ -329,6 +339,7 @@ export const buildPreviewVars = (config: Pick<WizardConfig, "color" | "theme" | 
   return {
     "--pv-primary": primary,
     "--pv-on-primary": onPrimary,
+    "--pv-accent": accent,
     "--pv-soft": surfaces.soft,
     "--pv-bg": surfaces.bg,
     "--pv-surface": surfaces.surface,
@@ -374,3 +385,41 @@ export const appExtras: { value: string; label: string; description: string; ico
   { value: "multilang", label: "چندزبانه", description: "نسخه انگلیسی و عربی", icon: Newspaper, visible: false },
   { value: "admin", label: "پنل مدیریت", description: "مدیریت کاربران و محتوا", icon: Briefcase, visible: false },
 ];
+
+/* ------------------------------------------------------------------ */
+/* Palette helpers                                                     */
+/* ------------------------------------------------------------------ */
+
+const toHsl = (hex: string) => {
+  const [r, g, b] = hexToRgb(hex).map((part) => part / 255);
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const lightness = (max + min) / 2;
+  if (max === min) return [0, 0, lightness];
+  const delta = max - min;
+  const saturation = lightness > 0.5 ? delta / (2 - max - min) : delta / (max + min);
+  const hue = max === r ? (g - b) / delta + (g < b ? 6 : 0) : max === g ? (b - r) / delta + 2 : (r - g) / delta + 4;
+  return [hue * 60, saturation, lightness];
+};
+
+const fromHsl = (hue: number, saturation: number, lightness: number) => {
+  const k = (n: number) => (n + hue / 30) % 12;
+  const a = saturation * Math.min(lightness, 1 - lightness);
+  const f = (n: number) => lightness - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return rgbToHex([f(0) * 255, f(8) * 255, f(4) * 255]);
+};
+
+/** Accent suggestions that harmonise with the primary: analogous, triadic and complementary. */
+export const suggestAccents = (primary: string) => {
+  const [hue, saturation, lightness] = toHsl(primary);
+  const sat = Math.max(saturation, 0.55);
+  const light = Math.min(Math.max(lightness, 0.45), 0.6);
+  return [
+    { value: fromHsl((hue + 40) % 360, sat, light), label: "هم‌خانواده" },
+    { value: fromHsl((hue + 120) % 360, sat, light), label: "سه‌گانه" },
+    { value: fromHsl((hue + 180) % 360, sat, light), label: "مکمل" },
+    { value: fromHsl((hue + 320) % 360, sat, light), label: "گرم" },
+  ];
+};
+
+export const isDark = (theme: ThemeKey) => theme === "dark" || theme === "midnight";

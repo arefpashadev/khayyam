@@ -1,7 +1,7 @@
 import { Bell, Heart, House, Search, UserRound } from "lucide-react";
 import type { CSSProperties } from "react";
 
-import { appFeatures, industries, mix, type WizardConfig } from "../config";
+import { appFeatures, industries, isDark, mix, type WizardConfig } from "../config";
 import { getAppDesign, industryArts } from "../designs";
 import { HeroArt } from "./hero-art";
 
@@ -19,7 +19,7 @@ export const AppPreview = ({ config }: { config: WizardConfig }) => {
   const headline = config.tagline.trim() || content.headline;
   const enabled = appFeatures.filter((feature) => config.sections.includes(feature.value));
   const tabs = [{ value: "home", label: "خانه", icon: House }, ...enabled.slice(0, 3), { value: "profile", label: "پروفایل", icon: UserRound }];
-  const tile = (amount: number) => ({ backgroundColor: mix(config.color, config.theme === "dark" ? "#0f151c" : "#ffffff", amount) });
+  const tile = (amount: number) => ({ backgroundColor: mix(config.color, isDark(config.theme) ? "#0f151c" : "#ffffff", amount) });
 
   const banner = {
     solid: (
@@ -32,7 +32,7 @@ export const AppPreview = ({ config }: { config: WizardConfig }) => {
     ),
     art: (
       <div className="overflow-hidden rounded-(--pv-r-card)">
-        <HeroArt art={industryArts[config.industry][(config.variant + 1) % 6]} config={config} />
+        <HeroArt art={industryArts[config.industry][config.art % 6]} config={config} />
       </div>
     ),
     stats: (

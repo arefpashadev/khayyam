@@ -9,27 +9,22 @@ import { useWizard, type TourName } from "./store";
 
 type TourStep = { target: string | null; icon: LucideIcon; title: string; text: (kind: OrderKind) => string };
 
-const tours: Record<TourName, TourStep[]> = {
-  intro: [
-    {
-      target: null,
-      icon: Sparkles,
-      title: "خوش آمدید",
-      text: (kind) => `در سه قدم ${kind === "app" ? "اپلیکیشن" : "سایت"} خودتان را می‌سازید: حوزه کاری را انتخاب می‌کنید، از میان طرح‌های مخصوص آن یکی را برمی‌دارید و بعد هر جزئیاتش را با پیش‌نمایش زنده تغییر می‌دهید.`,
-    },
-    { target: "gallery-steps", icon: ListChecks, title: "سه قدم ساده", text: () => "همیشه می‌بینید کجای کار هستید و می‌توانید به قدم قبلی برگردید." },
-    { target: "industry-grid", icon: MousePointerClick, title: "از حوزه کاری شروع کنید", text: () => "هر حوزه ۳۰ طرح، متن و بخش‌های مخصوص خودش را دارد؛ فروشگاه شبیه فروشگاه است و رستوران شبیه رستوران." },
-  ],
-  editor: [
-    { target: "stage", icon: MousePointerClick, title: "پیش‌نمایش زنده", text: (kind) => (kind === "app" ? "هر تغییری بدهید همین‌جا روی گوشی دیده می‌شود." : "هر تغییری بدهید همین‌جا روی لپ‌تاپ و گوشی دیده می‌شود و پیش‌نمایش خودش به همان بخش می‌رود.") },
-    { target: "tabs", icon: ListChecks, title: "هر تب، یک بخش", text: () => "نام برند، حس کلی، رنگ، فرم، بخش‌ها و امکانات فنی را تب به تب تنظیم کنید. ترتیب اجباری نیست." },
-    { target: "panel", icon: ListChecks, title: "تنظیمات هر بخش", text: () => "گزینه‌ها را بزنید و نتیجه را همان لحظه ببینید." },
-    { target: "change-design", icon: LayoutTemplate, title: "تغییر طرح", text: () => "هر وقت خواستید به گالری برگردید و طرح دیگری انتخاب کنید؛ انتخاب‌هایتان حفظ می‌شود." },
-    { target: "submit", icon: Send, title: "ثبت درخواست", text: () => "آخر کار درخواست را ثبت کنید. همه این مقادیر بعداً هم طبق خواسته شما قابل تغییر است." },
-  ],
-};
+const editorTour: TourStep[] = [
+  {
+    target: null,
+    icon: Sparkles,
+    title: "به استودیو خیام خوش آمدید",
+    text: (kind) => `${kind === "app" ? "اپلیکیشن" : "سایت"} خودتان را از جزئیات تا کل می‌سازید: اول رنگ‌ها و گوشه‌ها و نوشته‌ها، بعد کسب‌وکار، و در آخر چیدمان کامل صفحه. هر انتخاب همان لحظه دیده می‌شود.`,
+  },
+  { target: "steps", icon: ListChecks, title: "همه مراحل یک‌جا", text: () => "هر وقت خواستید روی هر مرحله بزنید، تغییرش بدهید و برگردید. ترتیب اجباری نیست." },
+  { target: "panel", icon: MousePointerClick, title: "انتخاب‌های هر مرحله", text: () => "گزینه‌ها را بزنید؛ رنگ دلخواه را هم با قطره‌چکان انتخاب کنید." },
+  { target: "stage", icon: LayoutTemplate, title: "پیش‌نمایش زنده", text: (kind) => (kind === "app" ? "نتیجه همین‌جا روی گوشی دیده می‌شود." : "نتیجه همین‌جا روی لپ‌تاپ و گوشی دیده می‌شود و خودش به بخشی که عوض شده می‌رود.") },
+  { target: "submit", icon: Send, title: "ثبت درخواست", text: () => "هر وقت آماده بودید ثبت کنید. همه این مقادیر بعداً هم طبق خواسته شما قابل تغییر است." },
+];
 
-const storageKey = (name: TourName) => `khayyam:order-wizard-tour:${name}:v2`;
+const tours: Record<TourName, TourStep[]> = { intro: editorTour, editor: editorTour };
+
+const storageKey = (name: TourName) => `khayyam:order-wizard-tour:${name}:v3`;
 
 const CARD_WIDTH = 320;
 const CARD_HEIGHT = 200;

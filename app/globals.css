@@ -178,3 +178,19 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .pv-rise, .pv-float { animation: none !important; }
 }
+
+@keyframes pv-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(6%, 8%) scale(1.08); }
+  66% { transform: translate(-6%, 4%) scale(0.95); }
+}
+@keyframes pv-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(33.333%); }
+}
+[data-motion="lively"] .pv-drift { animation: pv-drift 14s ease-in-out infinite; }
+[data-motion="subtle"] .pv-marquee { animation: pv-marquee 40s linear infinite; }
+[data-motion="lively"] .pv-marquee { animation: pv-marquee 18s linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .pv-drift, .pv-marquee { animation: none !important; }
+}

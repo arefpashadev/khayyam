@@ -3,11 +3,9 @@ import type { IndustryKey } from "./config";
 /**
  * Design catalogue.
  *
- * Site: every field has 6 artworks of its own; each is shown in 5 hero compositions,
- * giving 30 designs that belong only to that field. Navigation, social-proof row,
- * background pattern and card style rotate with the design number so neighbours differ.
- *
- * App: 3 home layouts × 5 banner styles × 2 tab bars = 30 designs.
+ * Site: 10 hero layouts, each a genuinely different page structure (bento grids, editorial
+ * type, glass panels, 3D stacks, marquees…). The hero shows one of the field's 6 own artworks.
+ * App: 3 home layouts × 5 banner styles with alternating tab bars = 15 designs.
  */
 
 export type HeroArtKey =
@@ -27,39 +25,54 @@ export const industryArts: Record<IndustryKey, HeroArtKey[]> = {
   personal: ["portrait", "projects", "monogram", "skills", "timeline", "contact"],
 };
 
-export const compositions = ["split", "mirror", "centered", "fullbleed", "editorial"] as const;
-export const navStyles = ["classic", "centered", "floating"] as const;
-export const proofStyles = ["rating", "stats", "none"] as const;
-export const cardStyles = ["outlined", "filled", "numbered"] as const;
-
-export type SiteDesign = {
-  art: HeroArtKey;
-  composition: (typeof compositions)[number];
-  nav: (typeof navStyles)[number];
-  proof: (typeof proofStyles)[number];
-  cards: (typeof cardStyles)[number];
-  pattern: boolean;
+export const artLabels: Record<HeroArtKey, string> = {
+  dashboard: "داشبورد رشد", services: "خدمات", stats: "آمار", logos: "مشتریان", quote: "نظر مشتری", team: "تیم",
+  products: "محصولات", categories: "دسته‌بندی", sale: "حراج", showcase: "محصول ویژه", deal: "پیشنهاد ویژه", cart: "سبد خرید",
+  menu: "منو", plate: "غذای ویژه", reserve: "رزرو میز", delivery: "پیک", chef: "سرآشپز", hours: "ساعت کاری",
+  courses: "دوره‌ها", live: "کلاس زنده", progress: "پیشرفت", teacher: "استاد", schedule: "برنامه", certificate: "گواهی",
+  appointment: "نوبت‌دهی", doctors: "پزشکان", vitals: "سلامت", clinic: "نقشه کلینیک", calendar: "تقویم", prescription: "داروها",
+  portrait: "پرتره", projects: "نمونه‌کار", monogram: "حرف اول", skills: "مهارت‌ها", timeline: "مسیر کاری", contact: "تماس",
 };
 
-export const DESIGN_COUNT = 30;
+export const siteLayouts = [
+  { value: "split", label: "کلاسیک" },
+  { value: "bento", label: "بنتو" },
+  { value: "editorial", label: "مجله‌ای" },
+  { value: "glass", label: "شیشه‌ای" },
+  { value: "stack3d", label: "سه‌بعدی" },
+  { value: "marquee", label: "نوار متحرک" },
+  { value: "media", label: "قاب بزرگ" },
+  { value: "centered", label: "وسط‌چین" },
+  { value: "mirror", label: "برعکس" },
+  { value: "fullbleed", label: "تمام‌رنگ" },
+] as const;
 
-const wrap = (variant: number) => ((variant % DESIGN_COUNT) + DESIGN_COUNT) % DESIGN_COUNT;
+export type SiteLayout = (typeof siteLayouts)[number]["value"];
 
-export const getSiteDesign = (industry: IndustryKey, variant: number): SiteDesign => {
-  const index = wrap(variant);
+export type SiteDesign = {
+  layout: SiteLayout;
+  art: HeroArtKey;
+  nav: "classic" | "centered" | "floating";
+  cards: "outlined" | "filled" | "numbered";
+};
+
+const navFor: Record<SiteLayout, SiteDesign["nav"]> = {
+  split: "classic", bento: "floating", editorial: "classic", glass: "floating", stack3d: "centered",
+  marquee: "centered", media: "floating", centered: "centered", mirror: "classic", fullbleed: "classic",
+};
+const cardsFor: Record<SiteLayout, SiteDesign["cards"]> = {
+  split: "outlined", bento: "filled", editorial: "numbered", glass: "filled", stack3d: "outlined",
+  marquee: "numbered", media: "filled", centered: "outlined", mirror: "numbered", fullbleed: "filled",
+};
+
+export const SITE_DESIGN_COUNT = siteLayouts.length;
+
+const wrap = (value: number, size: number) => ((value % size) + size) % size;
+
+export const getSiteDesign = (industry: IndustryKey, variant: number, art: number): SiteDesign => {
+  const layout = siteLayouts[wrap(variant, SITE_DESIGN_COUNT)].value;
   const arts = industryArts[industry];
-  const art = index % arts.length;
-  // Shift the composition by the artwork so the first row of the gallery already mixes layouts;
-  // every artwork still appears in all five compositions exactly once.
-  const composition = (Math.floor(index / arts.length) + art) % compositions.length;
-  return {
-    art: arts[art],
-    composition: compositions[composition],
-    nav: navStyles[(art + composition) % navStyles.length],
-    proof: proofStyles[(art * 2 + composition) % proofStyles.length],
-    cards: cardStyles[(art + composition * 2) % cardStyles.length],
-    pattern: (art + composition) % 2 === 1,
-  };
+  return { layout, art: arts[wrap(art, arts.length)], nav: navFor[layout], cards: cardsFor[layout] };
 };
 
 export const appLayouts = ["cards", "list", "feed"] as const;
@@ -72,11 +85,13 @@ export type AppDesign = {
   tabBar: (typeof appTabBars)[number];
 };
 
+export const APP_DESIGN_COUNT = appLayouts.length * appBanners.length;
+
 export const getAppDesign = (variant: number): AppDesign => {
-  const index = wrap(variant);
+  const index = wrap(variant, APP_DESIGN_COUNT);
   return {
     banner: appBanners[index % appBanners.length],
     layout: appLayouts[Math.floor(index / appBanners.length) % appLayouts.length],
-    tabBar: appTabBars[Math.floor(index / (appBanners.length * appLayouts.length)) % appTabBars.length],
+    tabBar: appTabBars[index % appTabBars.length],
   };
 };

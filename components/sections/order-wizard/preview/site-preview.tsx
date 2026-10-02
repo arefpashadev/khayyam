@@ -1,7 +1,7 @@
 import { ChevronDown, Menu, MessageCircle, Moon, Quote, Search, ShoppingCart, Star, UserRound } from "lucide-react";
 import type { CSSProperties, ReactNode } from "react";
 
-import { faNumber, industries, mix, type WizardConfig } from "../config";
+import { faNumber, industries, isDark, mix, type WizardConfig } from "../config";
 import { getSiteDesign } from "../designs";
 import { HeroArt } from "./hero-art";
 import { IndustryShowcase } from "./industry-showcase";
@@ -32,16 +32,43 @@ const SectionTitle = ({ title, compact }: { title: string; compact: boolean }) =
  * Navigation + hero. Exported on its own so the design picker can render real
  * thumbnails of every design without drawing a separate mini version.
  */
+/** Decorative layer behind the hero, chosen in the "backdrop" step. */
+export const Backdrop = ({ kind, strong = false }: { kind: WizardConfig["backdrop"]; strong?: boolean }) => {
+  const tint = (variable: string, amount: number) => `color-mix(in srgb, var(${variable}) ${amount}%, transparent)`;
+  const fade = "radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 75%)";
+  if (kind === "aurora" || strong) {
+    return (
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <span className="pv-drift absolute -right-[10%] -top-[30%] h-[80%] w-[55%] rounded-full blur-[90px]" style={{ background: tint("--pv-primary", strong ? 70 : 45) }} />
+        <span className="pv-drift absolute -left-[5%] top-[10%] h-[70%] w-[45%] rounded-full blur-[100px]" style={{ background: tint("--pv-accent", strong ? 60 : 38), animationDelay: "-4s" }} />
+        <span className="pv-drift absolute bottom-[-30%] left-[30%] h-[60%] w-[40%] rounded-full blur-[90px]" style={{ background: tint("--pv-primary", strong ? 40 : 22), animationDelay: "-8s" }} />
+      </div>
+    );
+  }
+  if (kind === "glow") {
+    return <div className="pointer-events-none absolute inset-0" aria-hidden="true" style={{ background: `radial-gradient(60% 55% at 50% 0%, ${tint("--pv-primary", 42)}, transparent 70%), radial-gradient(35% 35% at 85% 70%, ${tint("--pv-accent", 25)}, transparent 70%)` }} />;
+  }
+  if (kind === "grid") {
+    return <div className="pointer-events-none absolute inset-0" aria-hidden="true" style={{ backgroundImage: "linear-gradient(var(--pv-border) 1px, transparent 1px), linear-gradient(90deg, var(--pv-border) 1px, transparent 1px)", backgroundSize: "56px 56px", maskImage: fade, WebkitMaskImage: fade }} />;
+  }
+  if (kind === "dots") {
+    return <div className="pointer-events-none absolute inset-0" aria-hidden="true" style={{ backgroundImage: `radial-gradient(${tint("--pv-text", 22)} 1.3px, transparent 1.3px)`, backgroundSize: "20px 20px", maskImage: fade, WebkitMaskImage: fade }} />;
+  }
+  return null;
+};
+
+/**
+ * Navigation + hero. Exported on its own so the design gallery can render real
+ * thumbnails of every layout without drawing a separate mini version.
+ */
 export const SiteTop = ({ config, compact }: { config: WizardConfig; compact: boolean }) => {
   const content = industries[config.industry];
   const name = config.brandName.trim() || "برند شما";
   const BrandIcon = content.icon;
-  const design = getSiteDesign(config.industry, config.variant);
-  const pattern: CSSProperties | undefined = design.pattern
-    ? { backgroundImage: "radial-gradient(var(--pv-border) 1.4px, transparent 1.4px)", backgroundSize: "22px 22px" }
-    : undefined;
+  const design = getSiteDesign(config.industry, config.variant, config.art);
   const extra = (value: string) => config.extras.includes(value);
-  const shade = (amount: number) => mix(config.color, config.theme === "dark" ? "#0f151c" : "#ffffff", amount);
+  const headline = config.tagline.trim() || content.headline;
+  const layout = design.layout;
 
   const logo = (
     <div className="flex items-center gap-2.5">
@@ -85,120 +112,244 @@ export const SiteTop = ({ config, compact }: { config: WizardConfig; compact: bo
   );
 
   const nav = compact ? (
-    <header className="flex items-center justify-between border-b border-(--pv-border) px-5 py-4">{logo}{tools}</header>
+    <header className="relative z-10 flex items-center justify-between border-b border-(--pv-border) px-5 py-4">{logo}{tools}</header>
   ) : design.nav === "centered" ? (
-    <header className="grid grid-cols-3 items-center border-b border-(--pv-border) px-20 py-5">
+    <header className="relative z-10 grid grid-cols-3 items-center border-b border-(--pv-border) px-20 py-5">
       {links}
       <div className="flex justify-center">{logo}</div>
       <div className="flex justify-end">{tools}</div>
     </header>
   ) : design.nav === "floating" ? (
-    <div className="px-20 pt-6">
-      <header className="flex items-center justify-between rounded-(--pv-r-card) border border-(--pv-border) bg-(--pv-surface) px-6 py-3 shadow-sm">{logo}{links}{tools}</header>
+    <div className="relative z-10 px-20 pt-6">
+      <header className="flex items-center justify-between rounded-(--pv-r-card) border border-(--pv-border) bg-(--pv-surface)/80 px-6 py-3 shadow-sm backdrop-blur">{logo}{links}{tools}</header>
     </div>
   ) : (
-    <header className="flex items-center justify-between border-b border-(--pv-border) px-20 py-5">{logo}{links}{tools}</header>
+    <header className="relative z-10 flex items-center justify-between border-b border-(--pv-border) px-20 py-5">{logo}{links}{tools}</header>
   );
 
-  const composition = design.composition;
-  const centered = (composition === "centered" || composition === "editorial") && !compact;
-  const proof =
-    design.proof === "rating" ? (
-      <div className={`flex items-center gap-3 ${centered ? "justify-center" : ""}`}>
-        <span className="flex -space-x-3 space-x-reverse">
-          {[0.15, 0.35, 0.55, 0.75].map((amount) => (
-            <span key={amount} className="flex size-9 items-center justify-center rounded-full ring-2 ring-(--pv-bg)" style={{ backgroundColor: shade(amount) }}>
-              <UserRound className="size-4 text-white/90" aria-hidden="true" />
-            </span>
-          ))}
-        </span>
-        <span className="text-[13px]">
-          <span className="flex items-center gap-0.5 text-(--pv-primary)">{[0, 1, 2, 3, 4].map((star) => <Star key={star} className="size-3.5 fill-current" aria-hidden="true" />)}</span>
-          <span className="text-(--pv-muted)">۴٫۹ از ۲٬۴۰۰ نظر</span>
-        </span>
-      </div>
-    ) : design.proof === "stats" ? (
-      <div className={`flex gap-8 border-t border-(--pv-border) pt-5 ${centered ? "justify-center" : ""}`}>
-        {content.stats.map(([value, label]) => (
-          <div key={label}>
-            <strong className="block" style={heading(compact ? 20 : 26)}>{value}</strong>
-            <span className="text-[12px] text-(--pv-muted)">{label}</span>
-          </div>
-        ))}
-      </div>
-    ) : null;
+  const art = (tall = true) => <HeroArt art={design.art} config={config} tall={tall} />;
 
-  const heroText = (inverted = false) => (
-    <div key={config.motion} className={`pv-rise flex flex-col gap-5 ${centered ? "items-center text-center" : "items-start text-right"}`}>
-      <span className={`rounded-(--pv-r-ctrl) px-3 py-1.5 text-[12px] font-bold ${inverted ? "bg-white/15 text-white" : "bg-(--pv-soft) text-(--pv-primary)"}`}>{content.badge}</span>
-      <h1 style={heading(compact ? 30 : 54)} className={inverted ? "text-white" : ""}>
-        {config.tagline.trim() || content.headline}
-      </h1>
-      <p className={`max-w-[34ch] ${compact ? "text-[14px]" : "text-[17px]"} leading-8 ${inverted ? "text-white/80" : "text-(--pv-muted)"}`}>{content.sub}</p>
-      <div className="flex flex-wrap items-center gap-3">
-        <span className={`${primaryButton} ${compact ? "h-11 px-5 text-[13px]" : "h-13 px-7 text-[15px]"}`}>{content.cta}</span>
-        <span className={`inline-flex items-center rounded-(--pv-r-ctrl) border px-5 font-bold ${compact ? "h-11 text-[13px]" : "h-13 text-[15px]"} ${inverted ? "border-white/40 text-white" : "border-(--pv-border) text-(--pv-text)"}`}>درباره ما</span>
-      </div>
-      {!inverted && proof && <div className="mt-2 w-full">{proof}</div>}
+  const rating = (
+    <div className="flex items-center gap-3">
+      <span className="flex -space-x-3 space-x-reverse">
+        {[0.15, 0.35, 0.55, 0.75].map((amount) => (
+          <span key={amount} className="flex size-9 items-center justify-center rounded-full ring-2 ring-(--pv-bg)" style={{ backgroundColor: mix(config.color, "#ffffff", amount) }}>
+            <UserRound className="size-4 text-white/90" aria-hidden="true" />
+          </span>
+        ))}
+      </span>
+      <span className="text-[13px]">
+        <span className="flex items-center gap-0.5 text-(--pv-primary)">{[0, 1, 2, 3, 4].map((star) => <Star key={star} className="size-3.5 fill-current" aria-hidden="true" />)}</span>
+        <span className="text-(--pv-muted)">۴٫۹ از ۲٬۴۰۰ نظر</span>
+      </span>
     </div>
   );
 
-  return (
-    <>
-      {nav}
-      <section data-pv="hero" className="pv-section" style={composition === "fullbleed" ? undefined : pattern}>
-        {compact ? (
-          <div className={composition === "fullbleed" ? "bg-(--pv-primary) px-5 py-12" : "flex flex-col gap-8 px-5 py-10"}>
-            {heroText(composition === "fullbleed")}
-            {composition !== "fullbleed" && <HeroArt art={design.art} config={config} tall />}
-          </div>
-        ) : composition === "fullbleed" ? (
-          <div className="relative grid grid-cols-[1.1fr_1fr] items-center gap-12 overflow-hidden bg-(--pv-primary) px-20 py-20">
-            <div className="absolute -left-24 -top-24 size-96 rounded-full bg-white/10" />
-            <div className="absolute -bottom-32 left-1/3 size-80 rounded-full bg-black/10" />
-            <div className="relative">{heroText(true)}</div>
-            <div className="relative rounded-(--pv-r-card) bg-(--pv-bg) p-3 shadow-2xl">
-              <HeroArt art={design.art} config={config} tall />
-            </div>
-          </div>
-        ) : composition === "centered" ? (
-          <div className="flex flex-col items-center gap-12 px-20 py-20">
-            {heroText()}
-            <div className="w-full max-w-[920px]">
-              <HeroArt art={design.art} config={config} />
-            </div>
-          </div>
-        ) : composition === "editorial" ? (
-          <div className="px-20 pb-16 pt-14">
-            <div className="grid grid-cols-[1.4fr_1fr] items-end gap-10 border-b border-(--pv-border) pb-10">
-              <h1 className="pv-rise text-right" style={heading(68)}>{config.tagline.trim() || content.headline}</h1>
-              <div className="flex flex-col items-start gap-4">
-                <p className="text-[16px] leading-8 text-(--pv-muted)">{content.sub}</p>
-                <span className={`${primaryButton} h-12 px-7 text-[14px]`}>{content.cta}</span>
-              </div>
-            </div>
-            <div className="mt-10 grid grid-cols-[1fr_2fr] items-center gap-10">
-              <div>{proof ?? <span className="text-[13px] font-bold text-(--pv-primary)">{content.badge}</span>}</div>
-              <HeroArt art={design.art} config={config} />
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 items-center gap-14 px-20 py-20">
-            {composition === "mirror" ? (
-              <>
-                <HeroArt art={design.art} config={config} tall />
-                {heroText()}
-              </>
-            ) : (
-              <>
-                {heroText()}
-                <HeroArt art={design.art} config={config} tall />
-              </>
-            )}
+  const badge = (inverted = false) => (
+    <span className={`inline-flex w-fit items-center gap-2 rounded-(--pv-r-ctrl) px-3 py-1.5 text-[12px] font-bold ${inverted ? "bg-white/15 text-white" : "bg-(--pv-soft) text-(--pv-primary)"}`}>
+      <span className="size-1.5 rounded-full bg-(--pv-accent)" />
+      {content.badge}
+    </span>
+  );
+
+  const buttons = (inverted = false, center = false) => (
+    <div className={`flex flex-wrap items-center gap-3 ${center ? "justify-center" : ""}`}>
+      <span className={`${primaryButton} ${compact ? "h-11 px-5 text-[13px]" : "h-13 px-7 text-[15px]"} ${inverted ? "!bg-white !text-[#14202b]" : ""}`}>{content.cta}</span>
+      <span className={`inline-flex items-center rounded-(--pv-r-ctrl) border px-5 font-bold ${compact ? "h-11 text-[13px]" : "h-13 text-[15px]"} ${inverted ? "border-white/40 text-white" : "border-(--pv-border) text-(--pv-text)"}`}>درباره ما</span>
+    </div>
+  );
+
+  const text = ({ inverted = false, center = false, size = 54 }: { inverted?: boolean; center?: boolean; size?: number } = {}) => (
+    <div key={config.motion} className={`pv-rise flex flex-col gap-5 ${center ? "items-center text-center" : "items-start text-right"}`}>
+      {badge(inverted)}
+      <h1 style={heading(compact ? 30 : size)} className={inverted ? "text-white" : ""}>
+        {headline}
+      </h1>
+      <p className={`max-w-[38ch] ${compact ? "text-[14px]" : "text-[17px]"} leading-8 ${inverted ? "text-white/80" : "text-(--pv-muted)"}`}>{content.sub}</p>
+      {buttons(inverted, center)}
+    </div>
+  );
+
+  const marqueeRow = (
+    <div className="relative overflow-hidden py-2" style={{ maskImage: "linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent)" }}>
+      <div className="pv-marquee flex w-max gap-3">
+        {[...content.features, ...content.features, ...content.features].map((item, index) => (
+          <span key={index} className="flex shrink-0 items-center gap-2 rounded-(--pv-r-ctrl) border border-(--pv-border) bg-(--pv-surface) px-4 py-2.5 text-[13px] font-bold">
+            <item.icon className="size-4 text-(--pv-primary)" aria-hidden="true" /> {item.label}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+
+  const pad = compact ? "px-5 py-10" : "px-20 py-20";
+  let hero;
+
+  if (layout === "fullbleed") {
+    hero = (
+      <div className={`relative overflow-hidden bg-(--pv-primary) ${compact ? "px-5 py-12" : "grid grid-cols-[1.1fr_1fr] items-center gap-12 px-20 py-20"}`}>
+        <span className="absolute -left-24 -top-24 size-96 rounded-full opacity-40 blur-3xl" style={{ background: "var(--pv-accent)" }} />
+        <span className="absolute -bottom-32 left-1/3 size-80 rounded-full bg-black/15" />
+        <div className="relative">{text({ inverted: true })}</div>
+        {!compact && (
+          <div className="relative rounded-(--pv-r-card) bg-(--pv-bg) p-3 shadow-2xl">
+            {art()}
           </div>
         )}
+      </div>
+    );
+  } else if (layout === "glass") {
+    hero = (
+      <div className={`relative overflow-hidden ${compact ? "px-4 py-10" : "px-20 py-20"}`}>
+        <Backdrop kind={config.backdrop} strong />
+        <div className={`relative grid items-center gap-10 rounded-(--pv-r-card) border border-white/40 bg-(--pv-bg)/55 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.35)] backdrop-blur-xl ${compact ? "p-5" : "grid-cols-[1.1fr_1fr] p-12"}`}>
+          {text()}
+          {!compact && art()}
+        </div>
+      </div>
+    );
+  } else if (layout === "media") {
+    hero = (
+      <div className={compact ? "px-4 py-6" : "px-20 py-10"}>
+        <div className="relative overflow-hidden rounded-(--pv-r-card)">
+          <div className={compact ? "aspect-[3/4]" : "aspect-[16/7.5]"}>
+            <div className="size-full [&>*]:!aspect-auto [&>*]:size-full [&>*]:!rounded-none">
+              {art(false)}
+            </div>
+          </div>
+          <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.55),transparent_55%)]" />
+          <div className={`absolute bottom-0 right-0 ${compact ? "left-0 p-5" : "max-w-[620px] p-12"}`}>
+            <div key={config.motion} className="pv-rise flex flex-col gap-4">
+              {badge(true)}
+              <h1 style={heading(compact ? 28 : 52)} className="text-white">{headline}</h1>
+              {buttons(true)}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  } else if (compact) {
+    hero = (
+      <div className="relative flex flex-col gap-8 px-5 py-10">
+        <Backdrop kind={config.backdrop} />
+        <div className="relative">{text()}</div>
+        {layout === "marquee" ? <div className="relative">{marqueeRow}</div> : null}
+        <div className="relative">{art()}</div>
+      </div>
+    );
+  } else if (layout === "bento") {
+    hero = (
+      <div className={`relative grid grid-cols-[1fr_1.35fr] items-stretch gap-6 ${pad}`}>
+        <Backdrop kind={config.backdrop} />
+        <div className="relative flex flex-col justify-center gap-8">
+          {text({ size: 50 })}
+          {rating}
+        </div>
+        <div className="relative grid grid-cols-3 grid-rows-3 gap-3">
+          <div className="col-span-2 row-span-2 overflow-hidden rounded-(--pv-r-card) [&>*]:!aspect-auto [&>*]:size-full">{art(false)}</div>
+          <div className="flex flex-col justify-end rounded-(--pv-r-card) bg-(--pv-primary) p-4 text-(--pv-on-primary)">
+            <strong className="text-[26px] leading-none">{content.stats[0][0]}</strong>
+            <span className="mt-1 text-[12px] opacity-80">{content.stats[0][1]}</span>
+          </div>
+          <div className="flex flex-col justify-end rounded-(--pv-r-card) p-4" style={{ background: "color-mix(in srgb, var(--pv-accent) 18%, var(--pv-bg))" }}>
+            <strong className="text-[26px] leading-none" style={{ color: "var(--pv-accent)" }}>{content.stats[1][0]}</strong>
+            <span className="mt-1 text-[12px] text-(--pv-muted)">{content.stats[1][1]}</span>
+          </div>
+          {content.features.slice(0, 3).map((item, index) => (
+            <div key={item.label} className={`flex flex-col justify-between rounded-(--pv-r-card) p-4 ${index === 1 ? "bg-(--pv-text) text-(--pv-bg)" : "bg-(--pv-surface)"}`}>
+              <item.icon className="size-5" aria-hidden="true" />
+              <strong className="text-[13px]">{item.label}</strong>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  } else if (layout === "editorial") {
+    hero = (
+      <div className="relative px-20 pb-16 pt-14">
+        <Backdrop kind={config.backdrop} />
+        <div className="relative grid grid-cols-[1.5fr_1fr] items-end gap-10 border-b border-(--pv-border) pb-10">
+          <h1 key={config.motion} className="pv-rise text-right" style={heading(76)}>{headline}</h1>
+          <div className="flex flex-col items-start gap-5">
+            {badge()}
+            <p className="text-[16px] leading-8 text-(--pv-muted)">{content.sub}</p>
+            {buttons()}
+          </div>
+        </div>
+        <div className="relative mt-10 grid grid-cols-[1fr_2.2fr] items-center gap-10">
+          <div className="flex flex-col gap-6">
+            {content.stats.map(([value, label]) => (
+              <div key={label} className="border-t border-(--pv-border) pt-3">
+                <strong style={heading(30)}>{value}</strong>
+                <span className="block text-[12px] text-(--pv-muted)">{label}</span>
+              </div>
+            ))}
+          </div>
+          {art(false)}
+        </div>
+      </div>
+    );
+  } else if (layout === "stack3d") {
+    hero = (
+      <div className="relative overflow-hidden px-20 pt-20">
+        <Backdrop kind={config.backdrop} />
+        <div className="relative mx-auto max-w-[760px]">{text({ center: true, size: 58 })}</div>
+        <div className="relative mx-auto mt-14 h-[380px] max-w-[980px]" style={{ perspective: "1400px" }}>
+          <div className="absolute inset-x-[12%] top-10 opacity-50" style={{ transform: "rotateX(28deg) translateZ(-120px) translateY(-40px)" }}>
+            <div className="rounded-(--pv-r-card) bg-(--pv-surface) p-3 shadow-xl"><div className="aspect-[16/7] rounded-(--pv-r-card)" style={{ background: "color-mix(in srgb, var(--pv-accent) 25%, var(--pv-bg))" }} /></div>
+          </div>
+          <div className="absolute inset-x-[6%] top-16" style={{ transform: "rotateX(28deg)" }}>
+            <div className="rounded-(--pv-r-card) bg-(--pv-bg) p-3 shadow-[0_40px_80px_-30px_rgba(0,0,0,0.45)] ring-1 ring-(--pv-border)">{art(false)}</div>
+          </div>
+        </div>
+      </div>
+    );
+  } else if (layout === "marquee") {
+    hero = (
+      <div className="relative flex flex-col gap-12 overflow-hidden pb-16 pt-20">
+        <Backdrop kind={config.backdrop} />
+        <div className="relative mx-auto max-w-[860px] px-20">{text({ center: true, size: 64 })}</div>
+        <div className="relative">{marqueeRow}</div>
+        <div className="relative mx-auto w-full max-w-[1000px] px-20">{art(false)}</div>
+      </div>
+    );
+  } else if (layout === "centered") {
+    hero = (
+      <div className="relative flex flex-col items-center gap-12 px-20 py-20">
+        <Backdrop kind={config.backdrop} />
+        <div className="relative flex flex-col items-center gap-6">
+          {text({ center: true })}
+          {rating}
+        </div>
+        <div className="relative w-full max-w-[920px]">{art(false)}</div>
+      </div>
+    );
+  } else {
+    hero = (
+      <div className={`relative grid grid-cols-2 items-center gap-14 ${pad}`}>
+        <Backdrop kind={config.backdrop} />
+        {layout === "mirror" ? (
+          <>
+            <div className="relative">{art()}</div>
+            <div className="relative flex flex-col gap-8">{text()}{rating}</div>
+          </>
+        ) : (
+          <>
+            <div className="relative flex flex-col gap-8">{text()}{rating}</div>
+            <div className="relative">{art()}</div>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative">
+      {nav}
+      <section data-pv="hero" className="pv-section relative">
+        {hero}
       </section>
-    </>
+    </div>
   );
 };
 
@@ -206,7 +357,7 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
   const content = industries[config.industry];
   const name = config.brandName.trim() || "برند شما";
   const has = (section: string) => config.sections.includes(section);
-  const design = getSiteDesign(config.industry, config.variant);
+  const design = getSiteDesign(config.industry, config.variant, config.art);
 
   return (
     <div dir="rtl" data-motion={config.motion} className="pv-root min-h-full bg-(--pv-bg) font-sans text-(--pv-text)">
@@ -248,7 +399,7 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
               <div
                 key={index}
                 className={`rounded-(--pv-r-card) ${index === 0 && !compact ? "row-span-2" : "aspect-[4/3]"}`}
-                style={{ backgroundColor: mix(config.color, config.theme === "dark" ? "#0f151c" : "#ffffff", amount) }}
+                style={{ backgroundColor: mix(config.color, isDark(config.theme) ? "#0f151c" : "#ffffff", amount) }}
               />
             ))}
           </div>
@@ -324,7 +475,7 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
           <div className={`grid gap-4 ${compact ? "" : "grid-cols-3"}`}>
             {["راهنمای انتخاب درست", "پنج اشتباه رایج", "پشت صحنه کار ما"].slice(0, compact ? 2 : 3).map((title, index) => (
               <article key={title} className={`${card} overflow-hidden`}>
-                <div className="aspect-[16/9]" style={{ backgroundColor: mix(config.color, config.theme === "dark" ? "#0f151c" : "#ffffff", 0.3 + index * 0.2) }} />
+                <div className="aspect-[16/9]" style={{ backgroundColor: mix(config.color, isDark(config.theme) ? "#0f151c" : "#ffffff", 0.3 + index * 0.2) }} />
                 <div className="p-5">
                   <strong className="text-[15px]">{title}</strong>
                   <p className="mt-2 text-[12px] text-(--pv-muted)">۵ دقیقه مطالعه</p>

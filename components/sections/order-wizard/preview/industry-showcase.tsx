@@ -1,7 +1,7 @@
 import { Clock, Plus, Star, TrendingUp, UserRound } from "lucide-react";
 import type { CSSProperties } from "react";
 
-import { faNumber, mix, type WizardConfig } from "../config";
+import { faNumber, isDark, mix, type WizardConfig } from "../config";
 
 const heading = (size: number): CSSProperties => ({
   fontSize: `calc(${size}px * var(--pv-hs))`,
@@ -23,7 +23,7 @@ const Title = ({ title, action, compact }: { title: string; action: string; comp
 
 /** The section that makes each field look like itself: products, menu, courses, doctors, cases, work. */
 export const IndustryShowcase = ({ config, compact }: { config: WizardConfig; compact: boolean }) => {
-  const shade = (amount: number) => mix(config.color, config.theme === "dark" ? "#0f151c" : "#ffffff", amount);
+  const shade = (amount: number) => mix(config.color, isDark(config.theme) ? "#0f151c" : "#ffffff", amount);
   const cols = compact ? "grid-cols-2" : "grid-cols-4";
   const pad = compact ? "px-5 py-10" : "px-20 py-16";
 

@@ -1,12 +1,12 @@
 "use client";
 
-import { CircleHelp, Laptop as LaptopIcon, LayoutTemplate, MonitorSmartphone, Smartphone, X } from "lucide-react";
+import { CircleHelp, Laptop as LaptopIcon, MonitorSmartphone, Smartphone, X } from "lucide-react";
 import { motion } from "motion/react";
 import { useState, type ReactNode } from "react";
 
 import { Link } from "@/i18n/navigation";
 
-import { buildPreviewVars, faNumber, mix, steps } from "../config";
+import { buildPreviewVars } from "../config";
 import { useWizard } from "../store";
 import { useIsSmallScreen } from "../use-small-screen";
 import { AppPreview } from "./app-preview";
@@ -48,20 +48,17 @@ export const deskViews: { value: DeskView; label: string; icon: typeof LaptopIco
   { value: "phone", label: "موبایل", icon: Smartphone },
 ];
 
-const pill = "flex h-9 items-center gap-2 rounded-full bg-white/85 px-3.5 text-[12px] font-bold text-[#4d5b65] shadow-[0_1px_2px_rgba(20,32,43,0.08)] backdrop-blur";
-const designStep = steps.findIndex((step) => step.key === "design");
+const pill = "flex h-9 items-center gap-2 rounded-full bg-white/8 px-3.5 text-[12px] font-bold text-[#c9d0d9] ring-1 ring-white/8 backdrop-blur";
 
 /**
- * The live preview canvas.
- * - mobile: its own small toolbar (exit, help, change design), laptop + phone side by side
- * - studio (desktop): chrome lives in the top bar; the floating panel sits over the right side,
- *   so the scene is laid out in the space left of it, with a view switch floating at the bottom.
+ * The live preview canvas: a dark stage lit by the brand's own two colours.
+ * - mobile: small floating toolbar (exit, help) and laptop + phone side by side
+ * - studio (desktop): view switch floating at the top; chrome lives in the header
  */
 export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
   const kind = useWizard((state) => state.kind);
   const config = useWizard((state) => state.config);
   const setTour = useWizard((state) => state.setTour);
-  const goTo = useWizard((state) => state.goTo);
   const isSmall = useIsSmallScreen();
   const [deskView, setDeskView] = useState<DeskView>("both");
   const address = config.brandName.trim().replace(/\s+/g, "-") || "your-brand";
@@ -74,49 +71,51 @@ export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
     </Laptop>
   );
 
-  // The canvas picks up a whisper of the brand colour so it feels like the client's space.
-  const tint = mix(config.color, "#eef2f4", 0.86);
-
   return (
-    <div className="relative size-full" style={{ ...buildPreviewVars(config), background: `radial-gradient(110% 85% at 40% 45%, #fbfcfc 0%, ${tint} 70%, ${mix(config.color, "#dfe5e8", 0.9)} 100%)` }}>
-      {studio && <div className="pointer-events-none absolute inset-0 opacity-60" style={{ backgroundImage: "radial-gradient(rgba(20,32,43,0.07) 1px, transparent 1px)", backgroundSize: "24px 24px" }} />}
+    <div className="relative size-full overflow-hidden bg-[#0b0d12]" style={buildPreviewVars(config)}>
+      {/* stage lighting from the brand colours */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <span className="absolute left-[10%] top-[8%] h-[55%] w-[45%] rounded-full opacity-35 blur-[120px] transition-colors duration-700" style={{ backgroundColor: config.color }} />
+        <span className="absolute bottom-[0%] right-[8%] h-[50%] w-[40%] rounded-full opacity-25 blur-[120px] transition-colors duration-700" style={{ backgroundColor: config.accent }} />
+        <span className="absolute inset-0 opacity-50" style={{ backgroundImage: "radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px)", backgroundSize: "26px 26px", maskImage: "radial-gradient(ellipse at center, #000 40%, transparent 80%)", WebkitMaskImage: "radial-gradient(ellipse at center, #000 40%, transparent 80%)" }} />
+      </div>
 
-      {!studio && (
-        <div className="absolute inset-x-3 top-4 z-10 flex items-center gap-2">
-          <Link href="/" aria-label="خروج" className={`${pill} size-9 justify-center px-0`}>
-            <X className="size-4" aria-hidden="true" />
-          </Link>
-          <button type="button" onClick={() => setTour({ name: "editor", step: 0 })} aria-label="راهنما" className={`${pill} size-9 justify-center px-0`}>
-            <CircleHelp className="size-4" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            data-tour="change-design"
-            onClick={() => goTo(designStep)}
-            className="ms-auto flex h-9 items-center gap-2 rounded-full bg-[#14202b] px-4 text-[12px] font-bold text-white shadow-sm active:scale-95"
-          >
-            <LayoutTemplate className="size-4" aria-hidden="true" /> طرح {faNumber(config.variant + 1)}
-            <span className="text-white/60">تغییر</span>
-          </button>
-        </div>
-      )}
+      <div className={`absolute z-10 flex items-center gap-2 ${studio ? "right-5 top-5" : "inset-x-3 top-4"}`}>
+        {!studio && (
+          <>
+            <Link href="/" aria-label="خروج" className={`${pill} size-9 justify-center px-0`}>
+              <X className="size-4" aria-hidden="true" />
+            </Link>
+            <button type="button" onClick={() => setTour({ name: "editor", step: 0 })} aria-label="راهنما" className={`${pill} size-9 justify-center px-0`}>
+              <CircleHelp className="size-4" aria-hidden="true" />
+            </button>
+          </>
+        )}
+        <span className={pill}>
+          <span className="relative flex size-1.5">
+            <span className="absolute hidden size-full rounded-full bg-[#2fd08a] opacity-60 lg:motion-safe:inline-flex lg:motion-safe:animate-ping" />
+            <span className="relative inline-flex size-1.5 rounded-full bg-[#2fd08a]" />
+          </span>
+          پیش‌نمایش زنده
+        </span>
+      </div>
 
       {studio && kind === "site" && (
-        <div role="radiogroup" aria-label="نمایش" className="absolute bottom-6 z-10 flex -translate-x-1/2 gap-0.5 rounded-full bg-white/90 p-1 shadow-[0_8px_24px_-12px_rgba(20,32,43,0.35)] backdrop-blur" style={{ left: "calc((100% - 420px) / 2)" }}>
+        <div role="radiogroup" aria-label="نمایش" className="absolute left-1/2 top-5 z-10 flex -translate-x-1/2 gap-0.5 rounded-full bg-white/8 p-1 ring-1 ring-white/8 backdrop-blur">
           {deskViews.map((option) => {
             const selected = deskView === option.value;
             return (
-              <button key={option.value} type="button" role="radio" aria-checked={selected} onClick={() => setDeskView(option.value)} className="relative flex h-8 items-center gap-1.5 rounded-full px-3.5 text-[12px] font-bold outline-none focus-visible:ring-2 focus-visible:ring-[#078ef0]">
-                {selected && <motion.span layoutId="pv-desk-view" className="absolute inset-0 rounded-full bg-[#14202b]" transition={{ type: "spring", bounce: 0.15, duration: 0.35 }} />}
-                <option.icon className={`relative size-4 ${selected ? "text-white" : "text-[#7a868d]"}`} aria-hidden="true" />
-                <span className={`relative ${selected ? "text-white" : "text-[#5b6872]"}`}>{option.label}</span>
+              <button key={option.value} type="button" role="radio" aria-checked={selected} onClick={() => setDeskView(option.value)} className="relative flex h-7 items-center gap-1.5 rounded-full px-3.5 text-[12px] font-bold outline-none focus-visible:ring-2 focus-visible:ring-[#4da3ff]">
+                {selected && <motion.span layoutId="pv-desk-view" className="absolute inset-0 rounded-full bg-white" transition={{ type: "spring", bounce: 0.15, duration: 0.35 }} />}
+                <option.icon className={`relative size-4 ${selected ? "text-[#0b0d12]" : "text-[#8a93a0]"}`} aria-hidden="true" />
+                <span className={`relative ${selected ? "text-[#0b0d12]" : "text-[#c9d0d9]"}`}>{option.label}</span>
               </button>
             );
           })}
         </div>
       )}
 
-      <div data-tour="stage" className={`absolute ${studio ? "bottom-20 left-10 right-[460px] top-8" : "inset-0 px-3 pb-3 pt-16"}`}>
+      <div data-tour="stage" className={`absolute ${studio ? "inset-x-10 bottom-8 top-20" : "inset-0 px-3 pb-3 pt-16"}`}>
         {view === "phone" ? (
           <FitScene width={PHONE.width} height={PHONE.height}>{phone}</FitScene>
         ) : view === "laptop" ? (

@@ -44,7 +44,7 @@ const Screen = ({ children, className = "" }: { children: ReactNode; className?:
 export const Laptop = ({ address, children }: { address: string; children: ReactNode }) => (
   <div className="relative" style={LAPTOP}>
     {/* lid */}
-    <div className="absolute left-1/2 top-0 w-[1316px] -translate-x-1/2 rounded-b-[8px] rounded-t-[30px] bg-[#1a2129] p-[18px] pb-[22px] shadow-[0_40px_80px_-40px_rgba(15,23,32,0.6)]">
+    <div className="absolute left-1/2 top-0 w-[1316px] -translate-x-1/2 rounded-b-[8px] rounded-t-[30px] bg-[#1a2129] p-[18px] pb-[22px] ring-1 ring-white/12 shadow-[0_40px_80px_-40px_rgba(15,23,32,0.6)]">
       <span className="absolute left-1/2 top-[6px] size-[6px] -translate-x-1/2 rounded-full bg-[#3a454f]" />
       <div className="flex h-[800px] flex-col overflow-hidden rounded-[6px] bg-white">
         <div className="flex h-10 shrink-0 items-center gap-2 border-b border-black/6 bg-[#f3f5f6] px-4" dir="ltr">
