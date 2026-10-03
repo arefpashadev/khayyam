@@ -1,6 +1,6 @@
 "use client";
 
-import { Laptop, LayoutTemplate, ListChecks, MousePointerClick, Send, Smartphone, Sparkles, type LucideIcon } from "lucide-react";
+import { Bot, Laptop, LayoutTemplate, ListChecks, MousePointerClick, Send, Smartphone, Sparkles, type LucideIcon } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 
@@ -19,12 +19,14 @@ const editorTour: TourStep[] = [
   { target: "steps", icon: ListChecks, title: "همه مراحل یک‌جا", text: () => "هر وقت خواستید روی هر مرحله بزنید، تغییرش بدهید و برگردید. ترتیب اجباری نیست." },
   { target: "panel", icon: MousePointerClick, title: "انتخاب‌های هر مرحله", text: () => "گزینه‌ها را بزنید؛ رنگ دلخواه را هم با قطره‌چکان انتخاب کنید." },
   { target: "stage", icon: LayoutTemplate, title: "پیش‌نمایش زنده", text: (kind) => (kind === "app" ? "نتیجه همین‌جا روی گوشی دیده می‌شود." : "نتیجه همین‌جا روی لپ‌تاپ و گوشی دیده می‌شود و خودش به بخشی که عوض شده می‌رود.") },
+  { target: "devices", icon: Smartphone, title: "لپ‌تاپ یا موبایل", text: () => "با این دکمه‌ها بین نمایش هر دو، فقط لپ‌تاپ یا فقط موبایل جابه‌جا شوید." },
+  { target: "assistant", icon: Bot, title: "دستیار هوشمند", text: () => "هر جا مطمئن نبودید از دستیار بپرسید؛ برای هر مرحله پیشنهاد آماده دارد و با یک لمس اعمالش می‌کند." },
   { target: "submit", icon: Send, title: "ثبت درخواست", text: () => "هر وقت آماده بودید ثبت کنید. همه این مقادیر بعداً هم طبق خواسته شما قابل تغییر است." },
 ];
 
 const tours: Record<TourName, TourStep[]> = { intro: editorTour, editor: editorTour };
 
-const storageKey = (name: TourName) => `khayyam:order-wizard-tour:${name}:v3`;
+const storageKey = (name: TourName) => `khayyam:order-wizard-tour:${name}:v4`;
 
 const CARD_WIDTH = 320;
 const CARD_HEIGHT = 200;

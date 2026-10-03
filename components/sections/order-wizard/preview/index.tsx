@@ -7,6 +7,7 @@ import { useState, type ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 
 import { buildPreviewVars } from "../config";
+import { AssistantDock } from "../assistant";
 import { useWizard } from "../store";
 import { useIsSmallScreen } from "../use-small-screen";
 import { AppPreview } from "./app-preview";
@@ -62,7 +63,7 @@ export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
   const isSmall = useIsSmallScreen();
   const [deskView, setDeskView] = useState<DeskView>("both");
   const address = config.brandName.trim().replace(/\s+/g, "-") || "your-brand";
-  const view: DeskView = kind === "app" ? "phone" : studio ? deskView : "both";
+  const view: DeskView = kind === "app" ? "phone" : deskView;
 
   const phone = <Phone>{kind === "app" ? <AppPreview config={config} /> : <SitePreview config={config} compact />}</Phone>;
   const laptop = (
@@ -80,7 +81,7 @@ export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
         <span className="absolute inset-0 opacity-50" style={{ backgroundImage: "radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px)", backgroundSize: "26px 26px", maskImage: "radial-gradient(ellipse at center, #000 40%, transparent 80%)", WebkitMaskImage: "radial-gradient(ellipse at center, #000 40%, transparent 80%)" }} />
       </div>
 
-      <div className={`absolute z-10 flex items-center gap-2 ${studio ? "right-5 top-5" : "inset-x-3 top-4"}`}>
+      <div className={`absolute z-10 flex items-center gap-2 ${studio ? "right-5 top-5" : "right-3 top-4"}`}>
         {!studio && (
           <>
             <Link href="/" aria-label="خروج" className={`${pill} size-9 justify-center px-0`}>
@@ -100,20 +101,35 @@ export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
         </span>
       </div>
 
-      {studio && kind === "site" && (
-        <div role="radiogroup" aria-label="نمایش" className="absolute left-1/2 top-5 z-10 flex -translate-x-1/2 gap-0.5 rounded-full bg-white/8 p-1 ring-1 ring-white/8 backdrop-blur">
+      {kind === "site" && (
+        <div
+          role="radiogroup"
+          aria-label="نمایش"
+          data-tour="devices"
+          className={`absolute z-10 flex gap-0.5 rounded-full bg-white/8 p-1 ring-1 ring-white/8 backdrop-blur ${studio ? "left-1/2 top-5 -translate-x-1/2" : "left-3 top-4"}`}
+        >
           {deskViews.map((option) => {
             const selected = deskView === option.value;
             return (
-              <button key={option.value} type="button" role="radio" aria-checked={selected} onClick={() => setDeskView(option.value)} className="relative flex h-7 items-center gap-1.5 rounded-full px-3.5 text-[12px] font-bold outline-none focus-visible:ring-2 focus-visible:ring-[#4da3ff]">
-                {selected && <motion.span layoutId="pv-desk-view" className="absolute inset-0 rounded-full bg-white" transition={{ type: "spring", bounce: 0.15, duration: 0.35 }} />}
+              <button
+                key={option.value}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                aria-label={option.label}
+                onClick={() => setDeskView(option.value)}
+                className={`relative flex items-center gap-1.5 rounded-full text-[12px] font-bold outline-none focus-visible:ring-2 focus-visible:ring-[#4da3ff] ${studio ? "h-7 px-3.5" : "size-7 justify-center"}`}
+              >
+                {selected && <motion.span layoutId={studio ? "pv-desk-view" : "pv-mobile-view"} className="absolute inset-0 rounded-full bg-white" transition={{ type: "spring", bounce: 0.15, duration: 0.35 }} />}
                 <option.icon className={`relative size-4 ${selected ? "text-[#0b0d12]" : "text-[#8a93a0]"}`} aria-hidden="true" />
-                <span className={`relative ${selected ? "text-[#0b0d12]" : "text-[#c9d0d9]"}`}>{option.label}</span>
+                {studio && <span className={`relative ${selected ? "text-[#0b0d12]" : "text-[#c9d0d9]"}`}>{option.label}</span>}
               </button>
             );
           })}
         </div>
       )}
+
+      <AssistantDock studio={studio} />
 
       <div data-tour="stage" className={`absolute ${studio ? "inset-x-10 bottom-8 top-20" : "inset-0 px-3 pb-3 pt-16"}`}>
         {view === "phone" ? (
