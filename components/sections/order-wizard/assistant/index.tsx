@@ -1,9 +1,11 @@
 "use client";
 
 import { ArrowUp, Check, X } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useDragControls, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { create } from "zustand";
+
+import { KhayyamMark } from "@/components/brand/khayyam-mark";
 
 import { steps } from "../config";
 import { useWizard } from "../store";
@@ -37,20 +39,10 @@ export const useAssistant = create<AssistantState>((set) => ({
   markGuided: (step) => set((state) => ({ guided: [...state.guided, step] })),
 }));
 
-/** Animated gradient orb used as the assistant's face. */
-const Orb = ({ size = 36 }: { size?: number }) => (
-  <span className="relative inline-flex shrink-0 items-center justify-center" style={{ width: size, height: size }} aria-hidden="true">
-    <span className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,#4da3ff,#8b5cf6,#2fd08a,#4da3ff)] opacity-70 blur-[6px] motion-safe:animate-[spin_6s_linear_infinite]" />
-    <span className="absolute inset-[2px] rounded-full bg-[conic-gradient(from_180deg,#4da3ff,#8b5cf6,#2fd08a,#4da3ff)] motion-safe:animate-[spin_9s_linear_infinite]" />
-    <span className="absolute inset-[30%] rounded-full bg-white/85 blur-[1px]" />
-  </span>
-);
-
 const Typing = () => (
-  <span className="flex items-center gap-1 px-1 py-1.5" aria-label="در حال نوشتن">
-    {[0, 1, 2].map((dot) => (
-      <span key={dot} className="size-1.5 rounded-full bg-[#8a93a0] motion-safe:animate-bounce" style={{ animationDelay: `${dot * 0.15}s` }} />
-    ))}
+  <span className="flex items-center gap-2 py-1.5 text-[12px] text-[#8a93a0]" aria-label="در حال نوشتن">
+    <KhayyamMark size={22} state="thinking" />
+    در حال محاسبه…
   </span>
 );
 
@@ -60,6 +52,7 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
   const step = useWizard((state) => state.step);
   const update = useWizard((state) => state.update);
   const reduce = useReducedMotion();
+  const dragControls = useDragControls();
   const [draft, setDraft] = useState("");
   const listRef = useRef<HTMLDivElement>(null);
   const stepKey = steps[step].key;
@@ -108,7 +101,7 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
           className={`absolute z-20 flex items-center gap-2.5 rounded-full bg-[#111419]/90 text-[12.5px] font-bold text-white shadow-[0_12px_40px_-12px_rgba(77,163,255,0.7)] ring-1 ring-white/10 backdrop-blur transition hover:ring-white/25 ${studio ? "bottom-6 left-6 h-12 pe-5 ps-1.5" : "bottom-3 left-3 size-12 justify-center"}`}
           aria-label="دستیار هوشمند"
         >
-          <Orb size={studio ? 36 : 32} />
+          <KhayyamMark size={studio ? 36 : 38} />
           {studio && <span>دستیار هوشمند</span>}
         </button>
       )}
@@ -120,6 +113,15 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
             <motion.section
               {...panelMotion}
               transition={{ type: "spring", bounce: 0.12, duration: 0.4 }}
+              // phones: pull the header down to dismiss, like a native sheet
+              drag={studio ? false : "y"}
+              dragControls={dragControls}
+              dragListener={false}
+              dragConstraints={{ top: 0, bottom: 0 }}
+              dragElastic={{ top: 0, bottom: 0.7 }}
+              onDragEnd={(_, info) => {
+                if (info.offset.y > 110 || info.velocity.y > 600) setOpen(false);
+              }}
               role="dialog"
               aria-label="دستیار هوشمند"
               dir="rtl"
@@ -127,8 +129,13 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
                 studio ? "absolute bottom-6 left-6 h-[min(600px,calc(100%-110px))] w-[380px] rounded-[26px]" : "fixed inset-x-0 bottom-0 top-[10dvh] rounded-t-[26px]"
               }`}
             >
-              <header className="flex shrink-0 items-center gap-3 border-b border-white/6 px-4 py-3">
-                <Orb />
+              {!studio && (
+                <div className="flex h-6 shrink-0 cursor-grab touch-none items-center justify-center" onPointerDown={(event) => dragControls.start(event)} aria-hidden="true">
+                  <span className="h-1 w-10 rounded-full bg-white/20" />
+                </div>
+              )}
+              <header className={`flex shrink-0 items-center gap-3 border-b border-white/6 px-4 ${studio ? "py-3" : "touch-none pb-3"}`} onPointerDown={(event) => !studio && dragControls.start(event)}>
+                <KhayyamMark size={38} />
                 <div className="leading-tight">
                   <strong className="block text-[14px]">دستیار خیام</strong>
                   <span className="text-[11px] text-[#8a93a0]">راهنمای قدم‌به‌قدم · نسخه آزمایشی</span>

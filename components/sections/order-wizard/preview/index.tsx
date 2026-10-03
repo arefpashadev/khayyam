@@ -63,7 +63,9 @@ export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
   const isSmall = useIsSmallScreen();
   const [deskView, setDeskView] = useState<DeskView>("both");
   const address = config.brandName.trim().replace(/\s+/g, "-") || "your-brand";
-  const view: DeskView = kind === "app" ? "phone" : deskView;
+  // Phones show one device at a time — both together is too busy on a small screen.
+  const options = studio ? deskViews : deskViews.filter((option) => option.value !== "both");
+  const view: DeskView = kind === "app" ? "phone" : !studio && deskView === "both" ? "phone" : deskView;
 
   const phone = <Phone>{kind === "app" ? <AppPreview config={config} /> : <SitePreview config={config} compact />}</Phone>;
   const laptop = (
@@ -108,8 +110,8 @@ export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
           data-tour="devices"
           className={`absolute z-10 flex gap-0.5 rounded-full bg-white/8 p-1 ring-1 ring-white/8 backdrop-blur ${studio ? "left-1/2 top-5 -translate-x-1/2" : "left-3 top-4"}`}
         >
-          {deskViews.map((option) => {
-            const selected = deskView === option.value;
+          {options.map((option) => {
+            const selected = view === option.value;
             return (
               <button
                 key={option.value}

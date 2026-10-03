@@ -194,3 +194,16 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .pv-drift, .pv-marquee { animation: none !important; }
 }
+
+/* ---------- Khayyam mark ---------- */
+@keyframes khayyam-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes khayyam-fact {
+  0% { opacity: 0; transform: translateY(6px); }
+  4%, 21% { opacity: 1; transform: none; }
+  25%, 100% { opacity: 0; transform: translateY(-6px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  [style*="khayyam-spin"] { animation: none !important; }
+}

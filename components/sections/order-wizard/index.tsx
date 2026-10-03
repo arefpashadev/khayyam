@@ -23,6 +23,7 @@ import {
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
+import { KhayyamMark } from "@/components/brand/khayyam-mark";
 import { Link } from "@/i18n/navigation";
 
 import {
@@ -44,6 +45,7 @@ import {
 } from "./config";
 import { artLabels, industryArts, siteLayouts } from "./designs";
 import { PreviewStage } from "./preview";
+import { DraggableSheet } from "./sheet";
 import { stepPanels } from "./steps";
 import { useWizard } from "./store";
 import { Tour } from "./tour";
@@ -113,7 +115,7 @@ const StudioEditor = ({ kind }: { kind: OrderKind }) => {
   return (
     <div className="flex size-full flex-col">
       <header className="flex h-14 shrink-0 items-center gap-3 border-b border-white/6 px-4">
-        <span className="flex size-9 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#4da3ff,#8b5cf6)] text-[16px] font-black text-white">خ</span>
+        <KhayyamMark size={36} title="خیام" />
         <div className="leading-tight">
           <strong className="block text-[13px]">{brandName.trim() || "پروژه جدید"}</strong>
           <span className="text-[11px] text-[#8a93a0]">{kind === "app" ? "اپلیکیشن" : "وب‌سایت"} · استودیو خیام</span>
@@ -195,10 +197,10 @@ const MobileEditor = ({ kind }: { kind: OrderKind }) => {
       <main className="relative min-h-0 flex-1">
         <PreviewStage />
       </main>
-      <aside data-tour="panel" className="flex max-h-[54dvh] w-full shrink-0 flex-col rounded-t-[24px] bg-[#111419] shadow-[0_-16px_40px_-12px_rgba(0,0,0,0.6)]">
+      <DraggableSheet data-tour="panel" className="rounded-t-[24px] bg-[#111419] shadow-[0_-16px_40px_-12px_rgba(0,0,0,0.6)]">
         <StepChips />
         {submitted ? <SubmittedPanel kind={kind} /> : <StepPanel kind={kind} />}
-      </aside>
+      </DraggableSheet>
     </div>
   );
 };
@@ -217,7 +219,7 @@ const StepChips = () => {
   }, [step]);
 
   return (
-    <div ref={rowRef} data-tour="steps" className="flex shrink-0 gap-1.5 overflow-x-auto px-4 pb-1 pt-3 [scrollbar-width:none]">
+    <div ref={rowRef} data-tour="steps" className="flex shrink-0 gap-1.5 overflow-x-auto px-4 pb-1 pt-1 [scrollbar-width:none]">
       {steps.map((item, index) => {
         const current = index === step && !submitted;
         const done = index < step || submitted;
