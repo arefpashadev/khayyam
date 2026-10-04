@@ -10,9 +10,8 @@ import { buildPreviewVars } from "../config";
 import { AssistantDock } from "../assistant";
 import { useWizard } from "../store";
 import { useIsSmallScreen } from "../use-small-screen";
-import { AppPreview } from "./app-preview";
 import { FitScene, Laptop, LAPTOP, Phone, PHONE } from "./devices";
-import { SitePreview } from "./site-preview";
+import { PagePreview } from "./page-preview";
 
 /**
  * Laptop and phone side by side, bottoms aligned. On phones the laptop is drawn smaller
@@ -67,10 +66,14 @@ export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
   const options = studio ? deskViews : deskViews.filter((option) => option.value !== "both");
   const view: DeskView = kind === "app" ? "phone" : !studio && deskView === "both" ? "phone" : deskView;
 
-  const phone = <Phone>{kind === "app" ? <AppPreview config={config} /> : <SitePreview config={config} compact />}</Phone>;
+  const phone = (
+    <Phone>
+      <PagePreview config={config} compact app={kind === "app"} />
+    </Phone>
+  );
   const laptop = (
     <Laptop address={address}>
-      <SitePreview config={config} compact={false} />
+      <PagePreview config={config} compact={false} />
     </Laptop>
   );
 

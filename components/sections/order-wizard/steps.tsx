@@ -1,12 +1,10 @@
 "use client";
 
-import { Check, Droplet, EyeOff, Info, Link2, Moon, Pipette, Sparkles, Sun, Wind, Zap, Sunset } from "lucide-react";
-import { motion } from "motion/react";
+import { Check, Droplet, EyeOff, Info, Link2, Moon, PenTool, Pipette, Rocket, Sparkles, Sun, Sunset, Waves, Wind, Zap } from "lucide-react";
 import type { CSSProperties, ReactNode } from "react";
 
 import {
   appExtras,
-  appFeatures,
   backdrops,
   buildPreviewVars,
   colors,
@@ -15,7 +13,9 @@ import {
   motionLevels,
   radii,
   siteExtras,
-  siteSections,
+  sectionOptions,
+  estimate,
+  projectTypes,
   suggestAccents,
   themes,
   typeStyles,
@@ -48,28 +48,6 @@ const Label = ({ children, hint }: { children: ReactNode; hint?: string }) => (
     {hint && <span className="text-[11px] text-[#5d6573]">{hint}</span>}
   </span>
 );
-
-function Segmented<T extends string>({ id, label, options, value, onChange }: { id: string; label: string; options: { value: T; label: string; icon?: ReactNode }[]; value: T; onChange: (value: T) => void }) {
-  return (
-    <div>
-      <Label>{label}</Label>
-      <div role="radiogroup" aria-label={label} className="grid gap-1 rounded-2xl bg-[#171b22] p-1" style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}>
-        {options.map((option) => {
-          const selected = option.value === value;
-          return (
-            <button key={option.value} type="button" role="radio" aria-checked={selected} onClick={() => onChange(option.value)} className={`relative flex h-10 items-center justify-center rounded-xl text-[12px] font-bold ${ring}`}>
-              {selected && <motion.span layoutId={id} className="absolute inset-0 rounded-xl bg-[#262c37]" transition={{ type: "spring", bounce: 0.18, duration: 0.35 }} />}
-              <span className={`relative flex items-center gap-1.5 transition-colors ${selected ? "text-white" : "text-[#8a93a0]"}`}>
-                {option.icon}
-                {option.label}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
 
 const field = "w-full rounded-2xl bg-[#171b22] px-4 text-[13px] text-white outline-none transition-colors placeholder:text-[#5d6573] hover:bg-[#1d222b] focus:bg-[#1d222b] focus:ring-2 focus:ring-[#4da3ff]/50";
 
@@ -280,10 +258,25 @@ const TypeStep = () => {
 /* 4. Backdrop + motion                                                */
 /* ------------------------------------------------------------------ */
 
+/** A tiny looping scene that shows what each motion level feels like. */
+const MotionDemo = ({ level, config }: { level: WizardConfig["motion"]; config: WizardConfig }) => (
+  <div style={buildPreviewVars(config)} className="relative flex h-20 items-center gap-2 overflow-hidden rounded-xl bg-(--pv-bg) px-3">
+    <div className={`flex flex-1 flex-col gap-1.5 ${level === "none" ? "" : `pv-demo-${level}`}`}>
+      <span className="block h-2 w-4/5 rounded-full bg-(--pv-text) opacity-80" />
+      <span className="block h-1.5 w-3/5 rounded-full bg-(--pv-text) opacity-35" />
+      <span className="mt-1 block h-3.5 w-10 rounded-(--pv-r-ctrl) bg-(--pv-primary)" />
+    </div>
+    <div className={`flex gap-1.5 ${level === "none" ? "" : `pv-demo-${level}`}`}>
+      <span className="size-7 rounded-(--pv-r-ctrl) bg-(--pv-accent)" />
+      <span className="size-7 rounded-(--pv-r-ctrl) bg-(--pv-soft)" />
+    </div>
+  </div>
+);
+
 const BackdropStep = () => {
   const config = useWizard((state) => state.config);
   const update = useWizard((state) => state.update);
-  const motionIcons = { none: <Wind className="size-3.5" />, subtle: <Sparkles className="size-3.5" />, lively: <Zap className="size-3.5" /> };
+  const motionIcons = { none: <Wind className="size-3.5" />, subtle: <Sparkles className="size-3.5" />, snappy: <Zap className="size-3.5" />, lively: <Waves className="size-3.5" /> };
 
   return (
     <div className="flex flex-col gap-6">
@@ -307,7 +300,26 @@ const BackdropStep = () => {
           })}
         </div>
       </div>
-      <Segmented id="seg-motion" label="انیمیشن و حرکت" value={config.motion} onChange={(value) => update({ motion: value })} options={motionLevels.map((level) => ({ ...level, icon: motionIcons[level.value] }))} />
+      <div>
+        <Label hint="هر کارت حرکت خودش را نشان می‌دهد">انیمیشن و حرکت</Label>
+        <div className="grid grid-cols-2 gap-2.5">
+          {motionLevels.map((level) => {
+            const selected = config.motion === level.value;
+            return (
+              <Tile key={level.value} selected={selected} onClick={() => update({ motion: level.value }, "hero")} className="p-1.5">
+                <MotionDemo level={level.value} config={config} />
+                <span className="flex items-center justify-between px-1 pb-0.5 pt-2">
+                  <span>
+                    <strong className="flex items-center gap-1.5 text-[12.5px]">{motionIcons[level.value]}{level.label}</strong>
+                    <span className="text-[10.5px] opacity-60">{level.description}</span>
+                  </span>
+                  {selected && <span className="flex size-5 items-center justify-center rounded-full bg-[#4da3ff] text-white"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>}
+                </span>
+              </Tile>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 };
@@ -317,12 +329,32 @@ const BackdropStep = () => {
 /* ------------------------------------------------------------------ */
 
 const BusinessStep = () => {
+  const kind = useWizard((state) => state.kind);
   const config = useWizard((state) => state.config);
   const update = useWizard((state) => state.update);
   const setIndustry = useWizard((state) => state.setIndustry);
+  const setProjectType = useWizard((state) => state.setProjectType);
+  const types = projectTypes.filter((type) => kind !== "app" || type.forApp);
 
   return (
     <div className="flex flex-col gap-6">
+      <div>
+        <Label>نوع پروژه</Label>
+        <div className="grid grid-cols-2 gap-2">
+          {types.map((type) => {
+            const selected = config.projectType === type.value;
+            return (
+              <Tile key={type.value} selected={selected} onClick={() => setProjectType(type.value)} className="flex items-start gap-2.5 p-3">
+                <type.icon className="mt-0.5 size-[18px] shrink-0" aria-hidden="true" />
+                <span className="min-w-0">
+                  <strong className="block text-[12.5px] leading-5">{type.label}</strong>
+                  <span className="block text-[10.5px] leading-4 opacity-60">{type.description}</span>
+                </span>
+              </Tile>
+            );
+          })}
+        </div>
+      </div>
       <div>
         <Label>حوزه فعالیت</Label>
         <div className="grid grid-cols-3 gap-2">
@@ -360,6 +392,15 @@ const DesignStep = () => {
   const setVariant = useWizard((state) => state.setVariant);
   const update = useWizard((state) => state.update);
   const count = kind === "app" ? APP_DESIGN_COUNT : SITE_DESIGN_COUNT;
+
+  if (kind === "site" && (config.projectType === "dashboard" || config.projectType === "community")) {
+    return (
+      <p className="flex gap-2 rounded-2xl bg-[#171b22] px-4 py-4 text-[12.5px] leading-7 text-[#a7b0bc]">
+        <Info className="mt-1.5 size-4 shrink-0 text-[#4da3ff]" aria-hidden="true" />
+        {config.projectType === "dashboard" ? "پنل‌های داخلی چیدمان استاندارد و کاربردی دارند" : "پلتفرم‌های جامعه چیدمان فید و گروه دارند"}؛ ظاهرش با پالت، گوشه‌ها و نوشته‌هایی که انتخاب کردید ساخته می‌شود. ماژول‌ها را در مرحله بعد انتخاب کنید.
+      </p>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -415,7 +456,8 @@ const SectionsStep = () => {
   const kind = useWizard((state) => state.kind);
   const sections = useWizard((state) => state.config.sections);
   const toggle = useWizard((state) => state.toggleSection);
-  const options = kind === "app" ? appFeatures : siteSections;
+  const projectType = useWizard((state) => state.config.projectType);
+  const options = sectionOptions(kind, projectType);
 
   return (
     <div>
@@ -512,6 +554,63 @@ const ReferencesStep = () => {
   );
 };
 
+/** Last step: Figma design to review, or the full build; plus contact details and a live estimate. */
+export const OutcomeStep = () => {
+  const kind = useWizard((state) => state.kind);
+  const config = useWizard((state) => state.config);
+  const update = useWizard((state) => state.update);
+  const cost = estimate(kind, config);
+  const options = [
+    { value: "figma" as const, icon: PenTool, title: "طرح فیگما", text: "طرح کامل صفحه‌ها را در فیگما می‌فرستیم؛ می‌بینید، نظر می‌دهید و بعد تصمیم می‌گیرید." },
+    { value: "build" as const, icon: Rocket, title: "ساخت کامل", text: "طراحی، برنامه‌نویسی، راه‌اندازی و پشتیبانی؛ با کد تمیز و کیفیت بالا." },
+  ];
+
+  return (
+    <div className="flex flex-col gap-5">
+      <div className="grid grid-cols-1 gap-2.5">
+        {options.map((option) => {
+          const selected = config.deliverable === option.value;
+          return (
+            <Tile key={option.value} selected={selected} onClick={() => update({ deliverable: option.value })} className="flex items-start gap-3 p-4">
+              <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${selected ? "bg-[#4da3ff] text-white" : "bg-white/6"}`}>
+                <option.icon className="size-5" aria-hidden="true" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <strong className="block text-[14px] text-white">{option.title}</strong>
+                <span className="mt-1 block text-[12px] leading-6 opacity-70">{option.text}</span>
+              </span>
+              {selected && <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#4da3ff] text-white"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>}
+            </Tile>
+          );
+        })}
+      </div>
+
+      <div className="rounded-2xl bg-[linear-gradient(135deg,rgba(77,163,255,0.16),rgba(124,108,255,0.12))] p-4 ring-1 ring-[#4da3ff]/25">
+        <span className="text-[11.5px] font-bold text-[#9ccbff]">برآورد اولیه</span>
+        <div className="mt-1 flex items-baseline gap-2">
+          <strong className="text-[24px] font-black text-white">
+            {faNumber(cost.min)} تا {faNumber(cost.max)}
+          </strong>
+          <span className="text-[12px] text-[#a7b0bc]">میلیون تومان</span>
+        </div>
+        <span className="mt-1 block text-[12px] text-[#a7b0bc]">زمان تقریبی: {faNumber(Math.max(1, cost.weeks))} هفته</span>
+        <span className="mt-2 block text-[11px] leading-5 text-[#8a93a0]">این عدد با هر انتخاب به‌روز می‌شود و قیمت نهایی را مشاور بعد از بررسی اعلام می‌کند.</span>
+      </div>
+
+      <div className="grid grid-cols-1 gap-2.5">
+        <label className="block">
+          <Label>نام شما</Label>
+          <input value={config.contactName} onChange={(event) => update({ contactName: event.target.value })} placeholder="مثلاً سارا محمدی" autoComplete="name" className={`${field} h-12`} />
+        </label>
+        <label className="block">
+          <Label>شماره تماس</Label>
+          <input value={config.contactPhone} onChange={(event) => update({ contactPhone: event.target.value })} placeholder="۰۹۱۲ ۰۰۰ ۰۰۰۰" inputMode="tel" autoComplete="tel" dir="ltr" className={`${field} h-12 text-left`} />
+        </label>
+      </div>
+    </div>
+  );
+};
+
 export const stepPanels: Record<StepKey, () => ReactNode> = {
   palette: PaletteStep,
   radius: RadiusStep,
@@ -522,4 +621,5 @@ export const stepPanels: Record<StepKey, () => ReactNode> = {
   sections: SectionsStep,
   extras: ExtrasStep,
   references: ReferencesStep,
+  outcome: OutcomeStep,
 };

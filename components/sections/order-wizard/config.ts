@@ -66,6 +66,10 @@ export type WizardConfig = {
   sections: string[];
   references: string[];
   notes: string;
+  projectType: ProjectType;
+  deliverable: Deliverable;
+  contactName: string;
+  contactPhone: string;
   /** Hero layout number (see designs.ts). */
   variant: number;
   /** Which of the field's artworks the hero shows. */
@@ -74,13 +78,15 @@ export type WizardConfig = {
   extras: string[];
 };
 
-export type MotionKey = "none" | "subtle" | "lively";
+export type MotionKey = "none" | "subtle" | "snappy" | "lively";
+export type ProjectType = "site" | "landing" | "store" | "booking" | "community" | "dashboard";
+export type Deliverable = "figma" | "build";
 
 /* ------------------------------------------------------------------ */
 /* Steps                                                               */
 /* ------------------------------------------------------------------ */
 
-export type StepKey = "palette" | "radius" | "type" | "backdrop" | "business" | "design" | "sections" | "extras" | "references";
+export type StepKey = "palette" | "radius" | "type" | "backdrop" | "business" | "design" | "sections" | "extras" | "references" | "outcome";
 
 /** Small to big: colours and shapes first, then the business, then the whole page. */
 export const steps: { key: StepKey; title: string; question: (kind: OrderKind) => string; hint: string; target: PreviewTarget }[] = [
@@ -88,11 +94,12 @@ export const steps: { key: StepKey; title: string; question: (kind: OrderKind) =
   { key: "radius", title: "گوشه‌ها", question: () => "گوشه‌های رابط کاربری چطور باشد؟", hint: "هر کارت یک رابط کامل با همان گوشه‌هاست؛ نتیجه روی کل طرح هم دیده می‌شود.", target: "showcase" },
   { key: "type", title: "نوشته‌ها", question: () => "نوشته‌ها چه شخصیتی داشته باشند؟", hint: "وزن و اندازه تیترها حس برند را عوض می‌کند.", target: "hero" },
   { key: "backdrop", title: "پس‌زمینه و حرکت", question: () => "پس‌زمینه و حرکت صفحه چطور باشد؟", hint: "از ساده تا شفق رنگی و درخشش؛ حرکت را هم همین‌جا تعیین کنید.", target: "hero" },
-  { key: "business", title: "کسب‌وکار", question: (kind) => `${kind === "app" ? "اپلیکیشن" : "سایت"} برای چه کسب‌وکاری است؟`, hint: "حوزه کاری، متن‌ها، تصویرها و بخش‌های مخصوص را تعیین می‌کند.", target: "top" },
+  { key: "business", title: "کسب‌وکار", question: () => "چه چیزی می‌سازیم و برای چه کسب‌وکاری؟", hint: "نوع پروژه ساختار را تعیین می‌کند؛ حوزه کاری، متن‌ها و تصویرها را.", target: "top" },
   { key: "design", title: "چیدمان", question: () => "کدام چیدمان را می‌پسندید؟", hint: "حالا همه انتخاب‌هایتان را در چیدمان‌های کامل ببینید.", target: "top" },
-  { key: "sections", title: "بخش‌ها", question: (kind) => (kind === "app" ? "اپ شما چه امکاناتی لازم دارد؟" : "صفحه چه بخش‌هایی داشته باشد؟"), hint: "هر گزینه را بزنید تا جایش را در پیش‌نمایش ببینید.", target: "features" },
+  { key: "sections", title: "بخش‌ها", question: () => "چه بخش‌ها و ماژول‌هایی لازم دارید؟", hint: "هر گزینه را بزنید تا جایش را در پیش‌نمایش ببینید.", target: "features" },
   { key: "extras", title: "امکانات فنی", question: () => "چه امکانات فنی لازم دارید؟", hint: "بعضی امکانات پشت صحنه کار می‌کنند و در پیش‌نمایش دیده نمی‌شوند؛ کنارشان علامت زده‌ایم.", target: "top" },
   { key: "references", title: "الهام", question: () => "از کدام سایت‌ها یا اپ‌ها خوشتان می‌آید؟", hint: "لینک چند نمونه را بگذارید تا طراح دقیق‌تر سلیقه‌تان را بشناسد.", target: "top" },
+  { key: "outcome", title: "سفارش", question: () => "چه چیزی برایتان آماده کنیم؟", hint: "طرح فیگما برای دیدن و نظر دادن، یا ساخت کامل و تحویل نهایی. برآورد بر اساس انتخاب‌های شماست.", target: "top" },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -279,6 +286,10 @@ export const getDefaultConfig = (kind: OrderKind): WizardConfig => ({
   art: 0,
   sections: kind === "app" ? ["search", "cart", "notifications"] : ["features", "testimonials", "contact"],
   references: ["", "", ""],
+  projectType: kind === "app" ? "store" : "site",
+  deliverable: "build",
+  contactName: "",
+  contactPhone: "",
   notes: "",
   variant: 0,
   motion: "subtle",
@@ -360,10 +371,11 @@ export const faNumber = (value: number) => new Intl.NumberFormat("fa-IR").format
 /* Technical extras                                                    */
 /* ------------------------------------------------------------------ */
 
-export const motionLevels: { value: MotionKey; label: string }[] = [
-  { value: "none", label: "بدون حرکت" },
-  { value: "subtle", label: "ملایم" },
-  { value: "lively", label: "پرجنب‌وجوش" },
+export const motionLevels: { value: MotionKey; label: string; description: string }[] = [
+  { value: "none", label: "بدون حرکت", description: "ساکن و سریع" },
+  { value: "subtle", label: "نرم", description: "ظاهر شدن آرام" },
+  { value: "snappy", label: "سریع و دقیق", description: "پرشی و چابک" },
+  { value: "lively", label: "پرجنب‌وجوش", description: "شناور و زنده" },
 ];
 
 /** `visible` extras show up in the preview; the rest work behind the scenes. */
@@ -423,3 +435,77 @@ export const suggestAccents = (primary: string) => {
 };
 
 export const isDark = (theme: ThemeKey) => theme === "dark" || theme === "midnight";
+
+/* ------------------------------------------------------------------ */
+/* Project types, modules, estimate                                    */
+/* ------------------------------------------------------------------ */
+
+export const projectTypes: { value: ProjectType; label: string; description: string; icon: LucideIcon; forApp: boolean }[] = [
+  { value: "site", label: "سایت معرفی", description: "معرفی کسب‌وکار و خدمات", icon: Building2, forApp: false },
+  { value: "landing", label: "صفحه کمپین", description: "یک صفحه برای فروش یا ثبت‌نام", icon: Rocket, forApp: false },
+  { value: "store", label: "فروشگاه آنلاین", description: "محصول، سبد خرید، پرداخت", icon: ShoppingBag, forApp: true },
+  { value: "booking", label: "رزرو و نوبت‌دهی", description: "تقویم، زمان خالی، یادآور", icon: CalendarCheck, forApp: true },
+  { value: "community", label: "پلتفرم جامعه", description: "پروفایل، پست، گفتگو، گروه", icon: MessageCircle, forApp: true },
+  { value: "dashboard", label: "پنل و اتوماسیون داخلی", description: "گزارش، فرم، گردش کار، نقش‌ها", icon: ChartColumn, forApp: true },
+];
+
+/** Modules offered in the sections step, per project type (site/landing/store/booking reuse page sections). */
+export const dashboardModules: { value: string; label: string; icon: LucideIcon }[] = [
+  { value: "reports", label: "گزارش و نمودار", icon: ChartColumn },
+  { value: "users", label: "کاربران و نقش‌ها", icon: UserRound },
+  { value: "forms", label: "فرم‌ساز", icon: ClipboardCheck },
+  { value: "workflow", label: "گردش کار و تأیید", icon: Rocket },
+  { value: "tickets", label: "تیکت و پشتیبانی", icon: Headset },
+  { value: "inventory", label: "انبار و موجودی", icon: Briefcase },
+  { value: "crm", label: "مدیریت مشتری", icon: Award },
+  { value: "invoices", label: "فاکتور و مالی", icon: FileText },
+];
+
+export const communityModules: { value: string; label: string; icon: LucideIcon }[] = [
+  { value: "feed", label: "فید و پست", icon: Newspaper },
+  { value: "profiles", label: "پروفایل اعضا", icon: UserRound },
+  { value: "groups", label: "گروه‌ها", icon: PartyPopper },
+  { value: "messages", label: "گفتگوی خصوصی", icon: MessageCircle },
+  { value: "events", label: "رویدادها", icon: CalendarCheck },
+  { value: "badges", label: "امتیاز و نشان", icon: Award },
+  { value: "moderation", label: "مدیریت محتوا", icon: ShieldCheck },
+];
+
+export const defaultSections = (kind: OrderKind, type: ProjectType): string[] => {
+  if (kind === "app") return type === "community" ? ["chat", "notifications", "search"] : type === "dashboard" ? ["notifications", "search"] : ["search", "cart", "notifications"];
+  if (type === "dashboard") return ["reports", "users", "forms", "workflow"];
+  if (type === "community") return ["feed", "profiles", "groups", "messages"];
+  if (type === "landing") return ["features", "testimonials", "faq"];
+  return ["features", "testimonials", "contact"];
+};
+
+export const sectionOptions = (kind: OrderKind, type: ProjectType) =>
+  kind === "app" ? appFeatures : type === "dashboard" ? dashboardModules : type === "community" ? communityModules : siteSections;
+
+/**
+ * A rough first estimate shown to the customer. Numbers are placeholders in million tomans;
+ * tune `base`, `perSection`, `extraCost` to your real price list.
+ */
+const base: Record<ProjectType, [number, number, number]> = {
+  landing: [12, 20, 2],
+  site: [25, 40, 3],
+  store: [45, 75, 5],
+  booking: [40, 65, 5],
+  community: [80, 140, 8],
+  dashboard: [90, 170, 9],
+};
+const perSection = 2;
+const extraCost: Record<string, number> = { payment: 8, multilang: 6, chat: 4, analytics: 3, admin: 5, seo: 3, darkmode: 2, otp: 4, push: 3, offline: 6 };
+
+export const estimate = (kind: OrderKind, config: WizardConfig) => {
+  if (config.deliverable === "figma") return { min: 6, max: 10, weeks: 1 };
+  const [low, high, weeks] = base[config.projectType];
+  const extras = config.extras.reduce((sum, item) => sum + (extraCost[item] ?? 3), 0);
+  const sections = config.sections.length * perSection;
+  const factor = kind === "app" ? 1.6 : 1;
+  return {
+    min: Math.round((low + sections + extras) * factor),
+    max: Math.round((high + sections + extras * 1.3) * factor),
+    weeks: Math.round((weeks + config.extras.length * 0.5 + config.sections.length * 0.3) * (kind === "app" ? 1.4 : 1)),
+  };
+};

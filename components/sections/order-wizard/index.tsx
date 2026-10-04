@@ -16,6 +16,7 @@ import {
   Settings2,
   Sparkles,
   Square,
+  Send,
   Type,
   X,
   type LucideIcon,
@@ -28,15 +29,16 @@ import { Link } from "@/i18n/navigation";
 
 import {
   appExtras,
-  appFeatures,
   backdrops,
+  estimate,
   faNumber,
   getDefaultConfig,
   industries,
   motionLevels,
   radii,
   siteExtras,
-  siteSections,
+  projectTypes,
+  sectionOptions,
   steps,
   themes,
   typeStyles,
@@ -44,7 +46,9 @@ import {
   type StepKey,
 } from "./config";
 import { artLabels, industryArts, siteLayouts } from "./designs";
+import { PathChooser } from "./chooser";
 import { PreviewStage } from "./preview";
+import { QuickWizard } from "./quick";
 import { DraggableSheet } from "./sheet";
 import { stepPanels } from "./steps";
 import { useWizard } from "./store";
@@ -61,6 +65,7 @@ const stepIcons: Record<StepKey, LucideIcon> = {
   sections: Blocks,
   extras: Settings2,
   references: Link2,
+  outcome: Send,
 };
 
 const shortTitles: Record<StepKey, string> = {
@@ -73,12 +78,13 @@ const shortTitles: Record<StepKey, string> = {
   sections: "بخش‌ها",
   extras: "امکانات",
   references: "الهام",
+  outcome: "سفارش",
 };
 
 export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
   // Seed the store for this kind before the first paint so the right screen shows immediately.
   useState(() => {
-    useWizard.setState({ kind, step: 0, direction: 1, submitted: false, config: getDefaultConfig(kind), focus: { target: "top", tick: 0 }, tour: null });
+    useWizard.setState({ kind, step: 0, direction: 1, submitted: false, config: getDefaultConfig(kind), focus: { target: "top", tick: 0 }, tour: null, mode: "choose" });
     return true;
   });
 
@@ -91,12 +97,27 @@ export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
     };
   }, []);
 
+  // ?mode=quick or ?mode=studio opens a path directly (handy for links and for testing).
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("mode");
+    if (requested === "quick" || requested === "studio") useWizard.getState().setMode(requested);
+  }, []);
+
   const isSmall = useIsSmallScreen();
+  const mode = useWizard((state) => state.mode);
 
   return (
     <div dir="rtl" className="fixed inset-0 z-[100] overflow-hidden bg-[#0b0d12] font-sans text-[#eef1f5] [color-scheme:dark]">
-      {isSmall ? <MobileEditor kind={kind} /> : <StudioEditor kind={kind} />}
-      <Tour kind={kind} name="editor" />
+      {mode === "choose" ? (
+        <PathChooser kind={kind} />
+      ) : mode === "quick" ? (
+        <QuickWizard kind={kind} />
+      ) : (
+        <>
+          {isSmall ? <MobileEditor kind={kind} /> : <StudioEditor kind={kind} />}
+          <Tour kind={kind} name="editor" />
+        </>
+      )}
     </div>
   );
 };
@@ -303,10 +324,14 @@ const SubmittedPanel = ({ kind }: { kind: OrderKind }) => {
   const config = useWizard((state) => state.config);
   const goTo = useWizard((state) => state.goTo);
   const restart = useWizard((state) => state.restart);
-  const sectionLabels = (kind === "app" ? appFeatures : siteSections).filter((item) => config.sections.includes(item.value)).map((item) => item.label);
+  const sectionLabels = sectionOptions(kind, config.projectType).filter((item) => config.sections.includes(item.value)).map((item) => item.label);
   const references = config.references.filter((item) => item.trim());
+  const cost = estimate(kind, config);
 
   const summary = [
+    { label: "سفارش", value: config.deliverable === "figma" ? "طرح فیگما" : "ساخت کامل" },
+    { label: "برآورد", value: `${faNumber(cost.min)} تا ${faNumber(cost.max)} میلیون تومان · ${faNumber(Math.max(1, cost.weeks))} هفته` },
+    { label: "نوع پروژه", value: projectTypes.find((item) => item.value === config.projectType)?.label },
     { label: "برند", value: config.brandName.trim() || "بدون نام" },
     { label: "حوزه", value: industries[config.industry].label },
     { label: "رنگ‌ها", value: <span className="inline-flex gap-1" dir="ltr">{[config.color, config.accent].map((color) => <span key={color} className="size-4 rounded-full ring-1 ring-white/20" style={{ backgroundColor: color }} />)}</span> },

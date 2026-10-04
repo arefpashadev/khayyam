@@ -353,6 +353,54 @@ export const SiteTop = ({ config, compact }: { config: WizardConfig; compact: bo
   );
 };
 
+/** Booking projects get a real reservation widget right under the hero. */
+const BookingSection = ({ compact }: { compact: boolean }) => (
+  <section data-pv="booking" className={`pv-section ${compact ? "px-5 py-8" : "px-20 py-14"}`}>
+    <div className={`grid gap-6 rounded-(--pv-r-card) border border-(--pv-border) bg-(--pv-surface) ${compact ? "p-5" : "grid-cols-[1.2fr_1fr] p-8"}`}>
+      <div>
+        <h2 style={heading(compact ? 20 : 28)}>زمان مناسب را انتخاب کنید</h2>
+        <div className="mt-5 grid grid-cols-7 gap-2 text-center text-[12px]">
+          {Array.from({ length: 14 }, (_, index) => (
+            <span key={index} className={`flex aspect-square items-center justify-center rounded-(--pv-r-ctrl) ${index === 4 ? "bg-(--pv-primary) font-bold text-(--pv-on-primary)" : [2, 8, 11].includes(index) ? "text-(--pv-muted) line-through" : "bg-(--pv-bg)"}`}>
+              {(index + 8).toLocaleString("fa-IR")}
+            </span>
+          ))}
+        </div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <span className="text-[13px] font-bold text-(--pv-muted)">ساعت‌های خالی</span>
+        <div className="grid grid-cols-3 gap-2">
+          {["۹:۰۰", "۱۰:۳۰", "۱۲:۰۰", "۱۵:۰۰", "۱۶:۳۰", "۱۸:۰۰"].map((time, index) => (
+            <span key={time} className={`flex h-11 items-center justify-center rounded-(--pv-r-ctrl) text-[13px] font-bold ${index === 2 ? "bg-(--pv-primary) text-(--pv-on-primary)" : "bg-(--pv-bg)"}`}>{time}</span>
+          ))}
+        </div>
+        <span className={`${primaryButton} mt-3 h-12 text-[14px]`}>تأیید رزرو</span>
+      </div>
+    </div>
+  </section>
+);
+
+/** Campaign landing pages: a countdown and a single strong call to action. */
+const LandingStrip = ({ compact, cta }: { compact: boolean; cta: string }) => (
+  <section data-pv="showcase" className={`pv-section ${compact ? "px-5 py-8" : "px-20 py-14"}`}>
+    <div className={`flex items-center justify-between gap-6 rounded-(--pv-r-card) p-8 text-white ${compact ? "flex-col text-center" : ""}`} style={{ background: "linear-gradient(120deg, var(--pv-primary), var(--pv-accent))" }}>
+      <div>
+        <h2 style={heading(compact ? 22 : 32)}>فقط تا پایان این هفته</h2>
+        <p className="mt-2 text-[14px] opacity-85">پیشنهاد ویژه برای ۱۰۰ نفر اول</p>
+      </div>
+      <div className="flex gap-2" dir="ltr">
+        {[["۰۲", "روز"], ["۱۴", "ساعت"], ["۳۸", "دقیقه"]].map(([value, label]) => (
+          <span key={label} className="flex w-16 flex-col items-center rounded-(--pv-r-ctrl) bg-white/15 py-2 backdrop-blur">
+            <strong className="text-[22px] leading-none">{value}</strong>
+            <span className="mt-1 text-[10px] opacity-80">{label}</span>
+          </span>
+        ))}
+      </div>
+      <span className="inline-flex h-12 items-center rounded-(--pv-r-ctrl) bg-white px-7 text-[14px] font-extrabold text-[#14202b]">{cta}</span>
+    </div>
+  </section>
+);
+
 export const SitePreview = ({ config, compact }: { config: WizardConfig; compact: boolean }) => {
   const content = industries[config.industry];
   const name = config.brandName.trim() || "برند شما";
@@ -362,7 +410,12 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
   return (
     <div dir="rtl" data-motion={config.motion} className="pv-root min-h-full bg-(--pv-bg) font-sans text-(--pv-text)">
       <SiteTop config={config} compact={compact} />
-      <IndustryShowcase config={config} compact={compact} />
+      {config.projectType === "booking" && <BookingSection compact={compact} />}
+      {config.projectType === "landing" ? (
+        <LandingStrip compact={compact} cta={content.cta} />
+      ) : (
+        <IndustryShowcase config={config.projectType === "store" ? { ...config, industry: "shop" } : config} compact={compact} />
+      )}
 
       {has("features") && (
         <Section id="features" compact={compact} className="bg-(--pv-surface)">

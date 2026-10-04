@@ -3,84 +3,67 @@
 import { useId, type CSSProperties } from "react";
 
 /**
- * The Khayyam mark: an astrolabe.
- * Omar Khayyam measured the solar year (365.2422 days) for the Jalali calendar and solved
- * cubic equations with geometry — so the mark is a working instrument: a degree scale that
- * turns like the sky, an ecliptic ring turning the other way, a planet on its orbit and an
- * eight-pointed Persian star (khatam) at the centre.
- *
- * `state="thinking"` speeds every part up; use it for loading and for the assistant typing.
+ * The Khayyam mark — deliberately minimal.
+ * An open orbit (one year around the sun, which Khayyam measured to 365.2422 days)
+ * whose gap holds a single star; the star is also the dot above «خ».
+ * One stroke, one dot: it reads at 16px and animates simply where it matters:
+ * - "thinking": the orbit turns and the star breathes (loading, assistant typing)
+ * - "intro": the orbit draws itself, then the star lands (splash, welcome)
  */
-export const KhayyamMark = ({ size = 40, state = "idle", className = "", title }: { size?: number; state?: "idle" | "thinking" | "still"; className?: string; title?: string }) => {
+export const KhayyamMark = ({
+  size = 40,
+  state = "idle",
+  className = "",
+  title,
+  tone = "light",
+}: {
+  size?: number;
+  state?: "idle" | "thinking" | "intro" | "still";
+  className?: string;
+  title?: string;
+  /** "light" draws a white orbit for dark backgrounds; "dark" draws an ink orbit. */
+  tone?: "light" | "dark";
+}) => {
   const id = useId().replace(/:/g, "");
-  const speed = state === "thinking" ? 0.25 : 1;
-  const spin = (seconds: number, reverse = false): CSSProperties =>
-    state === "still"
-      ? { transformBox: "view-box", transformOrigin: "50% 50%" }
-      : { transformBox: "view-box", transformOrigin: "50% 50%", animation: `khayyam-spin ${seconds * speed}s linear infinite${reverse ? " reverse" : ""}` };
+  const ring = tone === "light" ? "#f4f6fa" : "#14202b";
+  const circumference = 2 * Math.PI * 15;
+  const gap = circumference * 0.2;
+  const orbitStyle: CSSProperties =
+    state === "thinking"
+      ? { transformBox: "view-box", transformOrigin: "24px 27px", animation: "khayyam-spin 1.4s cubic-bezier(0.6, 0.1, 0.4, 0.9) infinite" }
+      : {};
+  const starStyle: CSSProperties =
+    state === "thinking"
+      ? { transformBox: "fill-box", transformOrigin: "center", animation: "khayyam-breathe 1.4s ease-in-out infinite" }
+      : state === "intro"
+        ? { transformBox: "fill-box", transformOrigin: "center", opacity: 0, animation: "khayyam-land 0.5s 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards" }
+        : {};
 
   return (
-    <svg width={size} height={size} viewBox="0 0 100 100" className={className} role={title ? "img" : undefined} aria-hidden={title ? undefined : true} aria-label={title}>
+    <svg width={size} height={size} viewBox="0 0 48 48" className={className} role={title ? "img" : undefined} aria-hidden={title ? undefined : true} aria-label={title}>
       <defs>
-        <linearGradient id={`${id}-ring`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#4da3ff" />
-          <stop offset="0.55" stopColor="#7c6cff" />
-          <stop offset="1" stopColor="#2fd0c0" />
+        <linearGradient id={`${id}-star`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#ffd88a" />
+          <stop offset="1" stopColor="#f0a23a" />
         </linearGradient>
-        <linearGradient id={`${id}-gold`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#ffe3a3" />
-          <stop offset="1" stopColor="#e0a43a" />
-        </linearGradient>
-        <radialGradient id={`${id}-glow`}>
-          <stop offset="0" stopColor="#7c6cff" stopOpacity="0.45" />
-          <stop offset="1" stopColor="#7c6cff" stopOpacity="0" />
-        </radialGradient>
       </defs>
-
-      <circle cx="50" cy="50" r="48" fill={`url(#${id}-glow)`} />
-
-      {/* mater: outer ring with a degree scale, turning slowly like the night sky */}
-      <g style={spin(60)}>
-        <circle cx="50" cy="50" r="45" fill="none" stroke={`url(#${id}-ring)`} strokeWidth="2.6" />
-        {Array.from({ length: 72 }, (_, index) => {
-          const long = index % 6 === 0;
-          const angle = (index * 5 * Math.PI) / 180;
-          const inner = long ? 37.5 : 40;
-          return (
-            <line
-              key={index}
-              x1={50 + Math.cos(angle) * inner}
-              y1={50 + Math.sin(angle) * inner}
-              x2={50 + Math.cos(angle) * 42.5}
-              y2={50 + Math.sin(angle) * 42.5}
-              stroke={long ? "#e8edf5" : "#8c96b5"}
-              strokeWidth={long ? 1.4 : 0.7}
-              strokeLinecap="round"
-              opacity={long ? 0.9 : 0.55}
-            />
-          );
-        })}
+      <g style={orbitStyle}>
+        {/* the orbit: a circle with a gap at the top, where the star sits */}
+        <circle
+          cx="24"
+          cy="27"
+          r="15"
+          fill="none"
+          stroke={ring}
+          strokeWidth="4.2"
+          strokeLinecap="round"
+          strokeDasharray={`${circumference - gap} ${gap}`}
+          transform={`rotate(${-90 + (gap / circumference) * 180} 24 27)`}
+          style={state === "intro" ? { strokeDashoffset: circumference, animation: "khayyam-draw 1.1s cubic-bezier(0.65, 0, 0.35, 1) forwards" } : undefined}
+        />
       </g>
-
-      {/* rete: an off-centre ecliptic ring turning the other way */}
-      <g style={spin(24, true)}>
-        <circle cx="50" cy="45" r="24" fill="none" stroke="#4da3ff" strokeOpacity="0.55" strokeWidth="1.2" strokeDasharray="2 3" />
-        <circle cx="50" cy="50" r="31" fill="none" stroke="#7c6cff" strokeOpacity="0.4" strokeWidth="0.8" />
-      </g>
-
-      {/* a planet on its orbit */}
-      <g style={spin(8)}>
-        <circle cx="50" cy="19" r="3.4" fill="#2fd0c0" />
-        <circle cx="50" cy="19" r="6" fill="#2fd0c0" opacity="0.2" />
-      </g>
-
-      {/* khatam: the eight-pointed Persian star */}
-      <g style={spin(30)}>
-        <rect x="38" y="38" width="24" height="24" rx="1.5" fill={`url(#${id}-gold)`} />
-        <rect x="38" y="38" width="24" height="24" rx="1.5" fill={`url(#${id}-gold)`} transform="rotate(45 50 50)" />
-        <circle cx="50" cy="50" r="5.2" fill="#0b0d12" />
-        <circle cx="50" cy="50" r="2.2" fill="#ffe3a3" />
-      </g>
+      {/* the star: four-pointed, like a glint in the night sky */}
+      <path d="M24 3.5 L26.2 9.8 L32.5 12 L26.2 14.2 L24 20.5 L21.8 14.2 L15.5 12 L21.8 9.8 Z" fill={`url(#${id}-star)`} style={starStyle} />
     </svg>
   );
 };
@@ -95,7 +78,7 @@ const facts = [
 /** Full-area loading state with the mark and a rotating Khayyam fact. */
 export const KhayyamLoader = ({ tone = "light", label = "در حال بارگذاری" }: { tone?: "light" | "dark"; label?: string }) => (
   <div role="status" aria-live="polite" className={`flex size-full min-h-[50vh] flex-col items-center justify-center gap-6 px-6 text-center ${tone === "dark" ? "bg-[#0b0d12] text-[#eef1f5]" : "bg-white text-[#14202b]"}`}>
-    <KhayyamMark size={96} state="thinking" />
+    <KhayyamMark size={88} state="thinking" tone={tone === "dark" ? "light" : "dark"} />
     <span className="sr-only">{label}</span>
     <div className="relative h-14 w-full max-w-[340px]" aria-hidden="true">
       {facts.map((fact, index) => (

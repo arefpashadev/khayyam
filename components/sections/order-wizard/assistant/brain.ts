@@ -57,7 +57,7 @@ const palettes: Record<IndustryKey, { label: string; color: string; theme: Wizar
   ],
 };
 
-const recommended: Record<IndustryKey, { radius: WizardConfig["radius"]; type: WizardConfig["type"]; layouts: string[]; sections: string[]; extras: string[]; taglines: string[] }> = {
+export const recommended: Record<IndustryKey, { radius: WizardConfig["radius"]; type: WizardConfig["type"]; layouts: string[]; sections: string[]; extras: string[]; taglines: string[] }> = {
   shop: { radius: "round", type: "heavy", layouts: ["bento", "marquee", "split"], sections: ["features", "testimonials", "faq", "contact"], extras: ["seo", "admin", "payment", "chat"], taglines: ["هر روز یک تخفیف تازه", "خرید مطمئن، تحویل سریع", "استایل شما، انتخاب ما"] },
   company: { radius: "soft", type: "balanced", layouts: ["editorial", "split", "glass"], sections: ["features", "testimonials", "pricing", "contact"], extras: ["seo", "admin", "multilang", "analytics"], taglines: ["رشد کسب‌وکار شما، تخصص ما", "از ایده تا اجرا کنار شما", "راهکار دقیق برای چالش واقعی"] },
   restaurant: { radius: "soft", type: "balanced", layouts: ["media", "glass", "centered"], sections: ["gallery", "testimonials", "contact"], extras: ["seo", "admin", "payment"], taglines: ["طعمی که فراموش نمی‌شود", "سفره‌ای گرم برای هر روز", "میز شما آماده است"] },
@@ -126,6 +126,14 @@ export const stepGuide = ({ kind, step, config }: AssistantContext): AssistantRe
       return {
         text: "سئو و پنل مدیریت تقریباً برای همه لازم است. برای این حوزه این ترکیب را پیشنهاد می‌کنم:",
         actions: kind === "app" ? [{ label: "ورود با شماره + نوتیفیکیشن + پرداخت", patch: { extras: ["otp", "push", "payment"] } }] : [{ label: "اعمال امکانات پیشنهادی", patch: { extras: tips.extras }, target: "top" }],
+      };
+    case "outcome":
+      return {
+        text: "اگر هنوز مطمئن نیستید «طرح فیگما» را انتخاب کنید: هزینه کمتری دارد و قبل از ساخت همه‌چیز را می‌بینید. اگر تصمیمتان قطعی است «ساخت کامل» سریع‌تر به نتیجه می‌رسد.",
+        actions: [
+          { label: "اول طرح فیگما", patch: { deliverable: "figma" } },
+          { label: "ساخت کامل", patch: { deliverable: "build" } },
+        ],
       };
     case "references":
       return { text: "لینک دو یا سه سایتی که دوست دارید را بگذارید و بنویسید دقیقاً چه چیزشان را می‌پسندید: رنگ، چیدمان یا حس کلی. همین کافی است؛ بقیه را مشاور با شما هماهنگ می‌کند." };

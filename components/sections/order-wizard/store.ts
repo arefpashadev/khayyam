@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 export type TourName = "intro" | "editor";
 
-import { getDefaultConfig, steps, type IndustryKey, type OrderKind, type PreviewTarget, type WizardConfig } from "./config";
+import { defaultSections, getDefaultConfig, steps, type IndustryKey, type OrderKind, type ProjectType, type PreviewTarget, type WizardConfig } from "./config";
 
 type WizardState = {
   kind: OrderKind;
@@ -20,6 +20,12 @@ type WizardState = {
   toggleSection: (value: string) => void;
   setVariant: (variant: number) => void;
   setIndustry: (industry: IndustryKey) => void;
+  setProjectType: (projectType: ProjectType) => void;
+  /** Which path the customer took: pick on the start screen, quick 3 questions, or the full studio. */
+  mode: "choose" | "quick" | "studio";
+  setMode: (mode: "choose" | "quick" | "studio") => void;
+  /** Replace the whole config (quick path hands its chosen proposal to the studio). */
+  load: (config: WizardConfig) => void;
   /** Open guided tour and its step; null when closed. */
   tour: { name: TourName; step: number } | null;
   setTour: (tour: { name: TourName; step: number } | null) => void;
@@ -39,7 +45,7 @@ export const useWizard = create<WizardState>((set, get) => ({
   tour: null,
   setTour: (tour) => set({ tour }),
 
-  init: (kind) => set({ kind, step: 0, direction: 1, submitted: false, config: getDefaultConfig(kind), focus: { target: "top", tick: 0 } }),
+  init: (kind) => set({ kind, step: 0, direction: 1, submitted: false, config: getDefaultConfig(kind), focus: { target: "top", tick: 0 }, mode: "choose" }),
 
   goTo: (step) => {
     const current = get().step;
@@ -74,6 +80,11 @@ export const useWizard = create<WizardState>((set, get) => ({
     }),
 
   setVariant: (variant) => set((state) => ({ config: { ...state.config, variant }, focus: { target: "hero", tick: state.focus.tick + 1 } })),
+  setProjectType: (projectType) =>
+    set((state) => ({ config: { ...state.config, projectType, sections: defaultSections(state.kind, projectType) }, focus: { target: "top", tick: state.focus.tick + 1 } })),
+  mode: "choose",
+  setMode: (mode) => set({ mode }),
+  load: (config) => set((state) => ({ config, step: 0, submitted: false, focus: { target: "top", tick: state.focus.tick + 1 } })),
   setIndustry: (industry) => set((state) => ({ config: { ...state.config, industry, art: 0 }, focus: { target: "top", tick: state.focus.tick + 1 } })),
 
   submit: () => set({ submitted: true }),
