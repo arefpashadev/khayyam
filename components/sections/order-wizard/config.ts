@@ -417,7 +417,7 @@ export const motionLevels: { value: MotionKey; label: string; description: strin
 ];
 
 /** `visible` extras show up in the preview; the rest work behind the scenes. */
-export const siteExtras: { value: string; label: string; description: string; icon: LucideIcon; visible: boolean }[] = [
+export const siteExtras: { value: string; label: string; description: string; icon: LucideIcon; visible: boolean; ai?: boolean }[] = [
   { value: "seo", label: "سئو", description: "دیده شدن در نتایج گوگل", icon: Search, visible: false },
   { value: "admin", label: "پنل مدیریت", description: "ویرایش محتوا بدون برنامه‌نویس", icon: Briefcase, visible: false },
   { value: "multilang", label: "چندزبانه", description: "نسخه انگلیسی و عربی", icon: Newspaper, visible: true },
@@ -428,6 +428,10 @@ export const siteExtras: { value: string; label: string; description: string; ic
   { value: "announce", label: "نوار اطلاع‌رسانی", description: "پیام کوتاه بالای همه صفحه‌ها", icon: Bell, visible: true },
   { value: "popup", label: "پاپ‌آپ پیشنهاد ویژه", description: "تخفیف یا عضویت در خبرنامه", icon: PartyPopper, visible: true },
   { value: "floatcall", label: "دکمه شناور تماس", description: "تماس و واتس‌اپ با یک لمس", icon: Headset, visible: true },
+  { value: "aiChat", label: "دستیار هوشمند سایت", description: "به سوال مشتری‌ها ۲۴ ساعته جواب می‌دهد", icon: MessageCircle, visible: true, ai: true },
+  { value: "aiSearch", label: "جستجوی هوشمند", description: "با زبان عادی بپرسند، دقیق پیدا کنند", icon: Search, visible: true, ai: true },
+  { value: "aiRecommend", label: "پیشنهاد هوشمند", description: "محصول و خدمت مناسب هر بازدیدکننده", icon: Lightbulb, visible: true, ai: true },
+  { value: "aiContent", label: "تولید محتوا در پنل", description: "نوشتن متن، توضیح محصول و مقاله با هوش مصنوعی", icon: FileText, visible: false, ai: true },
 ];
 
 export const appExtras: { value: string; label: string; description: string; icon: LucideIcon; visible: boolean }[] = [
@@ -594,13 +598,15 @@ export const iconStyles: { value: IconStyle; label: string }[] = [
 ];
 
 /** Personal touches the customer can switch on and immediately see in the phone. */
-export const appFeatureList: { value: string; label: string; description: string; icon: LucideIcon }[] = [
+export const appFeatureList: { value: string; label: string; description: string; icon: LucideIcon; ai?: boolean }[] = [
   { value: "onboarding", label: "معرفی اول کار", description: "چند صفحه خوش‌آمد هنگام اولین ورود", icon: Rocket },
   { value: "biometric", label: "ورود با چهره یا اثر انگشت", description: "بدون رمز، امن و سریع", icon: Lock },
   { value: "darkmode", label: "حالت تیره", description: "کاربر خودش روشن و تیره می‌کند", icon: Lightbulb },
   { value: "stories", label: "استوری", description: "نوار استوری بالای صفحه خانه", icon: CirclePlay },
   { value: "loyalty", label: "باشگاه مشتریان", description: "امتیاز، سطح و جایزه", icon: Award },
-  { value: "forYou", label: "پیشنهاد شخصی", description: "«مخصوص شما» بر اساس سلیقه", icon: Lightbulb },
+  { value: "forYou", label: "پیشنهاد هوشمند", description: "«مخصوص شما» با هوش مصنوعی", icon: Lightbulb, ai: true },
+  { value: "aiAssistant", label: "دستیار هوشمند درون اپ", description: "کاربر می‌پرسد، اپ جواب می‌دهد", icon: MessageCircle, ai: true },
+  { value: "visualSearch", label: "جستجو با عکس", description: "عکس بگیرد، مشابهش را پیدا کند", icon: Search, ai: true },
   { value: "voice", label: "جستجوی صوتی", description: "بگویید، پیدا کنید", icon: Headset },
   { value: "push", label: "اعلان هوشمند", description: "پیام به‌موقع روی صفحه گوشی", icon: Bell },
   { value: "widget", label: "ویجت صفحه گوشی", description: "اطلاعات مهم بدون باز کردن اپ", icon: ChartColumn },

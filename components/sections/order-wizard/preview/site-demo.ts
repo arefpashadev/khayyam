@@ -12,6 +12,7 @@ type SiteDemo = {
   menu: boolean;
   popupClosed: boolean;
   installClosed: boolean;
+  aiOpen: boolean;
   addToCart: () => void;
   set: (patch: Partial<Omit<SiteDemo, "addToCart" | "set">>) => void;
 };
@@ -24,6 +25,7 @@ export const useSiteDemo = create<SiteDemo>((set) => ({
   menu: false,
   popupClosed: false,
   installClosed: false,
+  aiOpen: false,
   addToCart: () => set((state) => ({ cart: state.cart + 1 })),
   set: (patch) => set(patch),
 }));

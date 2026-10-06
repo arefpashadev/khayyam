@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, Download, Gift, Heart, House, LayoutGrid, Megaphone, Menu, MessageCircle, Moon, Phone, Quote, Search, ShoppingCart, Star, UserRound, X } from "lucide-react";
+import { ChevronDown, Download, Sparkles, Gift, Heart, House, LayoutGrid, Megaphone, Menu, MessageCircle, Moon, Phone, Quote, Search, ShoppingCart, Star, UserRound, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import type { CSSProperties, ReactNode } from "react";
 
@@ -102,9 +102,15 @@ export const SiteTop = ({ config, compact }: { config: WizardConfig; compact: bo
     <div className="flex items-center gap-2">
       {extra("multilang") && <span className="flex h-9 items-center gap-1 rounded-(--pv-r-ctrl) bg-(--pv-surface) px-2.5 text-[11px] font-bold"><span>FA</span><span className="text-(--pv-muted)">EN</span></span>}
       {extra("darkmode") && <span className="flex size-9 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-surface)"><Moon className="size-4" aria-hidden="true" /></span>}
+      {extra("aiSearch") && !compact && (
+        <span className="pv-act flex h-10 w-64 items-center gap-2 rounded-(--pv-r-ctrl) bg-(--pv-surface) px-3 text-[12px] text-(--pv-muted) ring-1 ring-(--pv-accent)/40" data-act="جستجوی هوشمند">
+          <Sparkles className="size-4 text-(--pv-accent)" aria-hidden="true" />
+          <span className="truncate">بپرسید: {config.industry === "shop" ? "کفش راحت زیر ۲ میلیون" : "بهترین گزینه برای من چیست؟"}</span>
+        </span>
+      )}
       {config.industry === "shop" ? (
         <>
-          {!compact && (
+          {!compact && !extra("aiSearch") && (
             <span className="flex h-10 w-56 items-center gap-2 rounded-(--pv-r-ctrl) bg-(--pv-surface) px-3 text-[12px] text-(--pv-muted)">
               <Search className="size-4" aria-hidden="true" /> جستجوی محصول…
             </span>
@@ -428,6 +434,7 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
   const menu = useSiteDemo((state) => state.menu);
   const popupClosed = useSiteDemo((state) => state.popupClosed);
   const installClosed = useSiteDemo((state) => state.installClosed);
+  const aiOpen = useSiteDemo((state) => state.aiOpen);
   const setDemo = useSiteDemo((state) => state.set);
   const extra = (value: string) => config.extras.includes(value);
 
@@ -453,6 +460,26 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
         <LandingStrip compact={compact} cta={content.cta} />
       ) : (
         <IndustryShowcase config={config.projectType === "store" ? { ...config, industry: "shop" } : config} compact={compact} />
+      )}
+      {extra("aiRecommend") && (
+        <section data-pv="aiRecommend" className={`pv-section ${compact ? "px-5 py-8" : "px-20 py-12"}`}>
+          <div className="rounded-(--pv-r-card) p-5" style={{ background: "linear-gradient(130deg, color-mix(in srgb, var(--pv-accent) 14%, var(--pv-bg)), color-mix(in srgb, var(--pv-primary) 10%, var(--pv-bg)))" }}>
+            <h2 className="flex items-center gap-2" style={heading(compact ? 18 : 24)}>
+              <Sparkles className="size-5 text-(--pv-accent)" aria-hidden="true" /> پیشنهاد هوشمند برای شما
+            </h2>
+            <div className={`mt-4 grid gap-3 ${compact ? "" : "grid-cols-3"}`}>
+              {content.features.slice(0, compact ? 2 : 3).map((item, index) => (
+                <div key={item.label} className="pv-act flex items-center gap-3 rounded-(--pv-r-card) bg-(--pv-bg) p-3 ring-1 ring-(--pv-border)">
+                  <span className="flex size-12 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-soft) text-(--pv-primary)"><item.icon className="size-5" aria-hidden="true" /></span>
+                  <span className="flex-1">
+                    <strong className="block text-[13px]">{item.label}</strong>
+                    <span className="text-[11px] font-bold text-(--pv-accent)">{faNumber(96 - index * 4)}٪ تطابق با سلیقه شما</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
       )}
 
       {has("features") && (
@@ -670,6 +697,27 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
           <span className="pv-act pointer-events-auto flex size-14 items-center justify-center rounded-full bg-[#25d366] text-white shadow-xl" data-act="تماس و واتس‌اپ">
             <Phone className="size-6" aria-hidden="true" />
           </span>
+        </div>
+      )}
+
+      {extra("aiChat") && (
+        <div className={`pointer-events-none sticky z-40 flex flex-col items-end gap-3 px-5 ${compact && config.webApp ? "bottom-24" : "bottom-5"}`}>
+          <AnimatePresence>
+            {aiOpen && (
+              <motion.div initial={{ opacity: 0, y: 16, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12 }} className={`pointer-events-auto flex flex-col gap-2 rounded-(--pv-r-card) bg-(--pv-bg) p-4 shadow-2xl ring-1 ring-(--pv-border) ${compact ? "w-[86%]" : "w-[340px]"}`}>
+                <strong className="flex items-center gap-2 text-[13px]"><Sparkles className="size-4 text-(--pv-accent)" aria-hidden="true" /> دستیار هوشمند {name}</strong>
+                <p className="self-start rounded-(--pv-r-card) bg-(--pv-surface) px-3 py-2 text-[12px] leading-6">سلام! دنبال چه چیزی هستید؟</p>
+                <p className="self-end rounded-(--pv-r-card) bg-(--pv-primary) px-3 py-2 text-[12px] leading-6 text-(--pv-on-primary)">{content.features[0].label} می‌خواهم</p>
+                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="self-start rounded-(--pv-r-card) bg-(--pv-surface) px-3 py-2 text-[12px] leading-6">
+                  عالی! سه گزینه مناسب شما پیدا کردم؛ بهترینش «{content.features[1].label}» است ✨
+                </motion.p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <button type="button" data-live onClick={() => setDemo({ aiOpen: !aiOpen })} className="pointer-events-auto flex h-14 items-center gap-2 rounded-full px-5 text-[13px] font-bold text-white shadow-xl" style={{ background: "linear-gradient(130deg, var(--pv-primary), var(--pv-accent))" }}>
+            {aiOpen ? <X className="size-5" aria-hidden="true" /> : <Sparkles className="size-5" aria-hidden="true" />}
+            {!compact && (aiOpen ? "بستن" : "از هوش مصنوعی بپرسید")}
+          </button>
         </div>
       )}
 

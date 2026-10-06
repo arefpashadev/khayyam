@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Award, Bell, Check, ChevronLeft, Fingerprint, Heart, Languages, Menu, Mic, Minus, Moon, Plus, ScanFace, Search, Send, Sparkles, Star, UserRound, X } from "lucide-react";
+import { ArrowRight, Award, Bell, Camera, Check, ChevronLeft, Fingerprint, Heart, Languages, Menu, Mic, Minus, Moon, Plus, ScanFace, Search, Send, Sparkles, Star, UserRound, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
@@ -48,6 +48,9 @@ export const InteractiveApp = ({ config, listen = false, springboard = false }: 
   const [listening, setListening] = useState(false);
   const [banner, setBanner] = useState(false);
   const [lang, setLang] = useState("فارسی");
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiStep, setAiStep] = useState(0);
+  const [scanning, setScanning] = useState(false);
   const has = (feature: string) => config.features.includes(feature);
   const demo = useAppPreview((state) => state.demo);
   const toastTimer = useRef<number | undefined>(undefined);
@@ -128,6 +131,19 @@ export const InteractiveApp = ({ config, listen = false, springboard = false }: 
           break;
         case "widget":
           setPhase("home");
+          break;
+        case "aiAssistant":
+          setPhase("app");
+          setScreen("home");
+          setAiStep(0);
+          setAiOpen(true);
+          later(() => setAiStep(1), 900);
+          later(() => setAiStep(2), 2000);
+          break;
+        case "visualSearch":
+          setPhase("app");
+          setScanning(true);
+          later(() => setScanning(false), 2200);
           break;
         case "loyalty":
         case "language":
@@ -322,6 +338,7 @@ export const InteractiveApp = ({ config, listen = false, springboard = false }: 
           <button type="button" onClick={() => go(config.screens.includes("catalog") ? "catalog" : "home")} className={`flex h-12 items-center gap-2 rounded-(--pv-r-ctrl) bg-(--pv-surface) px-4 text-[13px] text-(--pv-muted) ${press}`}>
             <Search className="size-4" aria-hidden="true" /> <span className="flex-1 text-right">جستجو در {name}</span>
             {has("voice") && <Mic className="size-4 text-(--pv-primary)" aria-hidden="true" />}
+            {has("visualSearch") && <Camera className="size-4 text-(--pv-accent)" aria-hidden="true" />}
           </button>
           {has("stories") && (
             <div className="-mx-1 flex gap-3 overflow-hidden px-1">
@@ -626,6 +643,67 @@ export const InteractiveApp = ({ config, listen = false, springboard = false }: 
               })}
             </motion.nav>
           </>
+        )}
+      </AnimatePresence>
+
+      {/* AI assistant: floating button + chat sheet */}
+      {has("aiAssistant") && screen === "home" && !aiOpen && (
+        <motion.button
+          type="button"
+          onClick={() => {
+            setAiStep(0);
+            setAiOpen(true);
+            window.setTimeout(() => setAiStep(1), 800);
+            window.setTimeout(() => setAiStep(2), 1800);
+          }}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          className={`absolute left-5 z-20 flex size-14 items-center justify-center rounded-full text-white shadow-xl ${config.appNav === "floating" ? "bottom-28" : "bottom-24"}`}
+          style={{ background: `linear-gradient(140deg, ${config.color}, ${config.accent})` }}
+          aria-label="دستیار هوشمند"
+        >
+          <Sparkles className="size-6" aria-hidden="true" />
+        </motion.button>
+      )}
+      <AnimatePresence>
+        {aiOpen && (
+          <motion.div className="absolute inset-x-0 bottom-0 z-50 flex max-h-[70%] flex-col gap-3 rounded-t-[28px] bg-(--pv-bg) p-5 pb-9 shadow-[0_-20px_50px_-10px_rgba(0,0,0,0.4)]" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", bounce: 0, duration: 0.4 }}>
+            <div className="flex items-center gap-2">
+              <span className="flex size-9 items-center justify-center rounded-full text-white" style={{ background: `linear-gradient(140deg, ${config.color}, ${config.accent})` }}><Sparkles className="size-4" aria-hidden="true" /></span>
+              <strong className="flex-1 text-[14px]">دستیار هوشمند {name}</strong>
+              <button type="button" onClick={() => setAiOpen(false)} aria-label="بستن"><X className="size-5" aria-hidden="true" /></button>
+            </div>
+            <p className="self-start rounded-(--pv-r-card) bg-(--pv-surface) px-3.5 py-2.5 text-[12.5px] leading-6">سلام! هر چیزی بخواهید بپرسید 🙂</p>
+            {aiStep >= 1 && <motion.p initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="self-end rounded-(--pv-r-card) bg-(--pv-primary) px-3.5 py-2.5 text-[12.5px] leading-6 text-(--pv-on-primary)">برای من چه پیشنهادی داری؟</motion.p>}
+            {aiStep === 1 && <span className="flex items-center gap-2 text-[11px] text-(--pv-muted)"><KhayyamMark size={18} state="thinking" tone={isDark(config.theme) || dark ? "light" : "dark"} /> در حال فکر کردن…</span>}
+            {aiStep >= 2 && (
+              <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-2 self-start rounded-(--pv-r-card) bg-(--pv-surface) p-3 text-[12.5px] leading-6">
+                بر اساس خریدهای قبلی‌تان این دو مورد را پیشنهاد می‌کنم:
+                {[1, 2].map((index) => (
+                  <button key={index} type="button" onClick={() => { setAiOpen(false); setItem(index); if (config.screens.includes("detail")) go("detail"); }} className={`flex items-center gap-2 rounded-(--pv-r-ctrl) bg-(--pv-bg) p-2 text-right ${press}`}>
+                    <span className="size-9 rounded-(--pv-r-ctrl)" style={{ backgroundColor: shade(0.3 + index * 0.15) }} />
+                    <strong className="flex-1 text-[12px]">{items[index].label}</strong>
+                    <ChevronLeft className="size-4 text-(--pv-muted)" aria-hidden="true" />
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* visual search: camera scanner */}
+      <AnimatePresence>
+        {scanning && (
+          <motion.div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-5 bg-black/90 text-white" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <div className="relative size-56 rounded-[28px]" style={{ backgroundColor: shade(0.35) }}>
+              {["right-0 top-0 border-r-4 border-t-4", "left-0 top-0 border-l-4 border-t-4", "bottom-0 right-0 border-b-4 border-r-4", "bottom-0 left-0 border-b-4 border-l-4"].map((corner) => (
+                <span key={corner} className={`absolute size-10 rounded-[8px] border-white ${corner}`} />
+              ))}
+              {!reduce && <motion.span className="absolute inset-x-4 h-0.5 rounded-full bg-white shadow-[0_0_14px_white]" initial={{ top: 16 }} animate={{ top: [16, 208, 16] }} transition={{ duration: 1.6, repeat: Infinity }} />}
+            </div>
+            <span className="flex items-center gap-2 text-[13px]"><Camera className="size-4" aria-hidden="true" /> در حال پیدا کردن موارد مشابه…</span>
+          </motion.div>
         )}
       </AnimatePresence>
 

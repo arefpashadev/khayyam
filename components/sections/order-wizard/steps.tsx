@@ -496,36 +496,47 @@ const ExtrasStep = () => {
   const update = useWizard((state) => state.update);
   const options = kind === "app" ? appExtras : siteExtras;
 
+  const row = (option: (typeof siteExtras)[number]) => {
+    const selected = extras.includes(option.value);
+    return (
+      <Tile
+        key={option.value}
+        selected={selected}
+        onClick={() => update({ extras: selected ? extras.filter((item) => item !== option.value) : [...extras, option.value] }, option.visible ? "top" : undefined)}
+        className="flex items-center gap-3 p-3"
+      >
+        <option.icon className="size-4 shrink-0 opacity-80" aria-hidden="true" />
+        <span className="min-w-0 flex-1">
+          <strong className="flex items-center gap-1.5 text-[12.5px] leading-5">
+            {option.label}
+            {!option.visible && (
+              <span className="hidden items-center gap-0.5 rounded-full bg-white/6 px-1.5 text-[10px] font-normal text-[#8a93a0] lg:inline-flex" title="در پیش‌نمایش دیده نمی‌شود">
+                <EyeOff className="size-2.5" aria-hidden="true" /> پشت صحنه
+              </span>
+            )}
+          </strong>
+          <span className="hidden text-[11px] text-[#8a93a0] lg:block">{option.description}</span>
+        </span>
+        <span className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${selected ? "bg-[#4da3ff]" : "bg-[#2a303b]"}`} aria-hidden="true">
+          {/* RTL switch: off sits on the right, on slides to the left */}
+          <span className="absolute top-0.5 size-4 rounded-full bg-white shadow transition-[left]" style={{ left: selected ? 2 : 18 }} />
+        </span>
+      </Tile>
+    );
+  };
+
+  const aiOptions = options.filter((option) => "ai" in option && option.ai);
   return (
-    <div className="grid grid-cols-2 gap-2 lg:grid-cols-1">
-      {options.map((option) => {
-        const selected = extras.includes(option.value);
-        return (
-          <Tile
-            key={option.value}
-            selected={selected}
-            onClick={() => update({ extras: selected ? extras.filter((item) => item !== option.value) : [...extras, option.value] }, option.visible ? "top" : undefined)}
-            className="flex items-center gap-3 p-3"
-          >
-            <option.icon className="size-4 shrink-0 opacity-80" aria-hidden="true" />
-            <span className="min-w-0 flex-1">
-              <strong className="flex items-center gap-1.5 text-[12.5px] leading-5">
-                {option.label}
-                {!option.visible && (
-                  <span className="hidden items-center gap-0.5 rounded-full bg-white/6 px-1.5 text-[10px] font-normal text-[#8a93a0] lg:inline-flex" title="در پیش‌نمایش دیده نمی‌شود">
-                    <EyeOff className="size-2.5" aria-hidden="true" /> پشت صحنه
-                  </span>
-                )}
-              </strong>
-              <span className="hidden text-[11px] text-[#8a93a0] lg:block">{option.description}</span>
-            </span>
-            <span className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${selected ? "bg-[#4da3ff]" : "bg-[#2a303b]"}`} aria-hidden="true">
-              {/* RTL switch: off sits on the right, on slides to the left */}
-              <span className="absolute top-0.5 size-4 rounded-full bg-white shadow transition-[left]" style={{ left: selected ? 2 : 18 }} />
-            </span>
-          </Tile>
-        );
-      })}
+    <div className="flex flex-col gap-5">
+      {aiOptions.length > 0 && (
+        <div className="rounded-2xl bg-[linear-gradient(140deg,rgba(124,108,255,0.14),rgba(77,163,255,0.06))] p-2.5 ring-1 ring-[#7c6cff]/25">
+          <span className="mb-2 flex items-center gap-1.5 px-1 text-[12px] font-bold text-[#c4bbff]">
+            <Sparkles className="size-3.5" aria-hidden="true" /> اتصال به هوش مصنوعی
+          </span>
+          <div className="grid grid-cols-2 gap-1.5 lg:grid-cols-1">{aiOptions.map(row)}</div>
+        </div>
+      )}
+      <div className="grid grid-cols-2 gap-2 lg:grid-cols-1">{options.filter((option) => !("ai" in option && option.ai)).map(row)}</div>
     </div>
   );
 };

@@ -1,48 +1,70 @@
 import { create } from "zustand";
 
-import { aiSteps, defaultAiConfig, type AiConfig, type AiView } from "./config";
+import { defaultAiConfig, type AiConfig, type AiView } from "./config";
+
+/** Fields of the custom-AI request (factory lines, medical imaging, …). */
+export type CustomRequest = {
+  domains: string[];
+  problem: string;
+  data: string[];
+  scale: string;
+  timeline: string;
+  company: string;
+  name: string;
+  phone: string;
+  fileName: string;
+};
+
+const emptyCustom: CustomRequest = { domains: [], problem: "", data: [], scale: "", timeline: "", company: "", name: "", phone: "", fileName: "" };
 
 type AiState = {
-  started: boolean;
-  step: number;
+  /** landing: pick a path · chat: interview builder · custom: bespoke AI request */
+  mode: "landing" | "chat" | "custom";
+  /** index of the interview question currently being answered */
+  stage: number;
   submitted: boolean;
   view: AiView;
   config: AiConfig;
-  start: () => void;
-  goTo: (step: number) => void;
-  next: () => void;
-  prev: () => void;
+  custom: CustomRequest;
+  setMode: (mode: AiState["mode"]) => void;
+  answer: (patch: Partial<AiConfig>) => void;
+  /** go back to a previous question to change the answer */
+  rewind: (stage: number) => void;
   setView: (view: AiView) => void;
   update: (patch: Partial<AiConfig>) => void;
   toggle: (key: "goals" | "tools" | "languages", value: string) => void;
+  updateCustom: (patch: Partial<CustomRequest>) => void;
+  toggleCustom: (key: "domains" | "data", value: string) => void;
   submit: () => void;
   reset: () => void;
 };
 
-export const useAi = create<AiState>((set, get) => ({
-  started: false,
-  step: 0,
+export const useAi = create<AiState>((set) => ({
+  mode: "landing",
+  stage: 0,
   submitted: false,
   view: "flow",
   config: defaultAiConfig,
-  start: () => set({ started: true }),
-  // Each step shows the preview tab that answers its question best.
-  goTo: (step) => {
-    if (step < 0 || step >= aiSteps.length) return;
-    set({ step, submitted: false, view: aiSteps[step].view });
-  },
-  next: () => (get().step === aiSteps.length - 1 ? get().submit() : get().goTo(get().step + 1)),
-  prev: () => get().goTo(get().step - 1),
+  custom: emptyCustom,
+  // The interview starts blank so the blueprint visibly draws itself from the answers.
+  setMode: (mode) => set((state) => ({ mode, stage: 0, submitted: false, config: mode === "chat" ? { ...state.config, goals: [], tools: [] } : state.config })),
+  answer: (patch) => set((state) => ({ config: { ...state.config, ...patch }, stage: state.stage + 1 })),
+  rewind: (stage) => set({ stage, submitted: false }),
   setView: (view) => set({ view }),
   update: (patch) => set((state) => ({ config: { ...state.config, ...patch } })),
   toggle: (key, value) =>
     set((state) => {
       const list = state.config[key] as string[];
-      const nextList = list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
-      // keep at least one language
-      if (key === "languages" && nextList.length === 0) return state;
-      return { config: { ...state.config, [key]: nextList } };
+      const next = list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
+      if (key === "languages" && next.length === 0) return state;
+      return { config: { ...state.config, [key]: next } };
     }),
-  submit: () => set({ submitted: true, view: "impact" }),
-  reset: () => set({ started: false, step: 0, submitted: false, view: "flow", config: defaultAiConfig }),
+  updateCustom: (patch) => set((state) => ({ custom: { ...state.custom, ...patch } })),
+  toggleCustom: (key, value) =>
+    set((state) => {
+      const list = state.custom[key];
+      return { custom: { ...state.custom, [key]: list.includes(value) ? list.filter((item) => item !== value) : [...list, value] } };
+    }),
+  submit: () => set({ submitted: true }),
+  reset: () => set({ mode: "landing", stage: 0, submitted: false, view: "flow", config: defaultAiConfig, custom: emptyCustom }),
 }));

@@ -19,6 +19,14 @@ import {
   Smartphone,
   Users,
   Workflow,
+  Factory,
+  Stethoscope,
+  Landmark,
+  Sprout,
+  Truck,
+  Cctv,
+  Zap,
+  Lightbulb,
   type LucideIcon,
 } from "lucide-react";
 
@@ -34,7 +42,6 @@ export type Autonomy = "suggest" | "assisted" | "auto";
 export type Hosting = "cloud" | "onprem";
 export type Persona = "formal" | "friendly" | "expert";
 export type Deliverable = "roadmap" | "poc" | "full";
-export type AiStepKey = "goals" | "tools" | "volume" | "brain" | "outcome";
 
 export type AiConfig = {
   company: string;
@@ -78,14 +85,6 @@ export const defaultAiConfig: AiConfig = {
 /* ------------------------------------------------------------------ */
 
 export type AiView = "flow" | "chat" | "impact";
-
-export const aiSteps: { key: AiStepKey; title: string; question: string; hint: string; view: AiView }[] = [
-  { key: "goals", title: "هدف", question: "چه کارهایی را می‌خواهید هوشمند و خودکار کنید؟", hint: "هر چند مورد که بخواهید؛ هر کدام یک مسیر در نقشه کار اضافه می‌کند.", view: "flow" },
-  { key: "tools", title: "ابزارها", question: "الان با چه ابزارها و کانال‌هایی کار می‌کنید؟", hint: "ما به همین‌ها وصل می‌شویم؛ لازم نیست چیزی را عوض کنید.", view: "flow" },
-  { key: "volume", title: "حجم کار", question: "این کارها الان چقدر وقت می‌گیرد؟", hint: "تقریبی کافی است؛ صرفه‌جویی و بازگشت سرمایه زنده حساب می‌شود.", view: "impact" },
-  { key: "brain", title: "رفتار هوش مصنوعی", question: "هوش مصنوعی چقدر اختیار داشته باشد و چطور حرف بزند؟", hint: "در گفتگوی نمونه کنار، لحن را همین حالا امتحان کنید.", view: "chat" },
-  { key: "outcome", title: "تحویل", question: "از کجا شروع کنیم؟", hint: "با نقشه راه یا نمونه اولیه شروع کنید و بعد بزرگش کنیم.", view: "impact" },
-];
 
 /* ------------------------------------------------------------------ */
 /* Goals: each adds its own outcomes to the workflow                    */
@@ -199,3 +198,37 @@ export const impact = (config: AiConfig) => {
 };
 
 export const fa = (value: number) => new Intl.NumberFormat("fa-IR", { maximumFractionDigits: 1 }).format(value);
+
+/* ------------------------------------------------------------------ */
+/* Custom AI: problems that need a conversation before a quote          */
+/* ------------------------------------------------------------------ */
+
+export const customDomains: { value: string; label: string; example: string; icon: LucideIcon }[] = [
+  { value: "factory", label: "خط تولید و کارخانه", example: "تشخیص عیب محصول با دوربین، پیش‌بینی خرابی دستگاه", icon: Factory },
+  { value: "medical", label: "پزشکی و درمان", example: "تحلیل تصاویر پزشکی، خلاصه پرونده بیمار", icon: Stethoscope },
+  { value: "finance", label: "مالی و بانکی", example: "تشخیص تقلب، اعتبارسنجی، تحلیل ریسک", icon: Landmark },
+  { value: "agriculture", label: "کشاورزی", example: "پایش سلامت گیاه، پیش‌بینی برداشت", icon: Sprout },
+  { value: "logistics", label: "لجستیک و حمل‌ونقل", example: "بهینه‌سازی مسیر، پیش‌بینی تقاضا", icon: Truck },
+  { value: "security", label: "امنیت و نظارت تصویری", example: "شناسایی رویداد، شمارش و تحلیل رفت‌وآمد", icon: Cctv },
+  { value: "energy", label: "انرژی و صنایع سنگین", example: "پایش مصرف، نگهداری پیش‌گویانه", icon: Zap },
+  { value: "other", label: "ایده دیگری دارم", example: "هر مسئله‌ای که داده و هدف روشن دارد", icon: Lightbulb },
+];
+
+export const customData = [
+  { value: "images", label: "عکس و ویدیو" },
+  { value: "sensors", label: "سنسور و IoT" },
+  { value: "documents", label: "اسناد و فرم‌ها" },
+  { value: "database", label: "پایگاه داده" },
+  { value: "audio", label: "صدا و تماس" },
+  { value: "none", label: "هنوز داده نداریم" },
+];
+
+export const customProcess = [
+  { title: "گفتگو و شناخت", text: "مسئله، هدف و معیار موفقیت را با هم دقیق می‌کنیم." },
+  { title: "بررسی داده", text: "داده‌های موجود را می‌سنجیم و کمبودها را مشخص می‌کنیم." },
+  { title: "نمونه اولیه", text: "روی داده واقعی شما یک نسخه آزمایشی می‌سازیم و نتیجه را اندازه می‌گیریم." },
+  { title: "استقرار و آموزش", text: "در سازمان راه‌اندازی، تیم را آموزش و سیستم را پایش می‌کنیم." },
+];
+
+export const hourChoices = [5, 10, 20, 40, 80];
+export const staffChoices = [1, 3, 5, 10, 25];
