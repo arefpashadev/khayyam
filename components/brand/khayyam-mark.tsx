@@ -1,15 +1,24 @@
 "use client";
 
-import { useId, type CSSProperties } from "react";
+import type { CSSProperties } from "react";
 
 /**
- * The Khayyam mark — deliberately minimal.
- * An open orbit (one year around the sun, which Khayyam measured to 365.2422 days)
- * whose gap holds a single star; the star is also the dot above «خ».
- * One stroke, one dot: it reads at 16px and animates simply where it matters:
- * - "thinking": the orbit turns and the star breathes (loading, assistant typing)
- * - "intro": the orbit draws itself, then the star lands (splash, welcome)
+ * The Khayyam mark: a cube.
+ * Khayyam solved cubic equations with geometry; a cube is also "building" — what we do.
+ * Two outlined sides and one gold face; nothing else, so it reads at favicon size.
+ *
+ * States
+ * - idle: still, gold top face
+ * - thinking: the gold face travels top -> right -> left, like a cube turning (loaders, assistant)
+ * - intro: the sides draw themselves, then the gold face drops into place (splash, welcome)
+ * - still: no motion at all
  */
+const FACES = {
+  top: "M32 9 L53 21 L32 33 L11 21 Z",
+  right: "M53 21 V44 L32 56 V33 Z",
+  left: "M11 21 V44 L32 56 V33 Z",
+};
+
 export const KhayyamMark = ({
   size = 40,
   state = "idle",
@@ -21,49 +30,34 @@ export const KhayyamMark = ({
   state?: "idle" | "thinking" | "intro" | "still";
   className?: string;
   title?: string;
-  /** "light" draws a white orbit for dark backgrounds; "dark" draws an ink orbit. */
+  /** "light" draws white lines for dark backgrounds; "dark" draws ink lines for light ones. */
   tone?: "light" | "dark";
 }) => {
-  const id = useId().replace(/:/g, "");
-  const ring = tone === "light" ? "#f4f6fa" : "#14202b";
-  const circumference = 2 * Math.PI * 15;
-  const gap = circumference * 0.2;
-  const orbitStyle: CSSProperties =
-    state === "thinking"
-      ? { transformBox: "view-box", transformOrigin: "24px 27px", animation: "khayyam-spin 1.4s cubic-bezier(0.6, 0.1, 0.4, 0.9) infinite" }
-      : {};
-  const starStyle: CSSProperties =
-    state === "thinking"
-      ? { transformBox: "fill-box", transformOrigin: "center", animation: "khayyam-breathe 1.4s ease-in-out infinite" }
-      : state === "intro"
-        ? { transformBox: "fill-box", transformOrigin: "center", opacity: 0, animation: "khayyam-land 0.5s 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards" }
-        : {};
+  const line = tone === "light" ? "#f4f6fa" : "#14202b";
+  const gold = "#f0b44a";
+  const stroke = { fill: "none", stroke: line, strokeWidth: 3.6, strokeLinejoin: "round" as const };
+  const draw = (delay: number): CSSProperties | undefined =>
+    state === "intro" ? { strokeDasharray: 90, strokeDashoffset: 90, animation: `khayyam-draw 0.7s ${delay}s cubic-bezier(0.65, 0, 0.35, 1) forwards` } : undefined;
+  const travel = (delay: number): CSSProperties => ({ opacity: 0, animation: `khayyam-face 1.8s ${delay}s cubic-bezier(0.65, 0, 0.35, 1) infinite` });
 
   return (
-    <svg width={size} height={size} viewBox="0 0 48 48" className={className} role={title ? "img" : undefined} aria-hidden={title ? undefined : true} aria-label={title}>
-      <defs>
-        <linearGradient id={`${id}-star`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#ffd88a" />
-          <stop offset="1" stopColor="#f0a23a" />
-        </linearGradient>
-      </defs>
-      <g style={orbitStyle}>
-        {/* the orbit: a circle with a gap at the top, where the star sits */}
-        <circle
-          cx="24"
-          cy="27"
-          r="15"
-          fill="none"
-          stroke={ring}
-          strokeWidth="4.2"
-          strokeLinecap="round"
-          strokeDasharray={`${circumference - gap} ${gap}`}
-          transform={`rotate(${-90 + (gap / circumference) * 180} 24 27)`}
-          style={state === "intro" ? { strokeDashoffset: circumference, animation: "khayyam-draw 1.1s cubic-bezier(0.65, 0, 0.35, 1) forwards" } : undefined}
+    <svg width={size} height={size} viewBox="0 0 64 64" className={className} role={title ? "img" : undefined} aria-hidden={title ? undefined : true} aria-label={title}>
+      {state === "thinking" ? (
+        <>
+          <path d={FACES.top} fill={gold} style={travel(0)} />
+          <path d={FACES.right} fill={gold} style={travel(0.6)} />
+          <path d={FACES.left} fill={gold} style={travel(1.2)} />
+        </>
+      ) : (
+        <path
+          d={FACES.top}
+          fill={gold}
+          style={state === "intro" ? { transformBox: "fill-box", transformOrigin: "center", opacity: 0, animation: "khayyam-drop 0.55s 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) forwards" } : undefined}
         />
-      </g>
-      {/* the star: four-pointed, like a glint in the night sky */}
-      <path d="M24 3.5 L26.2 9.8 L32.5 12 L26.2 14.2 L24 20.5 L21.8 14.2 L15.5 12 L21.8 9.8 Z" fill={`url(#${id}-star)`} style={starStyle} />
+      )}
+      <path d={FACES.left} {...stroke} style={draw(0)} />
+      <path d={FACES.right} {...stroke} style={draw(0.15)} />
+      {state === "thinking" && <path d={FACES.top} {...stroke} strokeOpacity={0.35} />}
     </svg>
   );
 };

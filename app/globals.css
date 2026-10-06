@@ -255,3 +255,12 @@ body {
 .pv-act:hover { transform: translateY(-2px); filter: brightness(1.04); }
 .pv-act:active { transform: scale(0.96); }
 @media (prefers-reduced-motion: reduce) { .pv-act:hover, .pv-act:active { transform: none; } }
+@keyframes khayyam-face {
+  0%, 4% { opacity: 0; }
+  12%, 30% { opacity: 1; }
+  40%, 100% { opacity: 0; }
+}
+@keyframes khayyam-drop {
+  from { opacity: 0; transform: translateY(-10px) scale(0.85); }
+  to { opacity: 1; transform: none; }
+}
