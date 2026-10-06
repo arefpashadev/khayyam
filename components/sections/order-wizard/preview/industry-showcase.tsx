@@ -10,9 +10,9 @@ const heading = (size: number): CSSProperties => ({
   lineHeight: 1.35,
 });
 
-const tile = "overflow-hidden rounded-(--pv-r-card) border border-(--pv-border) bg-(--pv-bg)";
-const chipActive = "rounded-(--pv-r-ctrl) bg-(--pv-primary) px-4 py-2 text-[12px] font-bold text-(--pv-on-primary)";
-const chipIdle = "rounded-(--pv-r-ctrl) bg-(--pv-surface) px-4 py-2 text-[12px] font-bold text-(--pv-muted)";
+const tile = "pv-act overflow-hidden rounded-(--pv-r-card) border border-(--pv-border) bg-(--pv-bg)";
+const chipActive = "pv-act rounded-(--pv-r-ctrl) bg-(--pv-primary) px-4 py-2 text-[12px] font-bold text-(--pv-on-primary)";
+const chipIdle = "pv-act rounded-(--pv-r-ctrl) bg-(--pv-surface) px-4 py-2 text-[12px] font-bold text-(--pv-muted)";
 
 const Title = ({ title, action, compact }: { title: string; action: string; compact: boolean }) => (
   <div className="mb-6 flex items-end justify-between">

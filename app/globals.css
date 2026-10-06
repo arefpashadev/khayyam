@@ -249,3 +249,9 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .pv-demo-subtle > *, .pv-demo-snappy > *, .pv-demo-lively > * { animation: none !important; }
 }
+
+/* interactive preview elements */
+.pv-act { cursor: pointer; transition: transform 160ms ease, box-shadow 200ms ease, filter 160ms ease; }
+.pv-act:hover { transform: translateY(-2px); filter: brightness(1.04); }
+.pv-act:active { transform: scale(0.96); }
+@media (prefers-reduced-motion: reduce) { .pv-act:hover, .pv-act:active { transform: none; } }

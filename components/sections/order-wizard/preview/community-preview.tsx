@@ -1,6 +1,8 @@
 import { Award, CalendarDays, Heart, Image as ImageIcon, MessageCircle, Search, Share2, UserRound, Users } from "lucide-react";
 import type { CSSProperties } from "react";
 
+import { ActionLayer } from "./action-layer";
+
 import { industries, isDark, mix, type WizardConfig } from "../config";
 
 const heading = (size: number): CSSProperties => ({
@@ -10,7 +12,7 @@ const heading = (size: number): CSSProperties => ({
   lineHeight: 1.35,
 });
 
-const card = "rounded-(--pv-r-card) border border-(--pv-border) bg-(--pv-bg)";
+const card = "pv-act rounded-(--pv-r-card) border border-(--pv-border) bg-(--pv-bg)";
 
 /** A community platform: members, posts, groups and events around the brand. */
 export const CommunityPreview = ({ config, compact }: { config: WizardConfig; compact: boolean }) => {
@@ -59,7 +61,7 @@ export const CommunityPreview = ({ config, compact }: { config: WizardConfig; co
   );
 
   return (
-    <div dir="rtl" data-motion={config.motion} className="pv-root min-h-full bg-(--pv-surface) font-sans text-(--pv-text)">
+    <ActionLayer><div dir="rtl" data-motion={config.motion} className="pv-root min-h-full flex-1 bg-(--pv-surface) font-sans text-(--pv-text)">
       <header className={`flex items-center gap-4 border-b border-(--pv-border) bg-(--pv-bg) ${compact ? "px-4 py-3" : "px-10 py-4"}`}>
         <span className="flex size-9 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-primary) text-(--pv-on-primary)"><Users className="size-5" aria-hidden="true" /></span>
         <strong className="text-[15px]">{name}</strong>
@@ -130,6 +132,6 @@ export const CommunityPreview = ({ config, compact }: { config: WizardConfig; co
           </div>
         )}
       </div>
-    </div>
+    </div></ActionLayer>
   );
 };

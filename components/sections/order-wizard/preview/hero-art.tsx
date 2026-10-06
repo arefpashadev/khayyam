@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ArrowUpLeft,
   Award,
@@ -28,7 +30,7 @@ import {
   UserRound,
   Users,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 import { industries, isDark, mix, type WizardConfig } from "../config";
 import type { HeroArtKey } from "../designs";
@@ -53,12 +55,46 @@ const Avatar = ({ tone, size = "size-9" }: { tone: string; size?: string }) => (
 
 /* Art --------------------------------------------------------------- */
 
-export const HeroArt = ({ art, config, tall }: { art: HeroArtKey; config: WizardConfig; tall?: boolean }) => {
+/**
+ * Every artwork is drawn on a fixed canvas and scaled to its slot, so it can never
+ * squash, wrap or overlap whatever layout, font weight or screen size it lands in.
+ */
+const CANVAS = { tall: { width: 560, height: 476 }, wide: { width: 960, height: 420 } };
+
+const ScaledArt = ({ base, fill, children }: { base: { width: number; height: number }; fill: boolean; children: ReactNode }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState({ width: 0, height: 0 });
+
+  useLayoutEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    const observer = new ResizeObserver(([entry]) => setBox({ width: entry.contentRect.width, height: entry.contentRect.height }));
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  // contain by default; "fill" covers the slot (bento tiles, full-bleed media)
+  const scale = box.width ? (fill ? Math.max(box.width / base.width, box.height / base.height) : box.width / base.width) : 0;
+  const offsetX = fill ? (box.width - base.width * scale) / 2 : 0;
+  const offsetY = fill ? (box.height - base.height * scale) / 2 : 0;
+
+  return (
+    <div ref={ref} className={`relative overflow-hidden rounded-(--pv-r-card) ${fill ? "size-full" : "w-full"}`} style={fill ? undefined : { aspectRatio: `${base.width} / ${base.height}` }}>
+      {scale > 0 && (
+        <div className="absolute left-0 top-0 origin-top-left" dir="rtl" style={{ width: base.width, height: base.height, transform: `translate(${offsetX}px, ${offsetY}px) scale(${scale})` }}>
+          {children}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export const HeroArt = ({ art, config, tall, fill = false }: { art: HeroArtKey; config: WizardConfig; tall?: boolean; fill?: boolean }) => {
   const content = industries[config.industry];
   const Icon = content.icon;
   const shade = (amount: number) => mix(config.color, isDark(config.theme) ? "#0f151c" : "#ffffff", amount);
   const name = config.brandName.trim() || "برند شما";
-  const frame = `relative w-full overflow-hidden rounded-(--pv-r-card) ${tall ? "aspect-[4/3.4]" : "aspect-[16/7]"}`;
+  const frame = "relative size-full overflow-hidden rounded-(--pv-r-card)";
 
   const pieces: Record<HeroArtKey, ReactNode> = {
     /* ---------- company ---------- */
@@ -523,5 +559,9 @@ export const HeroArt = ({ art, config, tall }: { art: HeroArtKey; config: Wizard
     ),
   };
 
-  return <>{pieces[art]}</>;
+  return (
+    <ScaledArt base={tall ? CANVAS.tall : CANVAS.wide} fill={fill}>
+      {pieces[art]}
+    </ScaledArt>
+  );
 };

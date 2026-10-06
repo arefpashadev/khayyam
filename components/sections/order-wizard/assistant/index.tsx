@@ -7,7 +7,7 @@ import { create } from "zustand";
 
 import { KhayyamMark } from "@/components/brand/khayyam-mark";
 
-import { steps } from "../config";
+import { getSteps } from "../config";
 import { useWizard } from "../store";
 import { askAssistant, quickQuestions, stepGuide, type AssistantAction } from "./brain";
 
@@ -55,7 +55,7 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
   const dragControls = useDragControls();
   const [draft, setDraft] = useState("");
   const listRef = useRef<HTMLDivElement>(null);
-  const stepKey = steps[step].key;
+  const stepKey = getSteps(kind)[step].key;
 
   // Greet once, then post a guide for every step the user reaches while the assistant is open.
   useEffect(() => {

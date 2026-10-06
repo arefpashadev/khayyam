@@ -21,14 +21,14 @@ const editorTour: TourStep[] = [
   { target: "steps", icon: ListChecks, title: "همه مراحل یک‌جا", text: () => "هر وقت خواستید روی هر مرحله بزنید، تغییرش بدهید و برگردید. ترتیب اجباری نیست." },
   { target: "panel", icon: MousePointerClick, title: "انتخاب‌های هر مرحله", text: () => "گزینه‌ها را بزنید؛ رنگ دلخواه را هم با قطره‌چکان انتخاب کنید." },
   { target: "stage", icon: LayoutTemplate, title: "پیش‌نمایش زنده", text: (kind) => (kind === "app" ? "نتیجه همین‌جا روی گوشی دیده می‌شود." : "نتیجه همین‌جا روی لپ‌تاپ و گوشی دیده می‌شود و خودش به بخشی که عوض شده می‌رود.") },
-  { target: "devices", icon: Smartphone, title: "لپ‌تاپ یا موبایل", text: () => "با این دکمه‌ها نمایش را بین لپ‌تاپ و موبایل عوض کنید." },
+  { target: "devices", icon: Smartphone, title: "دستگاه و صفحه‌ها", text: (kind) => (kind === "app" ? "از اینجا هر صفحه اپ را روی گوشی باز کنید؛ روی خود گوشی هم بزنید، کار می‌کند." : "با این دکمه‌ها نمایش را بین لپ‌تاپ و موبایل عوض کنید.") },
   { target: "assistant", icon: Bot, title: "دستیار هوشمند", text: () => "هر جا مطمئن نبودید از دستیار بپرسید؛ برای هر مرحله پیشنهاد آماده دارد و با یک لمس اعمالش می‌کند." },
   { target: "submit", icon: Send, title: "ثبت درخواست", text: () => "هر وقت آماده بودید ثبت کنید. همه این مقادیر بعداً هم طبق خواسته شما قابل تغییر است." },
 ];
 
 const tours: Record<TourName, TourStep[]> = { intro: editorTour, editor: editorTour };
 
-const storageKey = (name: TourName) => `khayyam:order-wizard-tour:${name}:v5`;
+const storageKey = (name: TourName) => `khayyam:order-wizard-tour:${name}:v6`;
 
 const CARD_WIDTH = 340;
 const CARD_HEIGHT = 230;

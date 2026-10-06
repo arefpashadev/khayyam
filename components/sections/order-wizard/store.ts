@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 export type TourName = "intro" | "editor";
 
-import { defaultSections, getDefaultConfig, steps, type IndustryKey, type OrderKind, type ProjectType, type PreviewTarget, type WizardConfig } from "./config";
+import { defaultScreens, defaultSections, getDefaultConfig, getSteps, type IndustryKey, type OrderKind, type ProjectType, type PreviewTarget, type WizardConfig } from "./config";
 
 type WizardState = {
   kind: OrderKind;
@@ -33,7 +33,7 @@ type WizardState = {
   restart: () => void;
 };
 
-const focusFor = (step: number, tick: number) => ({ target: steps[step].target, tick: tick + 1 });
+const focusFor = (kind: OrderKind, step: number, tick: number) => ({ target: getSteps(kind)[step].target, tick: tick + 1 });
 
 export const useWizard = create<WizardState>((set, get) => ({
   kind: "site",
@@ -49,16 +49,16 @@ export const useWizard = create<WizardState>((set, get) => ({
 
   goTo: (step) => {
     const current = get().step;
-    if (step < 0 || step >= steps.length) return;
+    if (step < 0 || step >= getSteps(get().kind).length) return;
     if (step === current) {
       if (get().submitted) set({ submitted: false });
       return;
     }
-    set({ step, direction: step > current ? 1 : -1, submitted: false, focus: focusFor(step, get().focus.tick) });
+    set({ step, direction: step > current ? 1 : -1, submitted: false, focus: focusFor(get().kind, step, get().focus.tick) });
   },
   next: () => {
     const { step } = get();
-    if (step === steps.length - 1) return get().submit();
+    if (step === getSteps(get().kind).length - 1) return get().submit();
     get().goTo(step + 1);
   },
   prev: () => get().goTo(get().step - 1),
@@ -66,7 +66,7 @@ export const useWizard = create<WizardState>((set, get) => ({
   update: (patch, target) =>
     set((state) => ({
       config: { ...state.config, ...patch },
-      focus: { target: target ?? steps[state.step].target, tick: state.focus.tick + 1 },
+      focus: { target: target ?? getSteps(state.kind)[state.step].target, tick: state.focus.tick + 1 },
     })),
 
   toggleSection: (value) =>
@@ -81,7 +81,7 @@ export const useWizard = create<WizardState>((set, get) => ({
 
   setVariant: (variant) => set((state) => ({ config: { ...state.config, variant }, focus: { target: "hero", tick: state.focus.tick + 1 } })),
   setProjectType: (projectType) =>
-    set((state) => ({ config: { ...state.config, projectType, sections: defaultSections(state.kind, projectType) }, focus: { target: "top", tick: state.focus.tick + 1 } })),
+    set((state) => ({ config: { ...state.config, projectType, sections: defaultSections(state.kind, projectType), screens: defaultScreens(projectType) }, focus: { target: "top", tick: state.focus.tick + 1 } })),
   mode: "choose",
   setMode: (mode) => set({ mode }),
   load: (config) => set((state) => ({ config, step: 0, submitted: false, focus: { target: "top", tick: state.focus.tick + 1 } })),

@@ -16,7 +16,11 @@ import {
   Settings2,
   Sparkles,
   Square,
+  AppWindow,
+  Navigation,
+  PanelsTopLeft,
   Send,
+  Smartphone,
   Type,
   X,
   type LucideIcon,
@@ -39,13 +43,15 @@ import {
   siteExtras,
   projectTypes,
   sectionOptions,
-  steps,
+  getSteps,
   themes,
   typeStyles,
   type OrderKind,
   type StepKey,
 } from "./config";
 import { artLabels, industryArts, siteLayouts } from "./designs";
+import { AppStage } from "./app/app-stage";
+import { IconStep, NavigationStep, PlatformStep, ScreensStep } from "./app/app-steps";
 import { PathChooser } from "./chooser";
 import { PreviewStage } from "./preview";
 import { QuickWizard } from "./quick";
@@ -66,6 +72,10 @@ const stepIcons: Record<StepKey, LucideIcon> = {
   extras: Settings2,
   references: Link2,
   outcome: Send,
+  platform: Smartphone,
+  navigation: Navigation,
+  screens: PanelsTopLeft,
+  icon: AppWindow,
 };
 
 const shortTitles: Record<StepKey, string> = {
@@ -79,7 +89,13 @@ const shortTitles: Record<StepKey, string> = {
   extras: "امکانات",
   references: "الهام",
   outcome: "سفارش",
+  platform: "پلتفرم",
+  navigation: "ناوبری",
+  screens: "صفحه‌ها",
+  icon: "آیکون",
 };
+
+const panels = { ...stepPanels, platform: PlatformStep, navigation: NavigationStep, screens: ScreensStep, icon: IconStep };
 
 export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
   // Seed the store for this kind before the first paint so the right screen shows immediately.
@@ -139,7 +155,7 @@ const StudioEditor = ({ kind }: { kind: OrderKind }) => {
         <KhayyamMark size={36} title="خیام" />
         <div className="leading-tight">
           <strong className="block text-[13px]">{brandName.trim() || "پروژه جدید"}</strong>
-          <span className="text-[11px] text-[#8a93a0]">{kind === "app" ? "اپلیکیشن" : "وب‌سایت"} · استودیو خیام</span>
+          <span className="text-[11px] text-[#8a93a0]">{kind === "app" ? "استودیو اپلیکیشن" : "استودیو وب‌سایت"} · خیام</span>
         </div>
         <div className="ms-auto flex items-center gap-1">
           <button type="button" onClick={() => setTour({ name: "editor", step: 0 })} aria-label="راهنما" className={iconButton}>
@@ -165,7 +181,7 @@ const StudioEditor = ({ kind }: { kind: OrderKind }) => {
           {submitted ? <SubmittedPanel kind={kind} /> : <StepPanel kind={kind} />}
         </aside>
         <main className="relative min-w-0 flex-1">
-          <PreviewStage studio />
+          {kind === "app" ? <AppStage studio /> : <PreviewStage studio />}
         </main>
       </div>
     </div>
@@ -177,6 +193,7 @@ const StepRail = () => {
   const step = useWizard((state) => state.step);
   const submitted = useWizard((state) => state.submitted);
   const goTo = useWizard((state) => state.goTo);
+  const steps = getSteps(useWizard((state) => state.kind));
 
   return (
     <nav data-tour="steps" aria-label="مراحل" className="flex w-[76px] shrink-0 flex-col items-center gap-1 overflow-y-auto border-l border-white/6 py-3">
@@ -216,7 +233,7 @@ const MobileEditor = ({ kind }: { kind: OrderKind }) => {
   return (
     <div className="flex size-full flex-col">
       <main className="relative min-h-0 flex-1">
-        <PreviewStage />
+        {kind === "app" ? <AppStage /> : <PreviewStage />}
       </main>
       <DraggableSheet data-tour="panel" className="rounded-t-[24px] bg-[#111419] shadow-[0_-16px_40px_-12px_rgba(0,0,0,0.6)]">
         <StepChips />
@@ -231,6 +248,7 @@ const StepChips = () => {
   const step = useWizard((state) => state.step);
   const submitted = useWizard((state) => state.submitted);
   const goTo = useWizard((state) => state.goTo);
+  const steps = getSteps(useWizard((state) => state.kind));
   const rowRef = useRef<HTMLDivElement>(null);
 
   // Keep the current chip in view as the user moves through the steps.
@@ -272,8 +290,9 @@ const StepPanel = ({ kind }: { kind: OrderKind }) => {
   const prev = useWizard((state) => state.prev);
   const reduce = useReducedMotion();
   const isSmall = useIsSmallScreen();
+  const steps = getSteps(kind);
   const current = steps[step];
-  const Panel = stepPanels[current.key];
+  const Panel = panels[current.key];
   const isLast = step === steps.length - 1;
   // RTL: forward slides in from the left. Phones switch instantly — less movement.
   const still = reduce || isSmall;
@@ -290,7 +309,7 @@ const StepPanel = ({ kind }: { kind: OrderKind }) => {
             <h1 className="text-[16px] font-extrabold leading-[1.65] text-white lg:text-[20px]">{current.question(kind)}</h1>
             <p className="mt-1 hidden text-[12px] leading-6 text-[#8a93a0] lg:block">{current.hint}</p>
             <div className="mt-3 lg:mt-6">
-              <Panel />
+              {Panel && <Panel />}
             </div>
           </motion.div>
         </AnimatePresence>

@@ -68,6 +68,11 @@ export type WizardConfig = {
   notes: string;
   projectType: ProjectType;
   deliverable: Deliverable;
+  /* app studio */
+  platform: Platform;
+  appNav: AppNav;
+  screens: string[];
+  iconStyle: IconStyle;
   contactName: string;
   contactPhone: string;
   /** Hero layout number (see designs.ts). */
@@ -81,15 +86,20 @@ export type WizardConfig = {
 export type MotionKey = "none" | "subtle" | "snappy" | "lively";
 export type ProjectType = "site" | "landing" | "store" | "booking" | "community" | "dashboard";
 export type Deliverable = "figma" | "build";
+export type Platform = "ios" | "android" | "both" | "pwa";
+export type AppNav = "tabs" | "floating" | "drawer" | "top";
+export type IconStyle = "gradient" | "solid" | "glyph" | "duo";
 
 /* ------------------------------------------------------------------ */
 /* Steps                                                               */
 /* ------------------------------------------------------------------ */
 
-export type StepKey = "palette" | "radius" | "type" | "backdrop" | "business" | "design" | "sections" | "extras" | "references" | "outcome";
+export type StepKey = "palette" | "radius" | "type" | "backdrop" | "business" | "design" | "sections" | "extras" | "references" | "outcome" | "platform" | "navigation" | "screens" | "icon";
 
 /** Small to big: colours and shapes first, then the business, then the whole page. */
-export const steps: { key: StepKey; title: string; question: (kind: OrderKind) => string; hint: string; target: PreviewTarget }[] = [
+export type StepDef = { key: StepKey; title: string; question: (kind: OrderKind) => string; hint: string; target: PreviewTarget };
+
+export const siteSteps: StepDef[] = [
   { key: "palette", title: "پالت رنگ", question: () => "پالت رنگی خودتان را بسازید", hint: "رنگ اصلی، رنگ دوم و فضای کلی. هر رنگی بخواهید می‌توانید انتخاب کنید.", target: "hero" },
   { key: "radius", title: "گوشه‌ها", question: () => "گوشه‌های رابط کاربری چطور باشد؟", hint: "هر کارت یک رابط کامل با همان گوشه‌هاست؛ نتیجه روی کل طرح هم دیده می‌شود.", target: "showcase" },
   { key: "type", title: "نوشته‌ها", question: () => "نوشته‌ها چه شخصیتی داشته باشند؟", hint: "وزن و اندازه تیترها حس برند را عوض می‌کند.", target: "hero" },
@@ -101,6 +111,22 @@ export const steps: { key: StepKey; title: string; question: (kind: OrderKind) =
   { key: "references", title: "الهام", question: () => "از کدام سایت‌ها یا اپ‌ها خوشتان می‌آید؟", hint: "لینک چند نمونه را بگذارید تا طراح دقیق‌تر سلیقه‌تان را بشناسد.", target: "top" },
   { key: "outcome", title: "سفارش", question: () => "چه چیزی برایتان آماده کنیم؟", hint: "طرح فیگما برای دیدن و نظر دادن، یا ساخت کامل و تحویل نهایی. برآورد بر اساس انتخاب‌های شماست.", target: "top" },
 ];
+
+/** The app studio has its own path: platform, navigation, screens and the app icon. */
+export const appSteps: StepDef[] = [
+  { key: "platform", title: "پلتفرم", question: () => "اپلیکیشن روی چه دستگاه‌هایی اجرا شود؟", hint: "آیفون، اندروید، هر دو، یا وب‌اپ که بدون نصب از مرورگر باز می‌شود.", target: "top" },
+  { key: "palette", title: "پالت رنگ", question: () => "پالت رنگی اپ را بسازید", hint: "رنگ اصلی، رنگ دوم و فضای کلی؛ هر رنگی بخواهید.", target: "top" },
+  { key: "radius", title: "گوشه‌ها", question: () => "گوشه‌های رابط کاربری چطور باشد؟", hint: "هر کارت یک رابط کامل با همان گوشه‌هاست.", target: "top" },
+  { key: "type", title: "نوشته‌ها", question: () => "نوشته‌ها چه شخصیتی داشته باشند؟", hint: "وزن و اندازه تیترها حس برند را عوض می‌کند.", target: "top" },
+  { key: "business", title: "کسب‌وکار", question: () => "چه اپی می‌سازیم و برای چه کسب‌وکاری؟", hint: "نوع اپ صفحه‌ها را تعیین می‌کند؛ حوزه کاری، متن‌ها و تصویرها را.", target: "top" },
+  { key: "navigation", title: "ناوبری", question: () => "کاربر چطور بین صفحه‌ها جابه‌جا شود؟", hint: "روی گوشی پیش‌نمایش بزنید و جابه‌جا شوید؛ کاملاً کار می‌کند.", target: "top" },
+  { key: "screens", title: "صفحه‌ها", question: () => "اپ چه صفحه‌هایی داشته باشد؟", hint: "هر صفحه را روشن کنید تا به اپ اضافه شود؛ روی هر کدام بزنید تا همان را ببینید.", target: "top" },
+  { key: "icon", title: "آیکون", question: () => "آیکون اپ روی صفحه گوشی چطور باشد؟", hint: "روی آیکون در صفحه گوشی بزنید تا اپ مثل واقعی باز شود.", target: "top" },
+  { key: "extras", title: "امکانات", question: () => "چه امکانات فنی لازم دارید؟", hint: "بعضی امکانات پشت صحنه کار می‌کنند و در پیش‌نمایش دیده نمی‌شوند.", target: "top" },
+  { key: "outcome", title: "سفارش", question: () => "چه چیزی برایتان آماده کنیم؟", hint: "طرح فیگما برای دیدن و نظر دادن، یا ساخت کامل و انتشار در فروشگاه‌ها.", target: "top" },
+];
+
+export const getSteps = (kind: OrderKind) => (kind === "app" ? appSteps : siteSteps);
 
 /* ------------------------------------------------------------------ */
 /* Industries — drive the preview copy                                 */
@@ -288,6 +314,10 @@ export const getDefaultConfig = (kind: OrderKind): WizardConfig => ({
   references: ["", "", ""],
   projectType: kind === "app" ? "store" : "site",
   deliverable: "build",
+  platform: "both",
+  appNav: "tabs",
+  screens: defaultScreens("store"),
+  iconStyle: "gradient",
   contactName: "",
   contactPhone: "",
   notes: "",
@@ -501,11 +531,54 @@ export const estimate = (kind: OrderKind, config: WizardConfig) => {
   if (config.deliverable === "figma") return { min: 6, max: 10, weeks: 1 };
   const [low, high, weeks] = base[config.projectType];
   const extras = config.extras.reduce((sum, item) => sum + (extraCost[item] ?? 3), 0);
-  const sections = config.sections.length * perSection;
-  const factor = kind === "app" ? 1.6 : 1;
+  const sections = (kind === "app" ? config.screens.length * 3 : config.sections.length * perSection);
+  const factor = kind === "app" ? { ios: 1.4, android: 1.4, both: 1.7, pwa: 1.15 }[config.platform] : 1;
   return {
     min: Math.round((low + sections + extras) * factor),
     max: Math.round((high + sections + extras * 1.3) * factor),
     weeks: Math.round((weeks + config.extras.length * 0.5 + config.sections.length * 0.3) * (kind === "app" ? 1.4 : 1)),
   };
 };
+
+/* ------------------------------------------------------------------ */
+/* App studio options                                                  */
+/* ------------------------------------------------------------------ */
+
+export const platforms: { value: Platform; label: string; description: string }[] = [
+  { value: "ios", label: "آیفون", description: "App Store" },
+  { value: "android", label: "اندروید", description: "Google Play، کافه‌بازار، مایکت" },
+  { value: "both", label: "هر دو", description: "یک کد، دو فروشگاه" },
+  { value: "pwa", label: "وب‌اپ", description: "بدون نصب، از مرورگر" },
+];
+
+export const appNavs: { value: AppNav; label: string; description: string }[] = [
+  { value: "tabs", label: "نوار پایین", description: "رایج و آشنا" },
+  { value: "floating", label: "نوار شناور", description: "مدرن و سبک" },
+  { value: "drawer", label: "منوی کشویی", description: "برای صفحه‌های زیاد" },
+  { value: "top", label: "تب بالا", description: "برای محتوای دسته‌بندی‌شده" },
+];
+
+export const appScreens: { value: string; label: string; icon: LucideIcon }[] = [
+  { value: "home", label: "خانه", icon: Lightbulb },
+  { value: "catalog", label: "فهرست و جستجو", icon: Search },
+  { value: "detail", label: "صفحه جزئیات", icon: FileText },
+  { value: "cart", label: "سبد و پرداخت", icon: ShoppingCart },
+  { value: "booking", label: "رزرو و نوبت", icon: CalendarCheck },
+  { value: "chat", label: "گفتگو", icon: MessageCircle },
+  { value: "notifications", label: "اعلان‌ها", icon: Bell },
+  { value: "profile", label: "پروفایل", icon: UserRound },
+];
+
+export function defaultScreens(type: ProjectType): string[] {
+  if (type === "booking") return ["home", "booking", "notifications", "profile"];
+  if (type === "community") return ["home", "chat", "notifications", "profile"];
+  if (type === "dashboard") return ["home", "catalog", "notifications", "profile"];
+  return ["home", "catalog", "detail", "cart", "profile"];
+}
+
+export const iconStyles: { value: IconStyle; label: string }[] = [
+  { value: "gradient", label: "گرادیان" },
+  { value: "solid", label: "تک‌رنگ" },
+  { value: "glyph", label: "روشن" },
+  { value: "duo", label: "دو رنگ" },
+];

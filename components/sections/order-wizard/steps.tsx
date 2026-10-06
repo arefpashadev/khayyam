@@ -32,17 +32,17 @@ import { useWizard } from "./store";
 /* Primitives — dark studio controls, selection by soft tint only      */
 /* ------------------------------------------------------------------ */
 
-const ring = "outline-none focus-visible:ring-2 focus-visible:ring-[#4da3ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#111419]";
-const idle = "bg-[#171b22] text-[#c9d0d9] hover:bg-[#1d222b]";
-const active = "bg-[#4da3ff]/14 text-[#9ccbff]";
+export const ring = "outline-none focus-visible:ring-2 focus-visible:ring-[#4da3ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#111419]";
+export const idle = "bg-[#171b22] text-[#c9d0d9] hover:bg-[#1d222b]";
+export const active = "bg-[#4da3ff]/14 text-[#9ccbff]";
 
-const Tile = ({ selected, onClick, children, className = "", label }: { selected: boolean; onClick: () => void; children: ReactNode; className?: string; label?: string }) => (
+export const Tile = ({ selected, onClick, children, className = "", label }: { selected: boolean; onClick: () => void; children: ReactNode; className?: string; label?: string }) => (
   <button type="button" aria-pressed={selected} aria-label={label} onClick={onClick} className={`relative rounded-2xl text-right transition-colors duration-150 ${ring} ${selected ? active : idle} ${className}`}>
     {children}
   </button>
 );
 
-const Label = ({ children, hint }: { children: ReactNode; hint?: string }) => (
+export const Label = ({ children, hint }: { children: ReactNode; hint?: string }) => (
   <span className="mb-2.5 flex items-baseline justify-between gap-2">
     <span className="text-[12px] font-bold text-[#8a93a0]">{children}</span>
     {hint && <span className="text-[11px] text-[#5d6573]">{hint}</span>}
@@ -611,7 +611,7 @@ export const OutcomeStep = () => {
   );
 };
 
-export const stepPanels: Record<StepKey, () => ReactNode> = {
+export const stepPanels: Partial<Record<StepKey, () => ReactNode>> = {
   palette: PaletteStep,
   radius: RadiusStep,
   type: TypeStep,

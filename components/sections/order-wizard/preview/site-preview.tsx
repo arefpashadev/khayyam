@@ -3,6 +3,7 @@ import type { CSSProperties, ReactNode } from "react";
 
 import { faNumber, industries, isDark, mix, type WizardConfig } from "../config";
 import { getSiteDesign } from "../designs";
+import { ActionLayer } from "./action-layer";
 import { HeroArt } from "./hero-art";
 import { IndustryShowcase } from "./industry-showcase";
 
@@ -14,7 +15,7 @@ const heading = (size: number): CSSProperties => ({
 });
 
 const card = "rounded-(--pv-r-card) border border-(--pv-border) bg-(--pv-surface)";
-const primaryButton = "inline-flex items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-primary) font-bold text-(--pv-on-primary)";
+const primaryButton = "pv-act inline-flex items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-primary) font-bold text-(--pv-on-primary)";
 
 const Section = ({ id, compact, children, className = "" }: { id: string; compact: boolean; children: ReactNode; className?: string }) => (
   <section data-pv={id} className={`pv-section ${compact ? "px-5 py-10" : "px-20 py-20"} ${className}`}>
@@ -128,6 +129,7 @@ export const SiteTop = ({ config, compact }: { config: WizardConfig; compact: bo
   );
 
   const art = (tall = true) => <HeroArt art={design.art} config={config} tall={tall} />;
+  const artFill = () => <HeroArt art={design.art} config={config} tall={false} fill />;
 
   const rating = (
     <div className="flex items-center gap-3">
@@ -155,7 +157,7 @@ export const SiteTop = ({ config, compact }: { config: WizardConfig; compact: bo
   const buttons = (inverted = false, center = false) => (
     <div className={`flex flex-wrap items-center gap-3 ${center ? "justify-center" : ""}`}>
       <span className={`${primaryButton} ${compact ? "h-11 px-5 text-[13px]" : "h-13 px-7 text-[15px]"} ${inverted ? "!bg-white !text-[#14202b]" : ""}`}>{content.cta}</span>
-      <span className={`inline-flex items-center rounded-(--pv-r-ctrl) border px-5 font-bold ${compact ? "h-11 text-[13px]" : "h-13 text-[15px]"} ${inverted ? "border-white/40 text-white" : "border-(--pv-border) text-(--pv-text)"}`}>درباره ما</span>
+      <span className={`pv-act inline-flex items-center rounded-(--pv-r-ctrl) border px-5 font-bold ${compact ? "h-11 text-[13px]" : "h-13 text-[15px]"} ${inverted ? "border-white/40 text-white" : "border-(--pv-border) text-(--pv-text)"}`}>درباره ما</span>
     </div>
   );
 
@@ -213,13 +215,13 @@ export const SiteTop = ({ config, compact }: { config: WizardConfig; compact: bo
       <div className={compact ? "px-4 py-6" : "px-20 py-10"}>
         <div className="relative overflow-hidden rounded-(--pv-r-card)">
           <div className={compact ? "aspect-[3/4]" : "aspect-[16/7.5]"}>
-            <div className="size-full [&>*]:!aspect-auto [&>*]:size-full [&>*]:!rounded-none">
-              {art(false)}
+            <div className="size-full [&>*]:!rounded-none">
+              {artFill()}
             </div>
           </div>
-          <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.55),transparent_55%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.78),rgba(0,0,0,0.25)_60%,rgba(0,0,0,0.1))]" />
           <div className={`absolute bottom-0 right-0 ${compact ? "left-0 p-5" : "max-w-[620px] p-12"}`}>
-            <div key={config.motion} className="pv-rise flex flex-col gap-4">
+            <div key={config.motion} className={`pv-rise flex flex-col gap-4 rounded-(--pv-r-card) bg-black/35 backdrop-blur-md ${compact ? "p-4" : "p-7"}`}>
               {badge(true)}
               <h1 style={heading(compact ? 28 : 52)} className="text-white">{headline}</h1>
               {buttons(true)}
@@ -246,7 +248,7 @@ export const SiteTop = ({ config, compact }: { config: WizardConfig; compact: bo
           {rating}
         </div>
         <div className="relative grid grid-cols-3 grid-rows-3 gap-3">
-          <div className="col-span-2 row-span-2 overflow-hidden rounded-(--pv-r-card) [&>*]:!aspect-auto [&>*]:size-full">{art(false)}</div>
+          <div className="col-span-2 row-span-2 overflow-hidden rounded-(--pv-r-card)">{artFill()}</div>
           <div className="flex flex-col justify-end rounded-(--pv-r-card) bg-(--pv-primary) p-4 text-(--pv-on-primary)">
             <strong className="text-[26px] leading-none">{content.stats[0][0]}</strong>
             <span className="mt-1 text-[12px] opacity-80">{content.stats[0][1]}</span>
@@ -408,7 +410,8 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
   const design = getSiteDesign(config.industry, config.variant, config.art);
 
   return (
-    <div dir="rtl" data-motion={config.motion} className="pv-root min-h-full bg-(--pv-bg) font-sans text-(--pv-text)">
+    <ActionLayer>
+    <div dir="rtl" data-motion={config.motion} className="pv-root min-h-full flex-1 bg-(--pv-bg) font-sans text-(--pv-text)">
       <SiteTop config={config} compact={compact} />
       {config.projectType === "booking" && <BookingSection compact={compact} />}
       {config.projectType === "landing" ? (
@@ -570,5 +573,6 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
         </div>
       )}
     </div>
+    </ActionLayer>
   );
 };

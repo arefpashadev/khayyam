@@ -7,6 +7,7 @@ import { useState, type ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 
 import { buildPreviewVars } from "../config";
+import { CustomNote } from "../app/app-stage";
 import { AssistantDock } from "../assistant";
 import { useWizard } from "../store";
 import { useIsSmallScreen } from "../use-small-screen";
@@ -134,6 +135,7 @@ export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
         </div>
       )}
 
+      {studio && <CustomNote className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap" />}
       <AssistantDock studio={studio} />
 
       <div data-tour="stage" className={`absolute ${studio ? "inset-x-10 bottom-8 top-20" : "inset-0 px-3 pb-3 pt-16"}`}>

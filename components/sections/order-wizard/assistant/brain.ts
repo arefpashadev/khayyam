@@ -1,4 +1,4 @@
-import { industries, steps, suggestAccents, type IndustryKey, type OrderKind, type PreviewTarget, type StepKey, type WizardConfig } from "../config";
+import { appSteps, industries, siteSteps, suggestAccents, type IndustryKey, type OrderKind, type PreviewTarget, type StepKey, type WizardConfig } from "../config";
 import { siteLayouts } from "../designs";
 
 /**
@@ -127,6 +127,35 @@ export const stepGuide = ({ kind, step, config }: AssistantContext): AssistantRe
         text: "سئو و پنل مدیریت تقریباً برای همه لازم است. برای این حوزه این ترکیب را پیشنهاد می‌کنم:",
         actions: kind === "app" ? [{ label: "ورود با شماره + نوتیفیکیشن + پرداخت", patch: { extras: ["otp", "push", "payment"] } }] : [{ label: "اعمال امکانات پیشنهادی", patch: { extras: tips.extras }, target: "top" }],
       };
+    case "platform":
+      return {
+        text: "اگر مشتری‌هایتان هم آیفون دارند هم اندروید، «هر دو» را بزنید؛ با یک کد مشترک ساخته می‌شود. برای شروع کم‌هزینه و سریع، وب‌اپ گزینه خوبی است.",
+        actions: [
+          { label: "هر دو (پیشنهادی)", patch: { platform: "both" } },
+          { label: "شروع سریع با وب‌اپ", patch: { platform: "pwa" } },
+        ],
+      };
+    case "navigation":
+      return {
+        text: "نوار پایین برای ۳ تا ۵ صفحه اصلی بهترین است؛ اگر صفحه‌ها زیاد است منوی کشویی را امتحان کنید. روی گوشی بزنید و حسش کنید.",
+        actions: [
+          { label: "نوار پایین", patch: { appNav: "tabs" } },
+          { label: "نوار شناور مدرن", patch: { appNav: "floating" } },
+        ],
+      };
+    case "screens":
+      return {
+        text: `برای «${field}» این صفحه‌ها معمولاً لازم است. هر صفحه را روشن کنید و روی چشم بزنید تا در گوشی باز شود.`,
+        actions: [{ label: "اعمال صفحه‌های پیشنهادی", patch: { screens: config.projectType === "booking" ? ["home", "booking", "notifications", "profile"] : config.projectType === "community" ? ["home", "chat", "notifications", "profile"] : ["home", "catalog", "detail", "cart", "profile"] } }],
+      };
+    case "icon":
+      return {
+        text: "آیکون گرادیان روی هر پس‌زمینه‌ای دیده می‌شود؛ تک‌رنگ رسمی‌تر است. روی آیکون در گوشی بزنید تا ورود به اپ را ببینید.",
+        actions: [
+          { label: "گرادیان", patch: { iconStyle: "gradient" } },
+          { label: "تک‌رنگ", patch: { iconStyle: "solid" } },
+        ],
+      };
     case "outcome":
       return {
         text: "اگر هنوز مطمئن نیستید «طرح فیگما» را انتخاب کنید: هزینه کمتری دارد و قبل از ساخت همه‌چیز را می‌بینید. اگر تصمیمتان قطعی است «ساخت کامل» سریع‌تر به نتیجه می‌رسد.",
@@ -155,7 +184,7 @@ const rules: { test: RegExp; reply: (context: AssistantContext) => AssistantRepl
 ];
 
 export const quickQuestions = (step: StepKey) => {
-  const title = steps.find((item) => item.key === step)?.title ?? "";
+  const title = [...siteSteps, ...appSteps].find((item) => item.key === step)?.title ?? "";
   return [`برای «${title}» پیشنهاد بده`, "هزینه چقدر می‌شود؟", "چقدر طول می‌کشد؟", "بعداً می‌شود تغییر داد؟"];
 };
 

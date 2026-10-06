@@ -1,6 +1,8 @@
 import { Bell, CheckCircle2, CircleDashed, LayoutDashboard, Menu, Search, TrendingUp } from "lucide-react";
 import type { CSSProperties } from "react";
 
+import { ActionLayer } from "./action-layer";
+
 import { dashboardModules, faNumber, industries, isDark, mix, type WizardConfig } from "../config";
 
 const heading = (size: number): CSSProperties => ({
@@ -10,7 +12,7 @@ const heading = (size: number): CSSProperties => ({
   lineHeight: 1.35,
 });
 
-const card = "rounded-(--pv-r-card) border border-(--pv-border) bg-(--pv-bg)";
+const card = "pv-act rounded-(--pv-r-card) border border-(--pv-border) bg-(--pv-bg)";
 
 /** An internal panel: what a company sees for automation, reports and workflows. */
 export const DashboardPreview = ({ config, compact }: { config: WizardConfig; compact: boolean }) => {
@@ -26,7 +28,7 @@ export const DashboardPreview = ({ config, compact }: { config: WizardConfig; co
   ];
 
   return (
-    <div dir="rtl" data-motion={config.motion} className="pv-root flex min-h-full bg-(--pv-surface) font-sans text-(--pv-text)">
+    <ActionLayer><div dir="rtl" data-motion={config.motion} className="pv-root flex min-h-full flex-1 bg-(--pv-surface) font-sans text-(--pv-text)">
       {!compact && (
         <aside className="flex w-64 shrink-0 flex-col gap-1 border-l border-(--pv-border) bg-(--pv-bg) p-5">
           <div className="mb-6 flex items-center gap-2.5">
@@ -118,6 +120,6 @@ export const DashboardPreview = ({ config, compact }: { config: WizardConfig; co
           </div>
         </div>
       </main>
-    </div>
+    </div></ActionLayer>
   );
 };
