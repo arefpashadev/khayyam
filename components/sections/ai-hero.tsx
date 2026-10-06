@@ -151,7 +151,7 @@ export const AiHero = () => {
       </div>
 
       <Button
-        href="#contact"
+        href="/createai"
         size="lg"
         className="absolute bottom-9 left-1/2 z-30 h-14 w-[min(350px,calc(100%-40px))] -translate-x-1/2 rounded-xl border-0 px-2 text-base font-bold shadow-[0_10px_35px_rgba(0,153,239,0.25)] hover:-translate-x-1/2 sm:bottom-11 sm:text-lg"
       >
