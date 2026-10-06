@@ -1,8 +1,8 @@
 "use client";
 
-import { Check, Eye, Globe, Smartphone } from "lucide-react";
+import { Check, Eye, Globe, Play, Smartphone } from "lucide-react";
 
-import { appNavs, appScreens, iconStyles, platforms, type AppNav, type Platform } from "../config";
+import { appFeatureList, appNavs, appScreens, iconStyles, platforms, type AppNav, type Platform } from "../config";
 import { Label, ring, Tile, active, idle } from "../steps";
 import { useWizard } from "../store";
 import { AppIcon } from "./app-icon";
@@ -158,6 +158,54 @@ export const IconStep = () => {
       <p className="flex items-center gap-2 rounded-2xl bg-[#171b22] px-3.5 py-3 text-[11.5px] leading-6 text-[#8a93a0]">
         <Smartphone className="size-4 shrink-0 text-[#4da3ff]" aria-hidden="true" />
         در پیش‌نمایش، روی آیکون اپ بزنید تا صفحه آغاز و ورود به اپ را ببینید.
+      </p>
+    </div>
+  );
+};
+
+export const FeaturesStep = () => {
+  const features = useWizard((state) => state.config.features);
+  const update = useWizard((state) => state.update);
+  const play = useAppPreview((state) => state.play);
+
+  return (
+    <div className="flex flex-col gap-2">
+      {appFeatureList.map((feature) => {
+        const on = features.includes(feature.value);
+        return (
+          <div key={feature.value} className={`flex items-center gap-3 rounded-2xl p-2.5 pe-3 transition-colors ${on ? active : idle}`}>
+            <button
+              type="button"
+              aria-pressed={on}
+              onClick={() => {
+                update({ features: on ? features.filter((value) => value !== feature.value) : [...features, feature.value] });
+                // show it right away, so the customer sees what they just switched on
+                if (!on) window.setTimeout(() => play(feature.value), 60);
+              }}
+              className={`flex flex-1 items-center gap-3 rounded-xl text-right ${ring}`}
+            >
+              <span className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${on ? "bg-[#4da3ff] text-white" : "bg-white/6"}`}>
+                <feature.icon className="size-4" aria-hidden="true" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <strong className="block text-[13px]">{feature.label}</strong>
+                <span className="block text-[11px] opacity-60">{feature.description}</span>
+              </span>
+              <span className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${on ? "bg-[#4da3ff]" : "bg-[#2a303b]"}`}>
+                <span className="absolute top-0.5 size-4 rounded-full bg-white shadow transition-[left]" style={{ left: on ? 2 : 18 }} />
+              </span>
+            </button>
+            {on && (
+              <button type="button" onClick={() => play(feature.value)} aria-label={`نمایش ${feature.label}`} className={`flex size-9 items-center justify-center rounded-xl bg-white/6 text-white transition-colors hover:bg-white/12 ${ring}`}>
+                <Play className="size-4" aria-hidden="true" />
+              </button>
+            )}
+          </div>
+        );
+      })}
+      <p className="mt-1 flex items-center gap-2 rounded-2xl bg-[#171b22] px-3.5 py-3 text-[11.5px] leading-6 text-[#8a93a0]">
+        <Eye className="size-4 shrink-0 text-[#4da3ff]" aria-hidden="true" />
+        هر قابلیتی که در فهرست نیست هم قابل ساخت است؛ در مرحله سفارش برایمان بنویسید.
       </p>
     </div>
   );

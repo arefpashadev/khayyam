@@ -148,6 +148,14 @@ export const stepGuide = ({ kind, step, config }: AssistantContext): AssistantRe
         text: `برای «${field}» این صفحه‌ها معمولاً لازم است. هر صفحه را روشن کنید و روی چشم بزنید تا در گوشی باز شود.`,
         actions: [{ label: "اعمال صفحه‌های پیشنهادی", patch: { screens: config.projectType === "booking" ? ["home", "booking", "notifications", "profile"] : config.projectType === "community" ? ["home", "chat", "notifications", "profile"] : ["home", "catalog", "detail", "cart", "profile"] } }],
       };
+    case "features":
+      return {
+        text: "حالت تیره و باشگاه مشتریان تقریباً برای هر اپی جواب می‌دهد؛ استوری و پیشنهاد شخصی کاربر را بیشتر برمی‌گرداند. هر کدام را روشن کنید تا روی گوشی ببینید.",
+        actions: [
+          { label: "ترکیب پیشنهادی", patch: { features: ["onboarding", "biometric", "darkmode", "loyalty", "forYou", "push"] } },
+          { label: "همه قابلیت‌ها", patch: { features: ["onboarding", "biometric", "darkmode", "stories", "loyalty", "forYou", "voice", "push", "widget", "language"] } },
+        ],
+      };
     case "icon":
       return {
         text: "آیکون گرادیان روی هر پس‌زمینه‌ای دیده می‌شود؛ تک‌رنگ رسمی‌تر است. روی آیکون در گوشی بزنید تا ورود به اپ را ببینید.",
@@ -158,10 +166,10 @@ export const stepGuide = ({ kind, step, config }: AssistantContext): AssistantRe
       };
     case "outcome":
       return {
-        text: "اگر هنوز مطمئن نیستید «طرح فیگما» را انتخاب کنید: هزینه کمتری دارد و قبل از ساخت همه‌چیز را می‌بینید. اگر تصمیمتان قطعی است «ساخت کامل» سریع‌تر به نتیجه می‌رسد.",
+        text: "طراحی فیگما همیشه جزو پروژه است و جدا حساب نمی‌شود. اگر تصمیمتان قطعی است با پیش‌پرداخت شروع کنید؛ اگر هنوز سوال دارید، مشاوره بگیرید. مبلغ مشاوره از قرارداد کم می‌شود.",
         actions: [
-          { label: "اول طرح فیگما", patch: { deliverable: "figma" } },
-          { label: "ساخت کامل", patch: { deliverable: "build" } },
+          { label: "شروع پروژه", patch: { plan: "start" } },
+          { label: "اول مشاوره", patch: { plan: "consult" } },
         ],
       };
     case "references":

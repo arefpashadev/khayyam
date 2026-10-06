@@ -1,12 +1,12 @@
 "use client";
 
-import { ArrowRight, Bell, Check, ChevronLeft, Heart, Menu, Minus, Plus, Search, Send, Star, UserRound, X } from "lucide-react";
+import { ArrowRight, Award, Bell, Check, ChevronLeft, Fingerprint, Heart, Languages, Menu, Mic, Minus, Moon, Plus, ScanFace, Search, Send, Sparkles, Star, UserRound, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import { KhayyamMark } from "@/components/brand/khayyam-mark";
 
-import { appScreens, faNumber, industries, isDark, mix, type WizardConfig } from "../config";
+import { appScreens, buildPreviewVars, faNumber, industries, isDark, mix, type WizardConfig } from "../config";
 import { AppIcon } from "./app-icon";
 import { useAppPreview } from "./state";
 
@@ -38,11 +38,18 @@ export const InteractiveApp = ({ config, listen = false, springboard = false }: 
   const [slot, setSlot] = useState(2);
   const [day, setDay] = useState(1);
   const [messages, setMessages] = useState<string[]>([]);
-  const [settings, setSettings] = useState({ notify: true, dark: false });
+  const [settings, setSettings] = useState({ notify: true });
   const [liked, setLiked] = useState<number[]>([]);
   const [drawer, setDrawer] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
-  const [phase, setPhase] = useState<"home" | "splash" | "app">(springboard ? "home" : "app");
+  const [phase, setPhase] = useState<"home" | "splash" | "onboarding" | "lock" | "app">(springboard ? "home" : "app");
+  const [slide, setSlide] = useState(0);
+  const [dark, setDark] = useState(false);
+  const [listening, setListening] = useState(false);
+  const [banner, setBanner] = useState(false);
+  const [lang, setLang] = useState("فارسی");
+  const has = (feature: string) => config.features.includes(feature);
+  const demo = useAppPreview((state) => state.demo);
   const toastTimer = useRef<number | undefined>(undefined);
   const request = useAppPreview((state) => state.request);
   const shade = (amount: number) => mix(config.color, isDark(config.theme) ? "#0f151c" : "#ffffff", amount);
@@ -87,9 +94,63 @@ export const InteractiveApp = ({ config, listen = false, springboard = false }: 
 
   useEffect(() => () => window.clearTimeout(toastTimer.current), []);
 
+  // The features step asks the phone to act a feature out as soon as it's switched on.
+  useEffect(() => {
+    if (!listen || demo.tick === 0) return;
+    const timers: number[] = [];
+    const later = (fn: () => void, ms: number) => timers.push(window.setTimeout(fn, ms));
+    later(() => {
+      setDrawer(false);
+      setHistory([]);
+      switch (demo.feature) {
+        case "onboarding":
+          setSlide(0);
+          setPhase("onboarding");
+          break;
+        case "biometric":
+          setPhase("lock");
+          later(() => setPhase("app"), reduce ? 300 : 1800);
+          break;
+        case "darkmode":
+          setPhase("app");
+          setDark((value) => !value);
+          break;
+        case "voice":
+          setPhase("app");
+          setScreen(config.screens.includes("catalog") ? "catalog" : "home");
+          setListening(true);
+          later(() => setListening(false), 2400);
+          break;
+        case "push":
+          setPhase("app");
+          setBanner(true);
+          later(() => setBanner(false), 3400);
+          break;
+        case "widget":
+          setPhase("home");
+          break;
+        case "loyalty":
+        case "language":
+          setPhase("app");
+          setScreen("profile");
+          break;
+        default:
+          setPhase("app");
+          setScreen("home");
+      }
+    }, 0);
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [listen, demo, reduce, config.screens]);
+
   const launch = () => {
     setPhase("splash");
-    window.setTimeout(() => setPhase("app"), reduce ? 200 : 1500);
+    window.setTimeout(() => {
+      if (has("biometric")) {
+        setPhase("lock");
+        window.setTimeout(() => setPhase(has("onboarding") ? "onboarding" : "app"), reduce ? 300 : 1600);
+      } else setPhase(has("onboarding") ? "onboarding" : "app");
+      setSlide(0);
+    }, reduce ? 200 : 1500);
   };
 
   /* ---------------- home screen of the phone (springboard) ---------------- */
@@ -97,8 +158,18 @@ export const InteractiveApp = ({ config, listen = false, springboard = false }: 
     const others = ["#ff9f0a", "#30d158", "#0a84ff", "#ff375f", "#bf5af2", "#64d2ff", "#ffd60a", "#8e8e93", "#ff6482", "#32ade6", "#5e5ce6"];
     return (
       <div className="absolute inset-0 flex flex-col px-6 pt-6" style={{ background: `linear-gradient(170deg, ${mix(config.color, "#0b1020", 0.55)}, ${mix(config.accent, "#05060c", 0.6)})` }}>
+        {has("widget") && (
+          <motion.button type="button" onClick={launch} initial={reduce ? false : { opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="mb-5 flex items-center gap-3 rounded-[22px] bg-white/18 p-4 text-right text-white backdrop-blur-xl">
+            <AppIcon config={config} size={44} />
+            <span className="flex-1">
+              <span className="block text-[11px] opacity-80">{name}</span>
+              <strong className="block text-[15px]">{content.badge}</strong>
+            </span>
+            <span className="rounded-full bg-white/25 px-2.5 py-1 text-[11px] font-bold">باز کن</span>
+          </motion.button>
+        )}
         <div className="grid grid-cols-4 gap-x-4 gap-y-5">
-          {others.map((color, index) =>
+          {(has("widget") ? others.slice(0, 8) : others).map((color, index) =>
             index === 5 ? (
               <button key="app" type="button" onClick={launch} className={`flex flex-col items-center gap-1.5 ${press}`} aria-label={`باز کردن ${name}`}>
                 <span className="relative">
@@ -116,6 +187,48 @@ export const InteractiveApp = ({ config, listen = false, springboard = false }: 
           )}
         </div>
         <span className="mx-auto mt-auto mb-10 rounded-full bg-white/15 px-4 py-2 text-[12px] font-bold text-white backdrop-blur">روی آیکون بزنید تا اپ باز شود</span>
+      </div>
+    );
+  }
+
+  if (phase === "onboarding") {
+    const slides = [
+      { title: `به ${name} خوش آمدید`, text: content.sub },
+      { title: "همه‌چیز در یک جا", text: content.features.map((feature) => feature.label).join("، ") },
+      { title: "مخصوص شما", text: "پیشنهادها کم‌کم با سلیقه شما شخصی می‌شود." },
+    ];
+    return (
+      <div className="absolute inset-0 flex flex-col bg-(--pv-bg) px-7 pb-10 pt-6" dir="rtl" style={buildPreviewVars(config)}>
+        <button type="button" onClick={() => setPhase("app")} className="self-start text-[12px] font-bold text-(--pv-muted)">رد کردن</button>
+        <AnimatePresence mode="wait">
+          <motion.div key={slide} initial={reduce ? false : { opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} exit={reduce ? undefined : { opacity: 0, x: 30 }} className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
+            <span className="flex size-40 items-center justify-center rounded-full" style={{ background: `linear-gradient(140deg, ${config.color}, ${config.accent})` }}>
+              {slide === 0 ? <AppIcon config={{ ...config, iconStyle: "glyph" }} size={72} /> : slide === 1 ? <Star className="size-16 text-white" /> : <Sparkles className="size-16 text-white" />}
+            </span>
+            <strong className="text-(--pv-text)" style={heading(22)}>{slides[slide].title}</strong>
+            <p className="text-[13px] leading-7 text-(--pv-muted)">{slides[slide].text}</p>
+          </motion.div>
+        </AnimatePresence>
+        <div className="mb-5 flex justify-center gap-1.5">
+          {slides.map((_, index) => <span key={index} className={`h-1.5 rounded-full transition-all ${index === slide ? "w-6 bg-(--pv-primary)" : "w-1.5 bg-(--pv-border)"}`} />)}
+        </div>
+        <button type="button" onClick={() => (slide < 2 ? setSlide(slide + 1) : setPhase("app"))} className={`h-13 rounded-(--pv-r-ctrl) bg-(--pv-primary) text-[14px] font-extrabold text-(--pv-on-primary) ${press}`}>
+          {slide < 2 ? "بعدی" : "شروع کنیم"}
+        </button>
+      </div>
+    );
+  }
+
+  if (phase === "lock") {
+    return (
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 bg-[#06070d] text-white" dir="rtl">
+        <AppIcon config={config} size={64} />
+        <strong className="text-[16px]">{name}</strong>
+        <motion.span className="relative mt-6 flex size-24 items-center justify-center rounded-[28px] border-2 border-white/30" animate={reduce ? undefined : { borderColor: ["rgba(255,255,255,0.3)", config.color, "#2fd08a"] }} transition={{ duration: 1.4 }}>
+          <ScanFace className="size-12" strokeWidth={1.3} aria-hidden="true" />
+          {!reduce && <motion.span className="absolute inset-x-3 h-0.5 rounded-full bg-(--pv-primary)" style={{ background: config.color }} initial={{ top: 12 }} animate={{ top: [12, 80, 12] }} transition={{ duration: 1.2 }} />}
+        </motion.span>
+        <span className="flex items-center gap-1.5 text-[12px] text-white/70"><Fingerprint className="size-4" aria-hidden="true" /> در حال شناسایی…</span>
       </div>
     );
   }
@@ -207,8 +320,30 @@ export const InteractiveApp = ({ config, listen = false, springboard = false }: 
         </div>
         <div className="flex flex-col gap-5 px-5 pb-28">
           <button type="button" onClick={() => go(config.screens.includes("catalog") ? "catalog" : "home")} className={`flex h-12 items-center gap-2 rounded-(--pv-r-ctrl) bg-(--pv-surface) px-4 text-[13px] text-(--pv-muted) ${press}`}>
-            <Search className="size-4" aria-hidden="true" /> جستجو در {name}
+            <Search className="size-4" aria-hidden="true" /> <span className="flex-1 text-right">جستجو در {name}</span>
+            {has("voice") && <Mic className="size-4 text-(--pv-primary)" aria-hidden="true" />}
           </button>
+          {has("stories") && (
+            <div className="-mx-1 flex gap-3 overflow-hidden px-1">
+              {["جدید", ...content.features.map((feature) => feature.label)].slice(0, 5).map((label, index) => (
+                <button key={label} type="button" onClick={() => notify("استوری‌ها را از پنل مدیریت خودتان منتشر می‌کنید.")} className={`flex w-16 shrink-0 flex-col items-center gap-1.5 ${press}`}>
+                  <span className="flex size-16 items-center justify-center rounded-full p-[3px]" style={{ background: index < 3 ? `linear-gradient(140deg, ${config.color}, ${config.accent})` : "var(--pv-border)" }}>
+                    <span className="size-full rounded-full border-[3px] border-(--pv-bg)" style={{ backgroundColor: shade(0.2 + index * 0.15) }} />
+                  </span>
+                  <span className="w-full truncate text-center text-[10px]">{label}</span>
+                </button>
+              ))}
+            </div>
+          )}
+          {has("loyalty") && (
+            <button type="button" onClick={() => go("profile")} className={`flex items-center gap-3 rounded-(--pv-r-card) border border-(--pv-border) bg-(--pv-surface) p-3.5 text-right ${press}`}>
+              <span className="flex size-11 items-center justify-center rounded-full bg-(--pv-soft) text-(--pv-primary)"><Award className="size-5" aria-hidden="true" /></span>
+              <span className="flex-1">
+                <strong className="block text-[13px]">۱٬۲۵۰ امتیاز · سطح نقره‌ای</strong>
+                <span className="mt-1.5 block h-1.5 overflow-hidden rounded-full bg-(--pv-border)"><span className="block h-full w-[62%] rounded-full bg-(--pv-primary)" /></span>
+              </span>
+            </button>
+          )}
           <div className="relative overflow-hidden rounded-(--pv-r-card) p-5 text-white" style={{ background: `linear-gradient(130deg, ${config.color}, ${config.accent})` }}>
             <span className="absolute -left-8 -top-8 size-32 rounded-full bg-white/15" />
             <span className="relative text-[11px] font-bold opacity-85">{content.badge}</span>
@@ -225,6 +360,12 @@ export const InteractiveApp = ({ config, listen = false, springboard = false }: 
               <span key={chip} className={`shrink-0 rounded-(--pv-r-ctrl) px-3.5 py-2 text-[12px] font-bold ${index === 0 ? "bg-(--pv-text) text-(--pv-bg)" : "bg-(--pv-surface) text-(--pv-muted)"}`}>{chip}</span>
             ))}
           </div>
+          {has("forYou") && (
+            <div>
+              <strong className="mb-2.5 flex items-center gap-1.5 text-[14px]"><Sparkles className="size-4 text-(--pv-accent)" aria-hidden="true" /> مخصوص شما</strong>
+              <div className="flex flex-col gap-2.5">{[2, 0].map((index) => itemCard(index, true))}</div>
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-3">{items.map((_, index) => itemCard(index))}</div>
         </div>
       </>
@@ -377,20 +518,36 @@ export const InteractiveApp = ({ config, listen = false, springboard = false }: 
           </span>
           <strong className="mt-2 text-[17px]">سارا محمدی</strong>
           <span className="text-[12px] text-(--pv-muted)">عضو از مهر ۱۴۰۴</span>
+          {has("loyalty") && (
+            <div className="mt-3 w-full rounded-(--pv-r-card) p-4 text-white" style={{ background: `linear-gradient(130deg, ${config.color}, ${config.accent})` }}>
+              <span className="flex items-center gap-1.5 text-[12px] opacity-85"><Award className="size-4" aria-hidden="true" /> باشگاه مشتریان</span>
+              <strong className="mt-1 block text-[22px]">۱٬۲۵۰ امتیاز</strong>
+              <span className="text-[11px] opacity-85">۷۵۰ امتیاز تا سطح طلایی</span>
+            </div>
+          )}
           <div className="mt-4 grid w-full grid-cols-3 gap-2">
             {content.stats.map(([value, label]) => (
               <span key={label} className="rounded-(--pv-r-card) bg-(--pv-surface) py-3 text-center"><strong className="block text-[15px]">{value}</strong><span className="text-[10px] text-(--pv-muted)">{label}</span></span>
             ))}
           </div>
           <div className="mt-3 w-full divide-y divide-(--pv-border) rounded-(--pv-r-card) bg-(--pv-surface)">
-            {([["notify", "دریافت اعلان"], ["dark", "حالت شب"]] as const).map(([key, label]) => (
-              <button key={key} type="button" onClick={() => setSettings((current) => ({ ...current, [key]: !current[key] }))} className="flex w-full items-center justify-between px-4 py-3.5 text-[13px]">
-                {label}
-                <span className={`relative h-6 w-11 rounded-full transition-colors ${settings[key] ? "bg-(--pv-primary)" : "bg-(--pv-border)"}`}>
-                  <span className="absolute top-0.5 size-5 rounded-full bg-white shadow transition-[left]" style={{ left: settings[key] ? 2 : 22 }} />
+            {[
+              { key: "notify", label: "دریافت اعلان", on: settings.notify, flip: () => setSettings((current) => ({ notify: !current.notify })) },
+              ...(has("darkmode") ? [{ key: "dark", label: "حالت تیره", on: dark, flip: () => setDark((value) => !value) }] : []),
+            ].map((row) => (
+              <button key={row.key} type="button" onClick={row.flip} className="flex w-full items-center justify-between px-4 py-3.5 text-[13px]">
+                <span className="flex items-center gap-2">{row.key === "dark" && <Moon className="size-4" aria-hidden="true" />}{row.label}</span>
+                <span className={`relative h-6 w-11 rounded-full transition-colors ${row.on ? "bg-(--pv-primary)" : "bg-(--pv-border)"}`}>
+                  <span className="absolute top-0.5 size-5 rounded-full bg-white shadow transition-[left]" style={{ left: row.on ? 2 : 22 }} />
                 </span>
               </button>
             ))}
+            {has("language") && (
+              <button type="button" onClick={() => setLang((current) => (current === "فارسی" ? "English" : current === "English" ? "العربية" : "فارسی"))} className="flex w-full items-center justify-between px-4 py-3.5 text-[13px]">
+                <span className="flex items-center gap-2"><Languages className="size-4" aria-hidden="true" />زبان</span>
+                <span className="font-bold text-(--pv-primary)">{lang}</span>
+              </button>
+            )}
           </div>
         </div>
       </>
@@ -405,7 +562,7 @@ export const InteractiveApp = ({ config, listen = false, springboard = false }: 
   const showNav = screen !== "detail" && !(screen === "booking" && history.length > 0);
 
   return (
-    <div dir="rtl" data-motion={config.motion} className="absolute inset-0 overflow-hidden bg-(--pv-bg)">
+    <div dir="rtl" data-motion={config.motion} className="absolute inset-0 overflow-hidden bg-(--pv-bg) text-(--pv-text)" style={dark ? buildPreviewVars({ ...config, theme: "dark" }) : undefined}>
       {config.appNav === "top" && showNav && (
         <div className="flex gap-1.5 overflow-hidden px-5 pb-2">
           {navItems.map((entry) => (
@@ -469,6 +626,33 @@ export const InteractiveApp = ({ config, listen = false, springboard = false }: 
               })}
             </motion.nav>
           </>
+        )}
+      </AnimatePresence>
+
+      {/* voice search */}
+      <AnimatePresence>
+        {listening && (
+          <motion.div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-(--pv-bg)/95 backdrop-blur" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <span className="relative flex size-24 items-center justify-center rounded-full bg-(--pv-primary) text-(--pv-on-primary)">
+              {!reduce && [0, 1].map((ring) => <motion.span key={ring} className="absolute inset-0 rounded-full bg-(--pv-primary)" initial={{ opacity: 0.4, scale: 1 }} animate={{ opacity: 0, scale: 1.9 }} transition={{ duration: 1.4, repeat: Infinity, delay: ring * 0.7 }} />)}
+              <Mic className="relative size-10" aria-hidden="true" />
+            </span>
+            <strong className="text-[16px]">در حال گوش دادن…</strong>
+            <span className="text-[13px] text-(--pv-muted)">«{items[0].label}»</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* push notification */}
+      <AnimatePresence>
+        {banner && (
+          <motion.button type="button" onClick={() => { setBanner(false); go(config.screens.includes("notifications") ? "notifications" : "home"); }} className="absolute inset-x-3 top-2 z-50 flex items-center gap-3 rounded-[22px] bg-white/90 p-3 text-right text-[#14202b] shadow-2xl backdrop-blur-xl" initial={{ y: -90 }} animate={{ y: 0 }} exit={{ y: -90 }} transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}>
+            <AppIcon config={config} size={38} />
+            <span className="min-w-0 flex-1">
+              <span className="flex justify-between text-[11px] text-black/50"><strong className="text-black/80">{name}</strong>اکنون</span>
+              <span className="block truncate text-[12.5px] font-bold">{content.badge} 🎉</span>
+            </span>
+          </motion.button>
         )}
       </AnimatePresence>
 

@@ -22,6 +22,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import type { Plan } from "../order-wizard/payments";
+
 /* ------------------------------------------------------------------ */
 /* Types                                                               */
 /* ------------------------------------------------------------------ */
@@ -48,6 +50,7 @@ export type AiConfig = {
   persona: Persona;
   languages: string[];
   deliverable: Deliverable;
+  plan: Plan;
   contactName: string;
   contactPhone: string;
 };
@@ -65,6 +68,7 @@ export const defaultAiConfig: AiConfig = {
   persona: "friendly",
   languages: ["fa"],
   deliverable: "poc",
+  plan: "start",
   contactName: "",
   contactPhone: "",
 };

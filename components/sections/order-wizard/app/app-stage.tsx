@@ -110,7 +110,7 @@ export const AppStage = ({ studio = false }: { studio?: boolean }) => {
         </FitScene>
       </div>
 
-      {studio && <CustomNote className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap" />}
+      {studio && <CustomNote className="absolute bottom-5 right-5 z-10 max-w-[min(420px,calc(100%-360px))]" />}
       <AssistantDock studio={studio} />
     </div>
   );

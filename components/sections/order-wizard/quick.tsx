@@ -7,9 +7,10 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { KhayyamMark } from "@/components/brand/khayyam-mark";
 import { Link } from "@/i18n/navigation";
 
-import { colors, faNumber, industries, projectTypes, suggestAccents, type IndustryKey, type OrderKind } from "./config";
+import { colors, estimate, faNumber, industries, projectTypes, suggestAccents, type IndustryKey, type OrderKind } from "./config";
 import { DevicePreview } from "./preview/device-preview";
 import { buildProposals } from "./proposals";
+import { amountDue, formatToman, startPayment } from "./payments";
 import { OutcomeStep } from "./steps";
 import { useWizard } from "./store";
 
@@ -285,8 +286,12 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
               <h1 className="mt-1 text-[24px] font-extrabold text-white lg:text-[30px]">چه چیزی برایتان آماده کنیم؟</h1>
               <p className="mb-6 mt-1 text-[13px] text-[#8a93a0]">همه این مقادیر طبق خواسته شما قابل تغییر است.</p>
               <OutcomeStep />
-              <button type="button" onClick={() => setStep("done")} className="mt-6 flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#4da3ff,#7c6cff)] text-[14px] font-extrabold text-white transition hover:brightness-110">
-                <Check className="size-4" aria-hidden="true" /> ثبت درخواست
+              <button
+                type="button"
+                onClick={() => void startPayment(amountDue(config.plan, estimate(kind, config).min)).then((ok) => ok && setStep("done"))}
+                className="mt-6 flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#4da3ff,#7c6cff)] text-[14px] font-extrabold text-white transition hover:brightness-110"
+              >
+                <Check className="size-4" aria-hidden="true" /> پرداخت {formatToman(amountDue(config.plan, estimate(kind, config).min))} و ثبت
               </button>
             </motion.div>
           )}
@@ -296,7 +301,7 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
               <KhayyamMark size={80} state="intro" />
               <h1 className="mt-6 text-[24px] font-extrabold text-white">درخواست شما ثبت شد</h1>
               <p className="mt-2 text-[14px] leading-7 text-[#a7b0bc]">
-                {config.deliverable === "figma" ? "طرح فیگما را آماده می‌کنیم و برایتان می‌فرستیم." : "مشاور پروژه برای قرارداد و جزئیات ساخت با شما تماس می‌گیرد."}
+                {config.plan === "consult" ? "کارشناس ما برای جلسه مشاوره با شما تماس می‌گیرد." : "طراحی فیگما شروع شد؛ طرح را برای تأیید برایتان می‌فرستیم و بعد ساخت را آغاز می‌کنیم."}
               </p>
               <button type="button" onClick={() => setMode("studio")} className="mt-8 flex h-11 items-center gap-2 rounded-2xl bg-white/8 px-5 text-[13px] font-bold text-white transition-colors hover:bg-white/14">
                 <Palette className="size-4" aria-hidden="true" /> جزئیات بیشتر در استودیو

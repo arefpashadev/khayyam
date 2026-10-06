@@ -7,6 +7,8 @@ import { useEffect, type ReactNode } from "react";
 import { KhayyamMark } from "@/components/brand/khayyam-mark";
 import { Link } from "@/i18n/navigation";
 
+import { PaymentOverlay } from "../order-wizard/payment-ui";
+import { amountDue, formatToman, startPayment } from "../order-wizard/payments";
 import { DraggableSheet } from "../order-wizard/sheet";
 import { useIsSmallScreen } from "../order-wizard/use-small-screen";
 import { ChatSim } from "./chat-sim";
@@ -40,6 +42,7 @@ export const AiWizard = () => {
 
   return (
     <div dir="rtl" className="fixed inset-0 z-[100] overflow-hidden bg-[#0b0d12] font-sans text-[#eef1f5] [color-scheme:dark]">
+      <PaymentOverlay />
       {!started ? <Intro /> : isSmall ? <MobileStudio /> : <DesktopStudio />}
     </div>
   );
@@ -185,15 +188,17 @@ const Footer = () => {
   const step = useAi((state) => state.step);
   const next = useAi((state) => state.next);
   const prev = useAi((state) => state.prev);
+  const config = useAi((state) => state.config);
   const isLast = step === aiSteps.length - 1;
+  const due = amountDue(config.plan, aiEstimate(config).min);
 
   return (
     <footer className="flex shrink-0 items-center gap-2 border-t border-white/6 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 lg:px-6 lg:py-4">
       <button type="button" onClick={prev} disabled={step === 0} aria-label="قبلی" className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#171b22] text-[#c9d0d9] transition hover:bg-[#1d222b] disabled:opacity-30">
         <ArrowRight className="size-[18px]" aria-hidden="true" />
       </button>
-      <button type="button" onClick={next} className="flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#4da3ff,#7c6cff)] text-[13px] font-extrabold text-white shadow-[0_10px_30px_-12px_rgba(77,163,255,0.8)] transition hover:brightness-110 active:scale-[0.98]">
-        {isLast ? "ثبت درخواست" : `بعدی: ${aiSteps[step + 1].title}`}
+      <button type="button" onClick={() => (isLast ? void startPayment(due).then((ok) => ok && next()) : next())} className="flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#4da3ff,#7c6cff)] text-[13px] font-extrabold text-white shadow-[0_10px_30px_-12px_rgba(77,163,255,0.8)] transition hover:brightness-110 active:scale-[0.98]">
+        {isLast ? `پرداخت ${formatToman(due)} و ثبت` : `بعدی: ${aiSteps[step + 1].title}`}
         {isLast ? <Check className="size-4" aria-hidden="true" /> : <ArrowLeft className="size-4" aria-hidden="true" />}
       </button>
     </footer>
@@ -208,6 +213,8 @@ const Submitted = () => {
   const result = impact(config);
   const rows: [string, ReactNode][] = [
     ["شروع با", deliverables.find((item) => item.value === config.deliverable)?.label],
+    ["مسیر", config.plan === "consult" ? "اول مشاوره" : "شروع پروژه"],
+    ["پرداخت‌شده", formatToman(amountDue(config.plan, cost.min))],
     ["برآورد", `${fa(cost.min)} تا ${fa(cost.max)} میلیون تومان · ${fa(cost.weeks)} هفته`],
     ["اهداف", goals.filter((goal) => config.goals.includes(goal.value)).map((goal) => goal.label).join("، ") || "—"],
     ["ابزارها", tools.filter((tool) => config.tools.includes(tool.value)).map((tool) => tool.label).join("، ") || "—"],
@@ -255,7 +262,6 @@ const DesktopStudio = () => {
   const step = useAi((state) => state.step);
   const submitted = useAi((state) => state.submitted);
   const goTo = useAi((state) => state.goTo);
-  const submit = useAi((state) => state.submit);
   const company = useAi((state) => state.config.company);
 
   return (
@@ -270,7 +276,7 @@ const DesktopStudio = () => {
           <Link href="/" aria-label="خروج" className="flex size-9 items-center justify-center rounded-xl text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white">
             <X className="size-[18px]" aria-hidden="true" />
           </Link>
-          <button type="button" onClick={submit} className="ms-2 flex h-9 items-center gap-2 rounded-xl bg-white px-4 text-[12.5px] font-extrabold text-[#0b0d12] transition-colors hover:bg-[#d9ecff]">
+          <button type="button" onClick={() => goTo(aiSteps.length - 1)} className="ms-2 flex h-9 items-center gap-2 rounded-xl bg-white px-4 text-[12.5px] font-extrabold text-[#0b0d12] transition-colors hover:bg-[#d9ecff]">
             <Check className="size-4" aria-hidden="true" /> ثبت درخواست
           </button>
         </div>

@@ -3,6 +3,7 @@
 import { Check, Cloud, Server } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { PlanChoice } from "../order-wizard/payment-ui";
 import { Label, Tile, active, idle, ring } from "../order-wizard/steps";
 import { aiEstimate, autonomyLevels, deliverables, fa, goals, languages, personas, tools, type AiStepKey } from "./config";
 import { useAi } from "./store";
@@ -194,6 +195,8 @@ const OutcomeStep = () => {
         </div>
         <span className="mt-1 block text-[12px] text-[#a7b0bc]">زمان تقریبی: {fa(cost.weeks)} هفته</span>
       </div>
+
+      <PlanChoice plan={config.plan} estimateMin={cost.min} onChange={(plan) => update({ plan })} />
 
       <div className="grid gap-2.5">
         <label className="block">

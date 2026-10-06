@@ -269,3 +269,20 @@ body {
 @keyframes ai-dash {
   to { stroke-dashoffset: -28; }
 }
+
+/* scroll reveal inside the preview, one feel per motion level */
+[data-motion="subtle"] .pv-section,
+[data-motion="snappy"] .pv-section,
+[data-motion="lively"] .pv-section {
+  transition-property: opacity, transform, background-color, color, border-color, border-radius, outline-color;
+}
+[data-motion="subtle"] .pv-section { transition-duration: 800ms; transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+[data-motion="subtle"] .pv-section:not([data-inview]) { opacity: 0; transform: translateY(28px); }
+[data-motion="snappy"] .pv-section { transition-duration: 420ms; transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
+[data-motion="snappy"] .pv-section:not([data-inview]) { opacity: 0; transform: scale(0.94); }
+[data-motion="lively"] .pv-section { transition-duration: 900ms; transition-timing-function: cubic-bezier(0.22, 1.2, 0.36, 1); }
+[data-motion="lively"] .pv-section:not([data-inview]) { opacity: 0; transform: translateY(48px) rotate(-1.5deg); }
+[data-motion="lively"] .pv-act:hover { transform: translateY(-4px) rotate(-1deg) scale(1.02); }
+@media (prefers-reduced-motion: reduce) {
+  .pv-section:not([data-inview]) { opacity: 1 !important; transform: none !important; }
+}

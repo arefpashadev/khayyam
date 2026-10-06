@@ -7,7 +7,7 @@ import { create } from "zustand";
 
 import { KhayyamMark } from "@/components/brand/khayyam-mark";
 
-import { getSteps } from "../config";
+import { faNumber, getSteps } from "../config";
 import { useWizard } from "../store";
 import { askAssistant, quickQuestions, stepGuide, type AssistantAction } from "./brain";
 
@@ -54,8 +54,31 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
   const reduce = useReducedMotion();
   const dragControls = useDragControls();
   const [draft, setDraft] = useState("");
+  const [nudge, setNudge] = useState(0);
+  const [tipVisible, setTipVisible] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const stepKey = getSteps(kind)[step].key;
+  const stepTitle = getSteps(kind)[step].title;
+  const suggestions = stepGuide({ kind, step: stepKey, config: useWizard.getState().config }).actions?.length ?? 0;
+  const tip = suggestions ? `برای «${stepTitle}» ${faNumber(suggestions)} پیشنهاد آماده دارم` : `درباره «${stepTitle}» سوالی دارید؟`;
+
+  // Every 5 seconds the closed launcher wiggles so it's noticed.
+  useEffect(() => {
+    if (open || reduce) return;
+    const interval = window.setInterval(() => setNudge((value) => value + 1), 5000);
+    return () => window.clearInterval(interval);
+  }, [open, reduce]);
+
+  // Arriving at a step shows a short, step-specific tip next to the launcher.
+  useEffect(() => {
+    if (open) return;
+    const show = window.setTimeout(() => setTipVisible(true), 900);
+    const hide = window.setTimeout(() => setTipVisible(false), 5200);
+    return () => {
+      window.clearTimeout(show);
+      window.clearTimeout(hide);
+    };
+  }, [stepKey, open]);
 
   // Greet once, then post a guide for every step the user reaches while the assistant is open.
   useEffect(() => {
@@ -94,16 +117,39 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
   return (
     <>
       {!open && (
-        <button
-          type="button"
-          data-tour="assistant"
-          onClick={() => setOpen(true)}
-          className={`absolute z-20 flex items-center gap-2.5 rounded-full bg-[#111419]/90 text-[12.5px] font-bold text-white shadow-[0_12px_40px_-12px_rgba(77,163,255,0.7)] ring-1 ring-white/10 backdrop-blur transition hover:ring-white/25 ${studio ? "bottom-6 left-6 h-12 pe-5 ps-1.5" : "bottom-3 left-3 size-12 justify-center"}`}
-          aria-label="دستیار هوشمند"
-        >
-          <KhayyamMark size={studio ? 36 : 38} />
-          {studio && <span>دستیار هوشمند</span>}
-        </button>
+        <div className={`absolute z-20 flex items-end gap-2 ${studio ? "bottom-6 left-6" : "bottom-3 left-3"}`} dir="ltr">
+          <motion.button
+            key={nudge}
+            type="button"
+            data-tour="assistant"
+            onClick={() => setOpen(true)}
+            animate={reduce || nudge === 0 ? undefined : { rotate: [0, -10, 8, -5, 0], scale: [1, 1.12, 1] }}
+            transition={{ duration: 0.7, ease: "easeInOut" }}
+            className={`relative flex items-center gap-2.5 rounded-full bg-[#111419]/90 text-[12.5px] font-bold text-white shadow-[0_12px_40px_-12px_rgba(77,163,255,0.7)] ring-1 ring-white/10 backdrop-blur transition hover:ring-white/25 ${studio ? "h-12 pe-5 ps-1.5" : "size-12 justify-center"}`}
+            aria-label="دستیار هوشمند"
+            dir="rtl"
+          >
+            {/* a soft ring that pings with every nudge */}
+            {!reduce && nudge > 0 && <motion.span key={`ring-${nudge}`} className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-[#4da3ff]" initial={{ opacity: 0.8, scale: 1 }} animate={{ opacity: 0, scale: 1.5 }} transition={{ duration: 1.1 }} />}
+            <KhayyamMark size={studio ? 36 : 38} state={nudge % 2 === 1 ? "thinking" : "idle"} />
+            {studio && <span>دستیار هوشمند</span>}
+          </motion.button>
+          <AnimatePresence>
+            {tipVisible && (
+              <motion.button
+                type="button"
+                onClick={() => setOpen(true)}
+                initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 6 }}
+                className={`mb-1 max-w-[230px] rounded-2xl rounded-bl-md bg-white px-3.5 py-2.5 text-right text-[12px] font-bold leading-5 text-[#0b0d12] shadow-xl ${studio ? "" : "max-w-[190px]"}`}
+                dir="rtl"
+              >
+                {tip}
+              </motion.button>
+            )}
+          </AnimatePresence>
+        </div>
       )}
 
       <AnimatePresence>

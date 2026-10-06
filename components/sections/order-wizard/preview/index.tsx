@@ -73,7 +73,7 @@ export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
     </Phone>
   );
   const laptop = (
-    <Laptop address={address}>
+    <Laptop address={address} installable={config.webApp}>
       <PagePreview config={config} compact={false} />
     </Laptop>
   );
@@ -135,7 +135,7 @@ export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
         </div>
       )}
 
-      {studio && <CustomNote className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap" />}
+      {studio && <CustomNote className="absolute bottom-5 right-5 z-10 max-w-[min(420px,calc(100%-360px))]" />}
       <AssistantDock studio={studio} />
 
       <div data-tour="stage" className={`absolute ${studio ? "inset-x-10 bottom-8 top-20" : "inset-0 px-3 pb-3 pt-16"}`}>

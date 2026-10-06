@@ -40,6 +40,8 @@ import {
 } from "lucide-react";
 import type { CSSProperties } from "react";
 
+import type { Plan } from "./payments";
+
 /* ------------------------------------------------------------------ */
 /* Types                                                               */
 /* ------------------------------------------------------------------ */
@@ -67,12 +69,16 @@ export type WizardConfig = {
   references: string[];
   notes: string;
   projectType: ProjectType;
-  deliverable: Deliverable;
+  plan: Plan;
   /* app studio */
   platform: Platform;
   appNav: AppNav;
   screens: string[];
   iconStyle: IconStyle;
+  /** Site delivered as an installable web app (PWA) as well. */
+  webApp: boolean;
+  /** User-facing app features (onboarding, biometrics, stories…) */
+  features: string[];
   contactName: string;
   contactPhone: string;
   /** Hero layout number (see designs.ts). */
@@ -85,7 +91,6 @@ export type WizardConfig = {
 
 export type MotionKey = "none" | "subtle" | "snappy" | "lively";
 export type ProjectType = "site" | "landing" | "store" | "booking" | "community" | "dashboard";
-export type Deliverable = "figma" | "build";
 export type Platform = "ios" | "android" | "both" | "pwa";
 export type AppNav = "tabs" | "floating" | "drawer" | "top";
 export type IconStyle = "gradient" | "solid" | "glyph" | "duo";
@@ -94,7 +99,7 @@ export type IconStyle = "gradient" | "solid" | "glyph" | "duo";
 /* Steps                                                               */
 /* ------------------------------------------------------------------ */
 
-export type StepKey = "palette" | "radius" | "type" | "backdrop" | "business" | "design" | "sections" | "extras" | "references" | "outcome" | "platform" | "navigation" | "screens" | "icon";
+export type StepKey = "palette" | "radius" | "type" | "backdrop" | "business" | "design" | "sections" | "extras" | "references" | "outcome" | "platform" | "navigation" | "screens" | "icon" | "features";
 
 /** Small to big: colours and shapes first, then the business, then the whole page. */
 export type StepDef = { key: StepKey; title: string; question: (kind: OrderKind) => string; hint: string; target: PreviewTarget };
@@ -109,7 +114,7 @@ export const siteSteps: StepDef[] = [
   { key: "sections", title: "بخش‌ها", question: () => "چه بخش‌ها و ماژول‌هایی لازم دارید؟", hint: "هر گزینه را بزنید تا جایش را در پیش‌نمایش ببینید.", target: "features" },
   { key: "extras", title: "امکانات فنی", question: () => "چه امکانات فنی لازم دارید؟", hint: "بعضی امکانات پشت صحنه کار می‌کنند و در پیش‌نمایش دیده نمی‌شوند؛ کنارشان علامت زده‌ایم.", target: "top" },
   { key: "references", title: "الهام", question: () => "از کدام سایت‌ها یا اپ‌ها خوشتان می‌آید؟", hint: "لینک چند نمونه را بگذارید تا طراح دقیق‌تر سلیقه‌تان را بشناسد.", target: "top" },
-  { key: "outcome", title: "سفارش", question: () => "چه چیزی برایتان آماده کنیم؟", hint: "طرح فیگما برای دیدن و نظر دادن، یا ساخت کامل و تحویل نهایی. برآورد بر اساس انتخاب‌های شماست.", target: "top" },
+  { key: "outcome", title: "سفارش", question: () => "از کجا شروع کنیم؟", hint: "طراحی فیگما همیشه جزو پروژه است. با پیش‌پرداخت شروع کنید یا اول مشاوره بگیرید.", target: "top" },
 ];
 
 /** The app studio has its own path: platform, navigation, screens and the app icon. */
@@ -121,9 +126,10 @@ export const appSteps: StepDef[] = [
   { key: "business", title: "کسب‌وکار", question: () => "چه اپی می‌سازیم و برای چه کسب‌وکاری؟", hint: "نوع اپ صفحه‌ها را تعیین می‌کند؛ حوزه کاری، متن‌ها و تصویرها را.", target: "top" },
   { key: "navigation", title: "ناوبری", question: () => "کاربر چطور بین صفحه‌ها جابه‌جا شود؟", hint: "روی گوشی پیش‌نمایش بزنید و جابه‌جا شوید؛ کاملاً کار می‌کند.", target: "top" },
   { key: "screens", title: "صفحه‌ها", question: () => "اپ چه صفحه‌هایی داشته باشد؟", hint: "هر صفحه را روشن کنید تا به اپ اضافه شود؛ روی هر کدام بزنید تا همان را ببینید.", target: "top" },
+  { key: "features", title: "قابلیت‌ها", question: () => "چه قابلیت‌هایی برای کاربرانتان فعال شود؟", hint: "هر قابلیت را روشن کنید؛ همان لحظه روی گوشی اجرا می‌شود.", target: "top" },
   { key: "icon", title: "آیکون", question: () => "آیکون اپ روی صفحه گوشی چطور باشد؟", hint: "روی آیکون در صفحه گوشی بزنید تا اپ مثل واقعی باز شود.", target: "top" },
   { key: "extras", title: "امکانات", question: () => "چه امکانات فنی لازم دارید؟", hint: "بعضی امکانات پشت صحنه کار می‌کنند و در پیش‌نمایش دیده نمی‌شوند.", target: "top" },
-  { key: "outcome", title: "سفارش", question: () => "چه چیزی برایتان آماده کنیم؟", hint: "طرح فیگما برای دیدن و نظر دادن، یا ساخت کامل و انتشار در فروشگاه‌ها.", target: "top" },
+  { key: "outcome", title: "سفارش", question: () => "از کجا شروع کنیم؟", hint: "طراحی فیگما همیشه جزو پروژه است. با پیش‌پرداخت شروع کنید یا اول مشاوره بگیرید.", target: "top" },
 ];
 
 export const getSteps = (kind: OrderKind) => (kind === "app" ? appSteps : siteSteps);
@@ -313,11 +319,13 @@ export const getDefaultConfig = (kind: OrderKind): WizardConfig => ({
   sections: kind === "app" ? ["search", "cart", "notifications"] : ["features", "testimonials", "contact"],
   references: ["", "", ""],
   projectType: kind === "app" ? "store" : "site",
-  deliverable: "build",
+  plan: "start",
   platform: "both",
   appNav: "tabs",
   screens: defaultScreens("store"),
   iconStyle: "gradient",
+  features: ["darkmode", "loyalty", "forYou"],
+  webApp: false,
   contactName: "",
   contactPhone: "",
   notes: "",
@@ -417,6 +425,9 @@ export const siteExtras: { value: string; label: string; description: string; ic
   { value: "darkmode", label: "حالت شب", description: "دکمه تغییر روشن و تیره", icon: Lightbulb, visible: true },
   { value: "payment", label: "پرداخت آنلاین", description: "درگاه بانکی امن", icon: CreditCard, visible: false },
   { value: "analytics", label: "آمار بازدید", description: "گزارش رفتار کاربران", icon: ChartColumn, visible: false },
+  { value: "announce", label: "نوار اطلاع‌رسانی", description: "پیام کوتاه بالای همه صفحه‌ها", icon: Bell, visible: true },
+  { value: "popup", label: "پاپ‌آپ پیشنهاد ویژه", description: "تخفیف یا عضویت در خبرنامه", icon: PartyPopper, visible: true },
+  { value: "floatcall", label: "دکمه شناور تماس", description: "تماس و واتس‌اپ با یک لمس", icon: Headset, visible: true },
 ];
 
 export const appExtras: { value: string; label: string; description: string; icon: LucideIcon; visible: boolean }[] = [
@@ -528,7 +539,6 @@ const perSection = 2;
 const extraCost: Record<string, number> = { payment: 8, multilang: 6, chat: 4, analytics: 3, admin: 5, seo: 3, darkmode: 2, otp: 4, push: 3, offline: 6 };
 
 export const estimate = (kind: OrderKind, config: WizardConfig) => {
-  if (config.deliverable === "figma") return { min: 6, max: 10, weeks: 1 };
   const [low, high, weeks] = base[config.projectType];
   const extras = config.extras.reduce((sum, item) => sum + (extraCost[item] ?? 3), 0);
   const sections = (kind === "app" ? config.screens.length * 3 : config.sections.length * perSection);
@@ -581,4 +591,18 @@ export const iconStyles: { value: IconStyle; label: string }[] = [
   { value: "solid", label: "تک‌رنگ" },
   { value: "glyph", label: "روشن" },
   { value: "duo", label: "دو رنگ" },
+];
+
+/** Personal touches the customer can switch on and immediately see in the phone. */
+export const appFeatureList: { value: string; label: string; description: string; icon: LucideIcon }[] = [
+  { value: "onboarding", label: "معرفی اول کار", description: "چند صفحه خوش‌آمد هنگام اولین ورود", icon: Rocket },
+  { value: "biometric", label: "ورود با چهره یا اثر انگشت", description: "بدون رمز، امن و سریع", icon: Lock },
+  { value: "darkmode", label: "حالت تیره", description: "کاربر خودش روشن و تیره می‌کند", icon: Lightbulb },
+  { value: "stories", label: "استوری", description: "نوار استوری بالای صفحه خانه", icon: CirclePlay },
+  { value: "loyalty", label: "باشگاه مشتریان", description: "امتیاز، سطح و جایزه", icon: Award },
+  { value: "forYou", label: "پیشنهاد شخصی", description: "«مخصوص شما» بر اساس سلیقه", icon: Lightbulb },
+  { value: "voice", label: "جستجوی صوتی", description: "بگویید، پیدا کنید", icon: Headset },
+  { value: "push", label: "اعلان هوشمند", description: "پیام به‌موقع روی صفحه گوشی", icon: Bell },
+  { value: "widget", label: "ویجت صفحه گوشی", description: "اطلاعات مهم بدون باز کردن اپ", icon: ChartColumn },
+  { value: "language", label: "تغییر زبان", description: "فارسی، انگلیسی، عربی", icon: Newspaper },
 ];

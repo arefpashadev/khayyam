@@ -1,7 +1,10 @@
+"use client";
+
 import { Clock, Plus, Star, TrendingUp, UserRound } from "lucide-react";
 import type { CSSProperties } from "react";
 
 import { faNumber, isDark, mix, type WizardConfig } from "../config";
+import { useSiteDemo } from "./site-demo";
 
 const heading = (size: number): CSSProperties => ({
   fontSize: `calc(${size}px * var(--pv-hs))`,
@@ -23,6 +26,9 @@ const Title = ({ title, action, compact }: { title: string; action: string; comp
 
 /** The section that makes each field look like itself: products, menu, courses, doctors, cases, work. */
 export const IndustryShowcase = ({ config, compact }: { config: WizardConfig; compact: boolean }) => {
+  const category = useSiteDemo((state) => state.category);
+  const setDemo = useSiteDemo((state) => state.set);
+  const addToCart = useSiteDemo((state) => state.addToCart);
   const shade = (amount: number) => mix(config.color, isDark(config.theme) ? "#0f151c" : "#ffffff", amount);
   const cols = compact ? "grid-cols-2" : "grid-cols-4";
   const pad = compact ? "px-5 py-10" : "px-20 py-16";
@@ -33,11 +39,11 @@ export const IndustryShowcase = ({ config, compact }: { config: WizardConfig; co
         <Title title="پرفروش‌ترین‌ها" action="همه محصولات" compact={compact} />
         <div className="mb-5 flex gap-2 overflow-hidden">
           {["همه", "پوشاک", "کیف و کفش", "اکسسوری", "تخفیف‌دار"].map((item, index) => (
-            <span key={item} className={`shrink-0 ${index === 0 ? chipActive : chipIdle}`}>{item}</span>
+            <button key={item} type="button" data-live onClick={() => setDemo({ category: index })} className={`shrink-0 transition-colors ${category === index ? chipActive : chipIdle}`}>{item}</button>
           ))}
         </div>
         <div className={`grid gap-4 ${cols}`}>
-          {[["کیف دستی چرم", 890, 1150], ["کتانی سفید", 1240, 0], ["ساعت کلاسیک", 2390, 2800], ["شال پاییزه", 320, 0]].map(([name, price, old], index) => (
+          {[["کیف دستی چرم", 890, 1150], ["کتانی سفید", 1240, 0], ["ساعت کلاسیک", 2390, 2800], ["شال پاییزه", 320, 0]].filter((_, index) => category === 0 || category === 4 ? true : index % 4 === (category % 4) || index === category).map(([name, price, old], index) => (
             <div key={name as string} className={tile}>
               <div className="relative aspect-square" style={{ backgroundColor: shade(0.2 + index * 0.14) }}>
                 {old ? <span className="absolute right-3 top-3 rounded-(--pv-r-ctrl) bg-(--pv-primary) px-2 py-0.5 text-[11px] font-bold text-(--pv-on-primary)">تخفیف</span> : null}
@@ -50,7 +56,9 @@ export const IndustryShowcase = ({ config, compact }: { config: WizardConfig; co
                     {old ? <span className="text-[11px] text-(--pv-muted) line-through">{faNumber(old as number)}</span> : null}
                   </span>
                 </div>
-                <span className="flex size-9 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-soft) text-(--pv-primary)"><Plus className="size-4" aria-hidden="true" /></span>
+                <button type="button" data-live aria-label="افزودن به سبد" onClick={(event) => { event.stopPropagation(); addToCart(); }} className="flex size-9 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-soft) text-(--pv-primary) transition-transform active:scale-75">
+                  <Plus className="size-4" aria-hidden="true" />
+                </button>
               </div>
             </div>
           ))}

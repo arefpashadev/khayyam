@@ -34,6 +34,25 @@ const Screen = ({ children, className = "" }: { children: ReactNode; className?:
     };
   }, [focus]);
 
+  // Sections fade/slide in as they scroll into view (styled per motion level in globals.css).
+  // Changing the motion level re-runs it so the difference is visible straight away.
+  const motionLevel = useWizard((state) => state.config.motion);
+  useEffect(() => {
+    const scroller = ref.current;
+    if (!scroller) return;
+    const sections = Array.from(scroller.querySelectorAll<HTMLElement>(".pv-section"));
+    sections.forEach((section) => delete section.dataset.inview);
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => entry.isIntersecting && ((entry.target as HTMLElement).dataset.inview = "true")),
+      { root: scroller, threshold: 0.15 },
+    );
+    const frame = requestAnimationFrame(() => sections.forEach((section) => observer.observe(section)));
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [motionLevel]);
+
   return (
     <div ref={ref} className={`pv-scroller relative overflow-y-auto overscroll-contain ${className}`}>
       {children}
@@ -41,7 +60,7 @@ const Screen = ({ children, className = "" }: { children: ReactNode; className?:
   );
 };
 
-export const Laptop = ({ address, children }: { address: string; children: ReactNode }) => (
+export const Laptop = ({ address, installable = false, children }: { address: string; installable?: boolean; children: ReactNode }) => (
   <div className="relative" style={LAPTOP}>
     {/* lid */}
     <div className="absolute left-1/2 top-0 w-[1316px] -translate-x-1/2 rounded-b-[8px] rounded-t-[30px] bg-[#1a2129] p-[18px] pb-[22px] ring-1 ring-white/12 shadow-[0_40px_80px_-40px_rgba(15,23,32,0.6)]">
@@ -51,7 +70,10 @@ export const Laptop = ({ address, children }: { address: string; children: React
           <span className="size-3 rounded-full bg-[#ff5f57]" />
           <span className="size-3 rounded-full bg-[#febc2e]" />
           <span className="size-3 rounded-full bg-[#28c840]" />
-          <span className="mx-auto flex h-7 w-[440px] items-center justify-center rounded-lg bg-white text-[13px] text-[#7a868d] ring-1 ring-black/5"><bdi>{address}</bdi>.ir</span>
+          <span className="mx-auto flex h-7 w-[440px] items-center justify-center rounded-lg bg-white text-[13px] text-[#7a868d] ring-1 ring-black/5">
+            <bdi>{address}</bdi>.ir
+            {installable && <span className="ms-3 rounded-md bg-[#e6f2fc] px-2 py-0.5 text-[11px] font-bold text-[#0a5a9c]">⤓ نصب اپ</span>}
+          </span>
         </div>
         <Screen className="min-h-0 flex-1">{children}</Screen>
       </div>

@@ -1,9 +1,13 @@
-import { ChevronDown, Menu, MessageCircle, Moon, Quote, Search, ShoppingCart, Star, UserRound } from "lucide-react";
+"use client";
+
+import { ChevronDown, Download, Gift, Heart, House, LayoutGrid, Megaphone, Menu, MessageCircle, Moon, Phone, Quote, Search, ShoppingCart, Star, UserRound, X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import type { CSSProperties, ReactNode } from "react";
 
 import { faNumber, industries, isDark, mix, type WizardConfig } from "../config";
 import { getSiteDesign } from "../designs";
 import { ActionLayer } from "./action-layer";
+import { jumpTo, useSiteDemo } from "./site-demo";
 import { HeroArt } from "./hero-art";
 import { IndustryShowcase } from "./industry-showcase";
 
@@ -68,6 +72,8 @@ export const SiteTop = ({ config, compact }: { config: WizardConfig; compact: bo
   const BrandIcon = content.icon;
   const design = getSiteDesign(config.industry, config.variant, config.art);
   const extra = (value: string) => config.extras.includes(value);
+  const cart = useSiteDemo((state) => state.cart);
+  const setDemo = useSiteDemo((state) => state.set);
   const headline = config.tagline.trim() || content.headline;
   const layout = design.layout;
 
@@ -81,11 +87,14 @@ export const SiteTop = ({ config, compact }: { config: WizardConfig; compact: bo
       </strong>
     </div>
   );
+  const linkTargets = ["showcase", "features", "contact"];
   const links = (
     <nav className="flex items-center gap-8 text-[14px] text-(--pv-muted)">
-      <span className="font-bold text-(--pv-text)">خانه</span>
-      {content.features.slice(0, 3).map((item) => (
-        <span key={item.label}>{item.label}</span>
+      <button type="button" data-live onClick={(event) => jumpTo(event.currentTarget, "hero")} className="font-bold text-(--pv-text) transition-colors hover:text-(--pv-primary)">خانه</button>
+      {content.features.slice(0, 3).map((item, index) => (
+        <button key={item.label} type="button" data-live onClick={(event) => jumpTo(event.currentTarget, linkTargets[index]) || jumpTo(event.currentTarget, "showcase")} className="transition-colors hover:text-(--pv-text)">
+          {item.label}
+        </button>
       ))}
     </nav>
   );
@@ -102,13 +111,19 @@ export const SiteTop = ({ config, compact }: { config: WizardConfig; compact: bo
           )}
           <span className="relative flex size-10 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-primary) text-(--pv-on-primary)">
             <ShoppingCart className="size-[18px]" aria-hidden="true" />
-            <span className="absolute -left-1 -top-1 flex size-5 items-center justify-center rounded-full bg-(--pv-text) text-[10px] font-bold text-(--pv-bg)">۳</span>
+            <motion.span key={cart} initial={{ scale: 1.6 }} animate={{ scale: 1 }} className="absolute -left-1 -top-1 flex size-5 items-center justify-center rounded-full bg-(--pv-accent) text-[10px] font-bold text-white">
+              {faNumber(cart)}
+            </motion.span>
           </span>
         </>
       ) : (
         !compact && <span className={`${primaryButton} h-10 px-5 text-[13px]`}>{content.cta}</span>
       )}
-      {compact && <Menu className="ms-1 size-6" aria-hidden="true" />}
+      {compact && (
+        <button type="button" data-live aria-label="منو" onClick={() => setDemo({ menu: true })} className="ms-1 flex size-9 items-center justify-center rounded-(--pv-r-ctrl) transition-colors hover:bg-(--pv-surface)">
+          <Menu className="size-6" aria-hidden="true" />
+        </button>
+      )}
     </div>
   );
 
@@ -408,10 +423,30 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
   const name = config.brandName.trim() || "برند شما";
   const has = (section: string) => config.sections.includes(section);
   const design = getSiteDesign(config.industry, config.variant, config.art);
+  const faqOpen = useSiteDemo((state) => state.faq);
+  const chosenPlan = useSiteDemo((state) => state.plan);
+  const menu = useSiteDemo((state) => state.menu);
+  const popupClosed = useSiteDemo((state) => state.popupClosed);
+  const installClosed = useSiteDemo((state) => state.installClosed);
+  const setDemo = useSiteDemo((state) => state.set);
+  const extra = (value: string) => config.extras.includes(value);
 
   return (
     <ActionLayer>
-    <div dir="rtl" data-motion={config.motion} className="pv-root min-h-full flex-1 bg-(--pv-bg) font-sans text-(--pv-text)">
+    <div dir="rtl" data-motion={config.motion} className="pv-root relative min-h-full flex-1 bg-(--pv-bg) font-sans text-(--pv-text)">
+      {/* web app: install prompt, like a real PWA on a phone */}
+      {compact && config.webApp && !installClosed && (
+        <div className="sticky top-0 z-40 flex items-center gap-3 border-b border-(--pv-border) bg-(--pv-surface) px-4 py-2.5">
+          <span className="flex size-9 items-center justify-center rounded-[10px] bg-(--pv-primary) text-(--pv-on-primary)"><Download className="size-4" aria-hidden="true" /></span>
+          <span className="flex-1 text-[12px] leading-5"><strong className="block">{name} را نصب کنید</strong><span className="text-(--pv-muted)">مثل اپ، روی صفحه گوشی</span></span>
+          <button type="button" data-live onClick={() => setDemo({ installClosed: true })} className="rounded-(--pv-r-ctrl) bg-(--pv-primary) px-3 py-1.5 text-[11px] font-bold text-(--pv-on-primary)">نصب</button>
+        </div>
+      )}
+      {extra("announce") && (
+        <div className="flex items-center justify-center gap-2 px-4 py-2 text-center text-[12px] font-bold text-white" style={{ background: "linear-gradient(90deg, var(--pv-primary), var(--pv-accent))" }}>
+          <Megaphone className="size-3.5 shrink-0" aria-hidden="true" /> {content.badge} · ارسال رایگان برای خرید اول
+        </div>
+      )}
       <SiteTop config={config} compact={compact} />
       {config.projectType === "booking" && <BookingSection compact={compact} />}
       {config.projectType === "landing" ? (
@@ -492,8 +527,8 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
               { title: "پایه", price: 490 },
               { title: "حرفه‌ای", price: 990, featured: true },
               { title: "ویژه", price: 1890 },
-            ].map((plan) => (
-              <div key={plan.title} className={`flex flex-col gap-4 rounded-(--pv-r-card) border p-6 ${plan.featured ? "border-(--pv-primary) bg-(--pv-primary) text-(--pv-on-primary)" : "border-(--pv-border) bg-(--pv-surface)"}`}>
+            ].map((plan, planIndex) => (
+              <button key={plan.title} type="button" data-live onClick={() => setDemo({ plan: planIndex })} className={`flex flex-col gap-4 rounded-(--pv-r-card) border p-6 text-right transition-all duration-300 ${chosenPlan === planIndex ? "scale-[1.03] border-(--pv-primary) bg-(--pv-primary) text-(--pv-on-primary) shadow-xl" : "border-(--pv-border) bg-(--pv-surface) hover:-translate-y-1"}`}>
                 <strong className="text-[16px]">{plan.title}</strong>
                 <span style={heading(compact ? 24 : 30)}>
                   {faNumber(plan.price)} <span className="text-[13px] font-normal opacity-70">هزار تومان</span>
@@ -501,8 +536,8 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
                 {["امکان اول", "امکان دوم", "امکان سوم"].map((line) => (
                   <span key={line} className="text-[13px] opacity-80">{line}</span>
                 ))}
-                <span className={`mt-auto flex h-11 items-center justify-center rounded-(--pv-r-ctrl) text-[13px] font-bold ${plan.featured ? "bg-(--pv-bg) text-(--pv-text)" : "bg-(--pv-primary) text-(--pv-on-primary)"}`}>انتخاب</span>
-              </div>
+                <span className={`mt-auto flex h-11 items-center justify-center rounded-(--pv-r-ctrl) text-[13px] font-bold ${chosenPlan === planIndex ? "bg-(--pv-bg) text-(--pv-text)" : "bg-(--pv-primary) text-(--pv-on-primary)"}`}>{chosenPlan === planIndex ? "انتخاب شد ✓" : "انتخاب"}</span>
+              </button>
             ))}
           </div>
         </Section>
@@ -512,14 +547,25 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
         <Section id="faq" compact={compact} className="bg-(--pv-surface)">
           <SectionTitle title="سوالات متداول" compact={compact} />
           <div className="mx-auto flex max-w-[760px] flex-col gap-3">
-            {["زمان تحویل چقدر است؟", "امکان پرداخت قسطی دارید؟", "پشتیبانی بعد از خرید چطور است؟", "چطور با شما تماس بگیرم؟"].map((question, index) => (
-              <div key={question} className={`${card} bg-(--pv-bg) px-5 py-4`}>
+            {[
+              ["زمان تحویل چقدر است؟", "بسته به نوع سفارش، معمولاً بین دو تا پنج روز کاری."],
+              ["امکان پرداخت قسطی دارید؟", "بله؛ تا سه قسط بدون کارمزد."],
+              ["پشتیبانی بعد از خرید چطور است؟", "تا یک سال پشتیبانی رایگان داریم."],
+              ["چطور با شما تماس بگیرم؟", "از فرم تماس پایین صفحه یا تلفن همیشه در دسترس."],
+            ].map(([question, answer], index) => (
+              <button key={question} type="button" data-live onClick={() => setDemo({ faq: faqOpen === index ? -1 : index })} className={`${card} bg-(--pv-bg) px-5 py-4 text-right`}>
                 <div className="flex items-center justify-between text-[14px] font-bold">
                   {question}
-                  <ChevronDown className={`size-4 text-(--pv-muted) ${index === 0 ? "rotate-180" : ""}`} aria-hidden="true" />
+                  <ChevronDown className={`size-4 text-(--pv-muted) transition-transform duration-300 ${faqOpen === index ? "rotate-180" : ""}`} aria-hidden="true" />
                 </div>
-                {index === 0 && <p className="mt-3 text-[13px] leading-7 text-(--pv-muted)">بسته به نوع سفارش، معمولاً بین دو تا پنج روز کاری.</p>}
-              </div>
+                <AnimatePresence initial={false}>
+                  {faqOpen === index && (
+                    <motion.p initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden text-[13px] leading-7 text-(--pv-muted)">
+                      <span className="block pt-3">{answer}</span>
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </button>
             ))}
           </div>
         </Section>
@@ -565,6 +611,68 @@ export const SitePreview = ({ config, compact }: { config: WizardConfig; compact
         <span>© {name}</span>
         <span>ساخته‌شده با خیام</span>
       </footer>
+      {/* mobile menu */}
+      <AnimatePresence>
+        {compact && menu && (
+          <motion.div className="absolute inset-0 z-50 bg-black/40" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.nav className="sticky top-0 flex flex-col gap-1 rounded-b-(--pv-r-card) bg-(--pv-bg) p-5 shadow-2xl" initial={{ y: -40 }} animate={{ y: 0 }} exit={{ y: -40 }} transition={{ type: "spring", bounce: 0, duration: 0.3 }}>
+              <div className="mb-3 flex items-center justify-between">
+                <strong className="text-[16px]">{name}</strong>
+                <button type="button" data-live aria-label="بستن" onClick={() => setDemo({ menu: false })}><X className="size-5" aria-hidden="true" /></button>
+              </div>
+              {[["خانه", "hero"], ...content.features.slice(0, 3).map((item, index) => [item.label, ["showcase", "features", "contact"][index]])].map(([label, target]) => (
+                <button key={label} type="button" data-live onClick={(event) => {
+                  setDemo({ menu: false });
+                  if (!jumpTo(event.currentTarget, target)) jumpTo(event.currentTarget, "showcase");
+                }} className="rounded-(--pv-r-ctrl) px-3 py-3 text-right text-[15px] font-bold transition-colors hover:bg-(--pv-surface)">
+                  {label}
+                </button>
+              ))}
+            </motion.nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* offer popup */}
+      <AnimatePresence>
+        {extra("popup") && !popupClosed && (
+          <motion.div className="pointer-events-none sticky bottom-0 z-40 flex h-0 items-end justify-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div className={`pointer-events-auto mb-24 w-[min(92%,380px)] rounded-(--pv-r-card) bg-(--pv-bg) p-5 text-center shadow-2xl ring-1 ring-(--pv-border) ${compact ? "" : "mb-28"}`} initial={{ y: 30, scale: 0.95 }} animate={{ y: 0, scale: 1 }} transition={{ delay: 1, type: "spring", bounce: 0.3 }}>
+              <button type="button" data-live aria-label="بستن" onClick={() => setDemo({ popupClosed: true })} className="absolute left-3 top-3"><X className="size-4 text-(--pv-muted)" aria-hidden="true" /></button>
+              <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-(--pv-soft) text-(--pv-primary)"><Gift className="size-6" aria-hidden="true" /></span>
+              <strong className="mt-3 block text-[16px]">۱۵٪ تخفیف خرید اول</strong>
+              <span className="mt-1 block text-[12px] text-(--pv-muted)">با عضویت در خبرنامه</span>
+              <button type="button" data-live onClick={() => setDemo({ popupClosed: true })} className={`${primaryButton} mt-4 h-10 w-full text-[13px]`}>دریافت کد</button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* web app tab bar */}
+      {compact && config.webApp && (
+        <nav className="sticky bottom-0 z-30 flex items-center justify-around border-t border-(--pv-border) bg-(--pv-bg)/95 px-3 pb-5 pt-2.5 backdrop-blur">
+          {[
+            { icon: House, label: "خانه", target: "hero" },
+            { icon: LayoutGrid, label: "محصولات", target: "showcase" },
+            { icon: Heart, label: "علاقه‌مندی", target: "features" },
+            { icon: UserRound, label: "حساب", target: "contact" },
+          ].map((tab, index) => (
+            <button key={tab.label} type="button" data-live onClick={(event) => jumpTo(event.currentTarget, tab.target) || jumpTo(event.currentTarget, "hero")} className={`flex flex-col items-center gap-1 text-[10px] ${index === 0 ? "font-bold text-(--pv-primary)" : "text-(--pv-muted)"}`}>
+              <tab.icon className="size-5" aria-hidden="true" />
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+      )}
+
+      {extra("floatcall") && (
+        <div className={`pointer-events-none sticky z-30 flex justify-start px-5 ${compact && config.webApp ? "bottom-24" : "bottom-5"}`}>
+          <span className="pv-act pointer-events-auto flex size-14 items-center justify-center rounded-full bg-[#25d366] text-white shadow-xl" data-act="تماس و واتس‌اپ">
+            <Phone className="size-6" aria-hidden="true" />
+          </span>
+        </div>
+      )}
+
       {config.extras.includes("chat") && (
         <div className="pointer-events-none sticky bottom-5 flex justify-end px-5">
           <span className="flex size-14 items-center justify-center rounded-full bg-(--pv-primary) text-(--pv-on-primary) shadow-xl">

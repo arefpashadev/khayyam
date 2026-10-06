@@ -33,6 +33,7 @@ import { Link } from "@/i18n/navigation";
 
 import {
   appExtras,
+  appFeatureList,
   backdrops,
   estimate,
   faNumber,
@@ -51,13 +52,15 @@ import {
 } from "./config";
 import { artLabels, industryArts, siteLayouts } from "./designs";
 import { AppStage } from "./app/app-stage";
-import { IconStep, NavigationStep, PlatformStep, ScreensStep } from "./app/app-steps";
+import { FeaturesStep, IconStep, NavigationStep, PlatformStep, ScreensStep } from "./app/app-steps";
 import { PathChooser } from "./chooser";
 import { PreviewStage } from "./preview";
 import { QuickWizard } from "./quick";
 import { DraggableSheet } from "./sheet";
 import { stepPanels } from "./steps";
 import { useWizard } from "./store";
+import { amountDue, formatToman, startPayment } from "./payments";
+import { PaymentOverlay } from "./payment-ui";
 import { Tour } from "./tour";
 import { useIsSmallScreen } from "./use-small-screen";
 
@@ -76,6 +79,7 @@ const stepIcons: Record<StepKey, LucideIcon> = {
   navigation: Navigation,
   screens: PanelsTopLeft,
   icon: AppWindow,
+  features: Sparkles,
 };
 
 const shortTitles: Record<StepKey, string> = {
@@ -93,9 +97,10 @@ const shortTitles: Record<StepKey, string> = {
   navigation: "ناوبری",
   screens: "صفحه‌ها",
   icon: "آیکون",
+  features: "قابلیت‌ها",
 };
 
-const panels = { ...stepPanels, platform: PlatformStep, navigation: NavigationStep, screens: ScreensStep, icon: IconStep };
+const panels = { ...stepPanels, platform: PlatformStep, navigation: NavigationStep, screens: ScreensStep, icon: IconStep, features: FeaturesStep };
 
 export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
   // Seed the store for this kind before the first paint so the right screen shows immediately.
@@ -124,6 +129,7 @@ export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
 
   return (
     <div dir="rtl" className="fixed inset-0 z-[100] overflow-hidden bg-[#0b0d12] font-sans text-[#eef1f5] [color-scheme:dark]">
+      <PaymentOverlay />
       {mode === "choose" ? (
         <PathChooser kind={kind} />
       ) : mode === "quick" ? (
@@ -144,7 +150,7 @@ export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
 
 const StudioEditor = ({ kind }: { kind: OrderKind }) => {
   const submitted = useWizard((state) => state.submitted);
-  const submit = useWizard((state) => state.submit);
+  const goTo = useWizard((state) => state.goTo);
   const setTour = useWizard((state) => state.setTour);
   const brandName = useWizard((state) => state.config.brandName);
   const iconButton = "flex size-9 items-center justify-center rounded-xl text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white";
@@ -167,7 +173,7 @@ const StudioEditor = ({ kind }: { kind: OrderKind }) => {
           <button
             type="button"
             data-tour="submit"
-            onClick={submit}
+            onClick={() => goTo(getSteps(kind).length - 1)}
             className="ms-2 flex h-9 items-center gap-2 rounded-xl bg-white px-4 text-[12.5px] font-extrabold text-[#0b0d12] transition-colors hover:bg-[#d9ecff]"
           >
             <Check className="size-4" aria-hidden="true" /> ثبت درخواست
@@ -288,6 +294,7 @@ const StepPanel = ({ kind }: { kind: OrderKind }) => {
   const direction = useWizard((state) => state.direction);
   const next = useWizard((state) => state.next);
   const prev = useWizard((state) => state.prev);
+  const config = useWizard((state) => state.config);
   const reduce = useReducedMotion();
   const isSmall = useIsSmallScreen();
   const steps = getSteps(kind);
@@ -327,11 +334,16 @@ const StepPanel = ({ kind }: { kind: OrderKind }) => {
         </button>
         <button
           type="button"
-          onClick={next}
+          onClick={() => {
+            if (!isLast) return next();
+            // last step: pay (deposit or consultation fee), then the request is registered
+            const due = amountDue(config.plan, estimate(kind, config).min);
+            void startPayment(due).then((ok) => ok && next());
+          }}
           data-tour={isSmall ? "submit" : undefined}
           className="flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#4da3ff,#7c6cff)] text-[13px] font-extrabold text-white shadow-[0_10px_30px_-12px_rgba(77,163,255,0.8)] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4da3ff] active:scale-[0.98]"
         >
-          {isLast ? "ثبت درخواست" : `بعدی: ${steps[step + 1].title}`}
+          {isLast ? `پرداخت ${formatToman(amountDue(config.plan, estimate(kind, config).min))} و ثبت` : `بعدی: ${steps[step + 1].title}`}
           {isLast ? <Check className="size-4" aria-hidden="true" /> : <ArrowLeft className="size-4" aria-hidden="true" />}
         </button>
       </footer>
@@ -348,9 +360,13 @@ const SubmittedPanel = ({ kind }: { kind: OrderKind }) => {
   const cost = estimate(kind, config);
 
   const summary = [
-    { label: "سفارش", value: config.deliverable === "figma" ? "طرح فیگما" : "ساخت کامل" },
+    { label: "مسیر", value: config.plan === "consult" ? "اول مشاوره" : "شروع پروژه (با طراحی فیگما)" },
+    { label: "پرداخت‌شده", value: formatToman(amountDue(config.plan, cost.min)) },
     { label: "برآورد", value: `${faNumber(cost.min)} تا ${faNumber(cost.max)} میلیون تومان · ${faNumber(Math.max(1, cost.weeks))} هفته` },
     { label: "نوع پروژه", value: projectTypes.find((item) => item.value === config.projectType)?.label },
+    ...(kind === "site"
+      ? [{ label: "وب‌اپ", value: config.webApp ? "دارد (قابل نصب روی گوشی)" : "ندارد" }]
+      : [{ label: "قابلیت‌ها", value: appFeatureList.filter((item) => config.features.includes(item.value)).map((item) => item.label).join("، ") || "—" }]),
     { label: "برند", value: config.brandName.trim() || "بدون نام" },
     { label: "حوزه", value: industries[config.industry].label },
     { label: "رنگ‌ها", value: <span className="inline-flex gap-1" dir="ltr">{[config.color, config.accent].map((color) => <span key={color} className="size-4 rounded-full ring-1 ring-white/20" style={{ backgroundColor: color }} />)}</span> },

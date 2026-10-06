@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Droplet, EyeOff, Info, Link2, Moon, PenTool, Pipette, Rocket, Sparkles, Sun, Sunset, Waves, Wind, Zap } from "lucide-react";
+import { Check, Droplet, EyeOff, Info, Link2, Moon, Pipette, Smartphone, Sparkles, Sun, Sunset, Waves, Wind, Zap } from "lucide-react";
 import type { CSSProperties, ReactNode } from "react";
 
 import {
@@ -26,6 +26,7 @@ import {
 import { APP_DESIGN_COUNT, artLabels, industryArts, SITE_DESIGN_COUNT, siteLayouts } from "./designs";
 import { Backdrop } from "./preview/site-preview";
 import { DesignThumb } from "./preview/thumbnail";
+import { PlanChoice } from "./payment-ui";
 import { useWizard } from "./store";
 
 /* ------------------------------------------------------------------ */
@@ -355,6 +356,18 @@ const BusinessStep = () => {
           })}
         </div>
       </div>
+      {kind === "site" && (
+        <Tile selected={config.webApp} onClick={() => update({ webApp: !config.webApp }, "top")} className="flex items-center gap-3 p-3.5">
+          <Smartphone className="size-5 shrink-0" aria-hidden="true" />
+          <span className="min-w-0 flex-1">
+            <strong className="block text-[13px] text-white">نسخه وب‌اپ هم داشته باشد</strong>
+            <span className="text-[11px] opacity-60">روی گوشی نصب می‌شود و مثل اپ کار می‌کند؛ بدون فروشگاه</span>
+          </span>
+          <span className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${config.webApp ? "bg-[#4da3ff]" : "bg-[#2a303b]"}`} aria-hidden="true">
+            <span className="absolute top-0.5 size-4 rounded-full bg-white shadow transition-[left]" style={{ left: config.webApp ? 2 : 18 }} />
+          </span>
+        </Tile>
+      )}
       <div>
         <Label>حوزه فعالیت</Label>
         <div className="grid grid-cols-3 gap-2">
@@ -560,31 +573,9 @@ export const OutcomeStep = () => {
   const config = useWizard((state) => state.config);
   const update = useWizard((state) => state.update);
   const cost = estimate(kind, config);
-  const options = [
-    { value: "figma" as const, icon: PenTool, title: "طرح فیگما", text: "طرح کامل صفحه‌ها را در فیگما می‌فرستیم؛ می‌بینید، نظر می‌دهید و بعد تصمیم می‌گیرید." },
-    { value: "build" as const, icon: Rocket, title: "ساخت کامل", text: "طراحی، برنامه‌نویسی، راه‌اندازی و پشتیبانی؛ با کد تمیز و کیفیت بالا." },
-  ];
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="grid grid-cols-1 gap-2.5">
-        {options.map((option) => {
-          const selected = config.deliverable === option.value;
-          return (
-            <Tile key={option.value} selected={selected} onClick={() => update({ deliverable: option.value })} className="flex items-start gap-3 p-4">
-              <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${selected ? "bg-[#4da3ff] text-white" : "bg-white/6"}`}>
-                <option.icon className="size-5" aria-hidden="true" />
-              </span>
-              <span className="min-w-0 flex-1">
-                <strong className="block text-[14px] text-white">{option.title}</strong>
-                <span className="mt-1 block text-[12px] leading-6 opacity-70">{option.text}</span>
-              </span>
-              {selected && <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#4da3ff] text-white"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>}
-            </Tile>
-          );
-        })}
-      </div>
-
       <div className="rounded-2xl bg-[linear-gradient(135deg,rgba(77,163,255,0.16),rgba(124,108,255,0.12))] p-4 ring-1 ring-[#4da3ff]/25">
         <span className="text-[11.5px] font-bold text-[#9ccbff]">برآورد اولیه</span>
         <div className="mt-1 flex items-baseline gap-2">
@@ -594,8 +585,10 @@ export const OutcomeStep = () => {
           <span className="text-[12px] text-[#a7b0bc]">میلیون تومان</span>
         </div>
         <span className="mt-1 block text-[12px] text-[#a7b0bc]">زمان تقریبی: {faNumber(Math.max(1, cost.weeks))} هفته</span>
-        <span className="mt-2 block text-[11px] leading-5 text-[#8a93a0]">این عدد با هر انتخاب به‌روز می‌شود و قیمت نهایی را مشاور بعد از بررسی اعلام می‌کند.</span>
+        <span className="mt-2 block text-[11px] leading-5 text-[#8a93a0]">شامل طراحی فیگما؛ با هر انتخاب به‌روز می‌شود و قیمت نهایی را مشاور بعد از بررسی اعلام می‌کند.</span>
       </div>
+
+      <PlanChoice plan={config.plan} estimateMin={cost.min} onChange={(plan) => update({ plan })} />
 
       <div className="grid grid-cols-1 gap-2.5">
         <label className="block">

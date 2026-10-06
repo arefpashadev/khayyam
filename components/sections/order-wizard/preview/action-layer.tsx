@@ -18,7 +18,10 @@ export const ActionLayer = ({ children, className = "flex min-h-full flex-col" }
     <div
       className={className}
       onClickCapture={(event) => {
-        const target = (event.target as HTMLElement).closest<HTMLElement>(".pv-act");
+        const clicked = event.target as HTMLElement;
+        // elements that really do something in the preview (data-live) don't need the note
+        if (clicked.closest("[data-live]")) return;
+        const target = clicked.closest<HTMLElement>(".pv-act");
         if (!target) return;
         const label = (target.dataset.act ?? target.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 28) || "این بخش";
         setToast({ label, id: Date.now() });
