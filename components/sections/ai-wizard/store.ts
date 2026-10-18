@@ -23,6 +23,9 @@ type AiState = {
   /** index of the interview question currently being answered */
   stage: number;
   submitted: boolean;
+  /** the final proposal screen is showing */
+  proposal: boolean;
+  setProposal: (open: boolean) => void;
   view: AiView;
   config: AiConfig;
   custom: CustomRequest;
@@ -43,13 +46,15 @@ export const useAi = create<AiState>((set) => ({
   mode: "landing",
   stage: 0,
   submitted: false,
+  proposal: false,
+  setProposal: (proposal) => set({ proposal }),
   view: "flow",
   config: defaultAiConfig,
   custom: emptyCustom,
   // The interview starts blank so the blueprint visibly draws itself from the answers.
-  setMode: (mode) => set((state) => ({ mode, stage: 0, submitted: false, config: mode === "chat" ? { ...state.config, goals: [], tools: [], pains: [] } : state.config })),
+  setMode: (mode) => set((state) => ({ mode, stage: 0, submitted: false, proposal: false, config: mode === "chat" ? { ...state.config, goals: [], tools: [], pains: [] } : state.config })),
   answer: (patch) => set((state) => ({ config: { ...state.config, ...patch }, stage: state.stage + 1 })),
-  rewind: (stage) => set({ stage, submitted: false }),
+  rewind: (stage) => set({ stage, submitted: false, proposal: false }),
   setView: (view) => set({ view }),
   update: (patch) => set((state) => ({ config: { ...state.config, ...patch } })),
   toggle: (key, value) =>
@@ -66,5 +71,5 @@ export const useAi = create<AiState>((set) => ({
       return { custom: { ...state.custom, [key]: list.includes(value) ? list.filter((item) => item !== value) : [...list, value] } };
     }),
   submit: () => set({ submitted: true }),
-  reset: () => set({ mode: "landing", stage: 0, submitted: false, view: "flow", config: defaultAiConfig, custom: emptyCustom }),
+  reset: () => set({ mode: "landing", stage: 0, submitted: false, proposal: false, view: "flow", config: defaultAiConfig, custom: emptyCustom }),
 }));

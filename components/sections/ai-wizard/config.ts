@@ -12,7 +12,6 @@ import {
   Megaphone,
   MessageCircle,
   MessagesSquare,
-  Phone,
   Send,
   ShoppingBag,
   Sheet,
@@ -36,8 +35,8 @@ import type { Plan } from "../order-wizard/payments";
 /* Types                                                               */
 /* ------------------------------------------------------------------ */
 
-export type GoalKey = "support" | "process" | "reports" | "documents" | "marketing" | "forecast" | "knowledge" | "voice";
-export type ToolKey = "website" | "telegram" | "bale" | "whatsapp" | "instagram" | "email" | "sms" | "phone" | "sheets" | "crm" | "accounting" | "shop" | "docs";
+export type GoalKey = "support" | "process" | "reports" | "documents" | "marketing" | "forecast" | "knowledge";
+export type ToolKey = "website" | "telegram" | "bale" | "whatsapp" | "instagram" | "email" | "sms" | "sheets" | "crm" | "accounting" | "shop" | "docs";
 export type Autonomy = "suggest" | "assisted" | "auto";
 export type Hosting = "cloud" | "onprem";
 export type Persona = "formal" | "friendly" | "expert";
@@ -105,7 +104,6 @@ export const goals: { value: GoalKey; label: string; description: string; icon: 
   { value: "marketing", label: "تولیدکننده محتوا", description: "تولید پست، کپشن و پاسخ کامنت", icon: Megaphone, actions: ["تولید پست و کپشن", "زمان‌بندی انتشار", "پاسخ به کامنت‌ها"] },
   { value: "forecast", label: "پیش‌بین فروش و انبار", description: "فروش، موجودی و رفتار مشتری", icon: LineChart, actions: ["پیش‌بینی فروش", "پیشنهاد سفارش خرید", "شناسایی مشتری در خطر"] },
   { value: "knowledge", label: "مشاور دانش سازمان", description: "از اسناد خود شرکت جواب می‌دهد", icon: BrainCircuit, actions: ["جواب از اسناد شرکت", "خلاصه جلسات", "جستجوی هوشمند"] },
-  { value: "voice", label: "منشی تلفنی", description: "پاسخ‌گوی تلفنی و تبدیل گفتار به متن", icon: Phone, actions: ["پاسخ تلفنی خودکار", "تبدیل تماس به متن", "ثبت درخواست تماس"] },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -119,7 +117,6 @@ export const tools: { value: ToolKey; label: string; icon: LucideIcon; color: st
   { value: "whatsapp", label: "واتس‌اپ", icon: MessageCircle, color: "#25d366", side: "in" },
   { value: "instagram", label: "اینستاگرام", icon: Smartphone, color: "#e1306c", side: "in" },
   { value: "email", label: "ایمیل", icon: Mail, color: "#f0b44a", side: "in" },
-  { value: "phone", label: "تلفن", icon: Phone, color: "#a78bfa", side: "in" },
   { value: "shop", label: "فروشگاه آنلاین", icon: ShoppingBag, color: "#ef7d3c", side: "in" },
   { value: "docs", label: "اسناد و فایل‌ها", icon: FileText, color: "#94a3b8", side: "in" },
   { value: "sheets", label: "اکسل / شیت", icon: Sheet, color: "#21a366", side: "out" },
@@ -164,8 +161,7 @@ const goalCost: Record<GoalKey, [number, number, number]> = {
   marketing: [20, 35, 2],
   forecast: [50, 100, 6],
   knowledge: [45, 90, 5],
-  voice: [60, 120, 7],
-};
+  };
 
 export const aiEstimate = (config: AiConfig) => {
   if (config.deliverable === "roadmap") return { min: 5, max: 9, weeks: 1 };
@@ -188,10 +184,10 @@ export const aiEstimate = (config: AiConfig) => {
 
 /** What hurts today — asked first, so the result speaks to it. */
 export const pains: { value: PainKey; label: string; fix: string; suggests: GoalKey[] }[] = [
-  { value: "wait", label: "مشتری‌ها منتظر جواب می‌مانند", fix: "هیچ مشتری‌ای دیگر منتظر نمی‌ماند", suggests: ["support", "voice"] },
+  { value: "wait", label: "مشتری‌ها منتظر جواب می‌مانند", fix: "هیچ مشتری‌ای دیگر منتظر نمی‌ماند", suggests: ["support"] },
   { value: "repeat", label: "تیم درگیر کارهای تکراری است", fix: "کارهای تکراری از دوش تیم برداشته می‌شود", suggests: ["process", "documents"] },
   { value: "errors", label: "خطای انسانی و دوباره‌کاری داریم", fix: "ورود دستی و خطای تایپی تقریباً حذف می‌شود", suggests: ["documents", "process"] },
-  { value: "night", label: "شب‌ها و تعطیلات کسی پاسخ نمی‌دهد", fix: "شب و تعطیل هم کسب‌وکارتان باز است", suggests: ["support", "voice"] },
+  { value: "night", label: "شب‌ها و تعطیلات کسی پاسخ نمی‌دهد", fix: "شب و تعطیل هم کسب‌وکارتان باز است", suggests: ["support"] },
   { value: "scattered", label: "اطلاعات پراکنده است و گزارش دیر می‌رسد", fix: "هر صبح گزارش آماده روی میزتان است", suggests: ["reports", "knowledge"] },
   { value: "growth", label: "برای رشد باید نیروی بیشتری بگیریم", fix: "بدون استخدام تازه، چند برابر کار انجام می‌شود", suggests: ["support", "marketing", "forecast"] },
 ];

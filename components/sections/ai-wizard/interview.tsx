@@ -1,15 +1,14 @@
 "use client";
 
-import { ArrowLeft, Check, Clock3, Moon, Pencil, TrendingDown, UserRoundCheck, Users } from "lucide-react";
+import { ArrowLeft, Check, Pencil, Sparkles, UserRoundCheck } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 import { KhayyamMark } from "@/components/brand/khayyam-mark";
 
-import { PlanChoice } from "../order-wizard/payment-ui";
-import { amountDue, formatToman, startPayment } from "../order-wizard/payments";
 import { useStickToBottom } from "../order-wizard/use-stick-bottom";
-import { aiEstimate, autonomyLevels, fa, goals, impact, pains, personas, shareChoices, staffChoices, tools, type AiConfig, type GoalKey } from "./config";
+import { autonomyLevels, fa, goals, impact, pains, personas, shareChoices, staffChoices, tools, type AiConfig, type GoalKey } from "./config";
 import { useAi } from "./store";
 
 type Question = {
@@ -24,16 +23,43 @@ const chip = "rounded-2xl text-right transition-colors outline-none focus-visibl
 const chipOff = "bg-[#151920] text-[#c9d0d9] ring-1 ring-white/6 hover:bg-[#1b2029]";
 const chipOn = "bg-[#4da3ff]/16 text-white ring-1 ring-[#4da3ff]/60";
 
-const Confirm = ({ count, onClick }: { count: number; onClick: () => void }) => (
-  <button type="button" disabled={count === 0} onClick={onClick} className="mt-1 flex h-11 w-fit items-center gap-2 rounded-2xl bg-white px-5 text-[13px] font-extrabold text-[#0b0d12] transition-colors hover:bg-[#d9ecff] disabled:opacity-30">
-    ادامه {count > 0 && <span className="opacity-60">({fa(count)})</span>}
-    <ArrowLeft className="size-4" aria-hidden="true" />
-  </button>
-);
+/**
+ * The main action of a question. On phones it moves into the bottom action bar
+ * (next to «نقشه زنده») so both buttons share one row, size and style.
+ */
+const Confirm = ({ count, onClick, label = "ادامه" }: { count?: number; onClick: () => void; label?: string }) => {
+  const [bar, setBar] = useState<HTMLElement | null>(null);
+  useEffect(() => {
+    const timeout = window.setTimeout(() => setBar(document.getElementById("ai-actions")), 0);
+    return () => window.clearTimeout(timeout);
+  }, []);
+  const button = (
+    <button
+      type="button"
+      disabled={count === 0}
+      onClick={onClick}
+      className={`flex h-12 items-center justify-center gap-2 rounded-2xl bg-white px-5 text-[13.5px] font-extrabold text-[#0b0d12] transition-colors hover:bg-[#d9ecff] disabled:opacity-30 ${bar ? "w-full" : "mt-1 w-fit"}`}
+    >
+      {label} {count !== undefined && count > 0 && <span className="opacity-50">({fa(count)})</span>}
+      <ArrowLeft className="size-4" aria-hidden="true" />
+    </button>
+  );
+  return bar ? createPortal(button, bar) : button;
+};
 
 /* ------------------------------------------------------------------ */
 /* Inputs                                                              */
 /* ------------------------------------------------------------------ */
+
+/** Teammates that fix the chosen pains, most-needed first, at most three. */
+const suggestFor = (picked: string[]): GoalKey[] => {
+  const score = new Map<GoalKey, number>();
+  pains.filter((pain) => picked.includes(pain.value)).forEach((pain) => pain.suggests.forEach((goal, rank) => score.set(goal, (score.get(goal) ?? 0) + 3 - rank)));
+  return [...score.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([goal]) => goal);
+};
+
+/** Why a teammate was suggested: the first pain it answers. */
+const reasonFor = (goal: GoalKey, picked: string[]) => pains.find((pain) => picked.includes(pain.value) && pain.suggests.includes(goal))?.label;
 
 const PainPick = () => {
   const picked = useAi((state) => state.config.pains);
@@ -58,8 +84,7 @@ const PainPick = () => {
         count={picked.length}
         onClick={() => {
           // pre-pick the teammates that fix these pains; the customer can still change them
-          const suggested = [...new Set(pains.filter((pain) => picked.includes(pain.value)).flatMap((pain) => pain.suggests))] as GoalKey[];
-          answer({ goals: suggested });
+          answer({ goals: suggestFor(picked) });
         }}
       />
     </div>
@@ -70,7 +95,7 @@ const TeamPick = () => {
   const config = useAi((state) => state.config);
   const toggle = useAi((state) => state.toggle);
   const answer = useAi((state) => state.answer);
-  const suggested = new Set(pains.filter((pain) => config.pains.includes(pain.value)).flatMap((pain) => pain.suggests));
+  const suggested = new Set(suggestFor(config.pains));
 
   return (
     <div className="flex flex-col gap-2">
@@ -84,7 +109,12 @@ const TeamPick = () => {
               </span>
               <strong className="text-[12.5px] leading-5 text-white">{goal.label}</strong>
               <span className="text-[11px] leading-[1.6] opacity-60">{goal.description}</span>
-              {suggested.has(goal.value) && <span className="absolute left-2.5 top-2.5 rounded-full bg-[#f0b44a]/15 px-2 py-0.5 text-[10px] font-bold text-[#f2cf8a]">پیشنهاد</span>}
+              {suggested.has(goal.value) && (
+                <span className="mt-auto flex items-start gap-1 border-t border-white/8 pt-2 text-[10.5px] leading-[1.6] text-[#9ccbff]">
+                  <Sparkles className="mt-0.5 size-3 shrink-0" aria-hidden="true" />
+                  برای «{reasonFor(goal.value, config.pains)}»
+                </span>
+              )}
             </button>
           );
         })}
@@ -130,93 +160,19 @@ const Choices = <T extends string | number>({ options, onPick }: { options: { va
 /** Passes the store's `answer` to inline pickers. */
 const Answer = ({ children }: { children: (answer: (patch: Partial<AiConfig>) => void) => ReactNode }) => <>{children(useAi.getState().answer)}</>;
 
-/* ------------------------------------------------------------------ */
-/* Final: the AI team, what changes, and how to start                  */
-/* ------------------------------------------------------------------ */
-
-const TeamCard = () => {
+/** Last step: a short summary and the door to the full proposal screen. */
+const ShowProposal = () => {
   const config = useAi((state) => state.config);
-  const update = useAi((state) => state.update);
-  const submit = useAi((state) => state.submit);
-  const cost = aiEstimate(config);
+  const setProposal = useAi((state) => state.setProposal);
   const result = impact(config);
-  const due = amountDue(config.plan, cost.min);
-  const team = goals.filter((goal) => config.goals.includes(goal.value));
-  const fixes = pains.filter((pain) => config.pains.includes(pain.value));
-  const field = "h-11 w-full rounded-2xl bg-[#171b22] px-4 text-[13px] text-white outline-none placeholder:text-[#5d6573] focus:ring-2 focus:ring-[#4da3ff]/50";
-
   return (
-    <div className="flex flex-col gap-4">
-      {/* the team */}
-      <div className="overflow-hidden rounded-[24px] bg-[#111419] ring-1 ring-white/8">
-        <div className="relative px-5 pb-4 pt-5" style={{ background: "radial-gradient(90% 120% at 100% 0%, rgba(124,108,255,0.25), transparent 60%)" }}>
-          <span className="text-[11.5px] font-bold text-[#c4bbff]">تیم هوش مصنوعی {config.company.trim() || "شما"}</span>
-          <strong className="mt-1 block text-[22px] font-black leading-[1.5] text-white">
-            {result.fte >= 1 ? `کار ${fa(result.fte)} نفر را تمام‌وقت انجام می‌دهد` : `ماهی ${fa(result.hoursSaved)} ساعت کار را برمی‌دارد`}
-          </strong>
-          <span className="text-[12.5px] text-[#a7b0bc]">بی‌وقفه، ۲۴ ساعت و ۷ روز هفته، بدون نیاز به استخدام تازه</span>
-        </div>
-        <div className="flex flex-wrap gap-2 px-5 pb-5">
-          {team.map((member, index) => (
-            <motion.span key={member.value} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: index * 0.08 }} className="flex items-center gap-2 rounded-full bg-white/6 py-1.5 pe-3 ps-1.5 text-[12px] font-bold text-white">
-              <span className="flex size-7 items-center justify-center rounded-full bg-[linear-gradient(135deg,#4da3ff,#7c6cff)]">
-                <member.icon className="size-3.5" aria-hidden="true" />
-              </span>
-              {member.label}
-            </motion.span>
-          ))}
-        </div>
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap gap-2">
+        <span className="rounded-full bg-white/6 px-3 py-1.5 text-[12px] font-bold text-white">{fa(config.goals.length)} هم‌تیمی هوش مصنوعی</span>
+        <span className="rounded-full bg-white/6 px-3 py-1.5 text-[12px] font-bold text-white">{result.fte >= 1 ? `کار ${fa(result.fte)} نفر` : `${fa(result.hoursSaved)} ساعت در ماه`}</span>
+        <span className="rounded-full bg-white/6 px-3 py-1.5 text-[12px] font-bold text-white">۲۴ ساعته</span>
       </div>
-
-      {/* what changes */}
-      <div className="grid gap-2 sm:grid-cols-2">
-        {[
-          { icon: Clock3, value: result.responseAfter, text: `پاسخ به مشتری؛ الان ${result.responseBefore}` },
-          { icon: Moon, value: "ساعت ۳ بامداد", text: "هم مثل ساعت ۱۰ صبح جواب می‌دهد" },
-          { icon: TrendingDown, value: `${fa(result.monthlySaving)} میلیون`, text: "تومان کمتر هزینه نیرو در ماه" },
-          { icon: Users, value: `${fa(result.paybackMonths)} ماه`, text: "تا برگشت کامل هزینه راه‌اندازی" },
-        ].map((item) => (
-          <div key={item.text} className="flex items-center gap-3 rounded-2xl bg-[#151920] p-3.5 ring-1 ring-white/6">
-            <item.icon className="size-5 shrink-0 text-[#4da3ff]" aria-hidden="true" />
-            <span>
-              <strong className="block text-[15px] text-white">{item.value}</strong>
-              <span className="text-[11.5px] text-[#8a93a0]">{item.text}</span>
-            </span>
-          </div>
-        ))}
-      </div>
-
-      {fixes.length > 0 && (
-        <ul className="flex flex-col gap-1.5 rounded-2xl bg-[#2fd08a]/8 p-4 ring-1 ring-[#2fd08a]/20">
-          {fixes.map((pain) => (
-            <li key={pain.value} className="flex items-center gap-2 text-[13px] text-[#c8f5df]">
-              <Check className="size-4 shrink-0 text-[#2fd08a]" strokeWidth={3} aria-hidden="true" />
-              {pain.fix}
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {/* start */}
-      <div className="rounded-2xl bg-[linear-gradient(135deg,rgba(77,163,255,0.14),rgba(124,108,255,0.1))] p-4 ring-1 ring-[#4da3ff]/25">
-        <span className="text-[11.5px] font-bold text-[#9ccbff]">برآورد اولیه راه‌اندازی</span>
-        <strong className="mt-1 block text-[20px] font-black text-white">
-          {fa(cost.min)} تا {fa(cost.max)} <span className="text-[12px] font-normal text-[#a7b0bc]">میلیون تومان · {fa(cost.weeks)} هفته</span>
-        </strong>
-      </div>
-      <PlanChoice plan={config.plan} estimateMin={cost.min} onChange={(plan) => update({ plan })} />
-      <div className="grid gap-2 sm:grid-cols-2">
-        <input value={config.company} onChange={(event) => update({ company: event.target.value })} placeholder="نام شرکت" aria-label="نام شرکت" className={field} />
-        <input value={config.contactName} onChange={(event) => update({ contactName: event.target.value })} placeholder="نام شما" aria-label="نام شما" autoComplete="name" className={field} />
-        <input value={config.contactPhone} onChange={(event) => update({ contactPhone: event.target.value })} placeholder="شماره تماس" aria-label="شماره تماس" inputMode="tel" autoComplete="tel" dir="ltr" className={`${field} text-left sm:col-span-2`} />
-      </div>
-      <button
-        type="button"
-        onClick={() => void startPayment(due).then((ok) => ok && submit())}
-        className="flex h-12 items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#4da3ff,#7c6cff)] text-[14px] font-extrabold text-white shadow-[0_10px_30px_-12px_rgba(77,163,255,0.8)] transition hover:brightness-110"
-      >
-        <Check className="size-4" aria-hidden="true" /> پرداخت {formatToman(due)} و ثبت
-      </button>
+      <Confirm label="دیدن پیشنهاد کامل" onClick={() => setProposal(true)} />
     </div>
   );
 };
@@ -234,7 +190,7 @@ const questions: Question[] = [
   },
   {
     key: "team",
-    ask: () => "متوجه شدم. این‌ها هم‌تیمی‌هایی هستند که می‌توانید استخدام کنید؛ آن‌هایی که با دردسرهایتان جور است را علامت زده‌ام. هر کدام را خواستید اضافه یا کم کنید.",
+    ask: () => "متوجه شدم. بر اساس همین‌ها، مهم‌ترین هم‌تیمی‌هایی که لازم دارید را انتخاب کرده‌ام و نوشته‌ام هر کدام برای کدام مشکل است. هر کدام را خواستید اضافه یا کم کنید.",
     said: (config) => goals.filter((goal) => config.goals.includes(goal.value)).map((goal) => goal.label).join("، "),
     input: () => <TeamPick />,
   },
@@ -314,13 +270,9 @@ const questions: Question[] = [
   },
   {
     key: "final",
-    ask: () => (
-      <>
-        تیمتان آماده است ✨ طراحی کامل و نقشه اجرا جزو پروژه است و هر بخشش را با شما دقیق‌تر می‌کنیم.
-      </>
-    ),
+    ask: () => "پیشنهادم آماده است ✨ تیم، اثرش بر کار شما و راه شروع را در یک صفحه برایتان چیده‌ام.",
     said: () => "",
-    input: () => <TeamCard />,
+    input: () => <ShowProposal />,
   },
 ];
 
@@ -359,6 +311,15 @@ export const Interview = () => {
     };
   }, [stage, reduce]);
 
+  // Reaching the end opens the proposal screen by itself, once.
+  const setProposal = useAi((state) => state.setProposal);
+  const isFinal = stage === questions.length - 1;
+  useEffect(() => {
+    if (!isFinal || submitted) return;
+    const timeout = window.setTimeout(() => setProposal(true), reduce ? 300 : 1600);
+    return () => window.clearTimeout(timeout);
+  }, [isFinal, submitted, reduce, setProposal]);
+
   // New messages always come into view without the customer scrolling.
   useStickToBottom(listRef);
 
@@ -366,7 +327,7 @@ export const Interview = () => {
 
   return (
     <div ref={listRef} data-guide="interview" className="size-full overflow-y-auto overscroll-contain px-4 py-6 lg:px-8 [scrollbar-width:thin]">
-      <div className="mx-auto flex max-w-[640px] flex-col gap-4 pb-24 lg:pb-6">
+      <div className="mx-auto flex max-w-[640px] flex-col gap-4 pb-6">
         {questions.slice(0, stage).map((question, index) => (
           <div key={question.key} className="flex flex-col gap-3">
             <Bot>{question.ask(config)}</Bot>

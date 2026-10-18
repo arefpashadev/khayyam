@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, BarChart3, CircleHelp, BrainCircuit, Map, MessageSquareText, Sparkles, Waypoints, X, Zap, type LucideIcon } from "lucide-react";
+import { ArrowLeft, ArrowRight, BarChart3, CircleHelp, BrainCircuit, Map, MessageSquareText, Waypoints, X, Zap, type LucideIcon } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 
@@ -16,6 +16,7 @@ import { CustomAi } from "./custom";
 import { FlowCanvas } from "./flow-canvas";
 import { ImpactBoard } from "./impact";
 import { Interview, interviewLength } from "./interview";
+import { Proposal } from "./proposal";
 import { useAi } from "./store";
 
 const views: { value: AiView; label: string; icon: LucideIcon }[] = [
@@ -199,6 +200,7 @@ const Progress = () => {
 const ChatLayout = () => {
   const isSmall = useIsSmallScreen();
   const [blueprintOpen, setBlueprintOpen] = useState(false);
+  const proposal = useAi((state) => state.proposal);
   const stage = useAi((state) => state.stage);
 
   return (
@@ -207,31 +209,42 @@ const ChatLayout = () => {
       <TopBar title="اتوماسیون و دستیار هوشمند" guide="ai-chat">
         <Progress />
       </TopBar>
-      <div className="flex min-h-0 flex-1">
-        <section className={`relative flex min-h-0 flex-col ${isSmall ? "w-full" : "w-[min(560px,46%)] border-l border-white/6"} bg-[radial-gradient(80%_50%_at_50%_0%,rgba(77,163,255,0.08),transparent_70%)]`}>
-          <Interview />
-        </section>
-        {!isSmall && (
-          <main data-guide="blueprint" className="relative min-w-0 flex-1">
-            <Blueprint compact={false} />
-          </main>
+      <AnimatePresence mode="wait" initial={false}>
+        {proposal ? (
+          <motion.div key="proposal" className="relative min-h-0 flex-1 bg-[radial-gradient(60%_40%_at_50%_0%,rgba(124,108,255,0.12),transparent_70%)]" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}>
+            <Proposal />
+          </motion.div>
+        ) : (
+          <motion.div key="chat" className="flex min-h-0 flex-1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <section className={`relative flex min-h-0 flex-col ${isSmall ? "w-full" : "w-[min(560px,46%)] border-l border-white/6"} bg-[radial-gradient(80%_50%_at_50%_0%,rgba(77,163,255,0.08),transparent_70%)]`}>
+              <Interview />
+            </section>
+            {!isSmall && (
+              <main data-guide="blueprint" className="relative min-w-0 flex-1">
+                <Blueprint compact={false} />
+              </main>
+            )}
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
 
-      {isSmall && (
+      {isSmall && !proposal && (
         <>
-          <motion.button
-            key={stage}
-            type="button"
-            data-guide="blueprint"
-            onClick={() => setBlueprintOpen(true)}
-            initial={{ scale: 0.9 }}
-            animate={{ scale: [1, 1.08, 1] }}
-            className="absolute bottom-5 left-4 z-20 flex h-12 items-center gap-2 rounded-full bg-white px-4 text-[13px] font-extrabold text-[#0b0d12] shadow-[0_12px_40px_-10px_rgba(77,163,255,0.8)]"
-          >
-            <Map className="size-4" aria-hidden="true" /> نقشه زنده
-            <Sparkles className="size-3.5 text-[#7c6cff]" aria-hidden="true" />
-          </motion.button>
+          {/* one action bar: the question's main button (portalled in) and the live map, same size and shape */}
+          <div className="flex shrink-0 items-center gap-2 border-t border-white/6 bg-[#0b0d12]/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur [&:has(#ai-actions:empty)>button]:flex-1">
+            <div id="ai-actions" className="flex-1 empty:hidden" />
+            <motion.button
+              key={stage}
+              type="button"
+              data-guide="blueprint"
+              onClick={() => setBlueprintOpen(true)}
+              animate={{ scale: [1, 1.04, 1] }}
+              transition={{ duration: 0.4 }}
+              className="flex h-12 shrink-0 items-center justify-center gap-2 rounded-2xl bg-[#171b22] px-4 text-[13px] font-bold text-white ring-1 ring-white/10"
+            >
+              <Map className="size-4 text-[#9ccbff]" aria-hidden="true" /> نقشه زنده
+            </motion.button>
+          </div>
           <AnimatePresence>
             {blueprintOpen && (
               <motion.div className="fixed inset-0 z-[150] flex flex-col bg-[#0b0d12]" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", bounce: 0, duration: 0.4 }}>
