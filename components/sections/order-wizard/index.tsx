@@ -61,7 +61,7 @@ import { stepPanels } from "./steps";
 import { useWizard } from "./store";
 import { amountDue, formatToman, startPayment } from "./payments";
 import { PaymentOverlay } from "./payment-ui";
-import { Tour } from "./tour";
+import { appGuide, Guide, siteGuide, useGuide } from "./guide";
 import { useIsSmallScreen } from "./use-small-screen";
 
 const stepIcons: Record<StepKey, LucideIcon> = {
@@ -137,7 +137,7 @@ export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
       ) : (
         <>
           {isSmall ? <MobileEditor kind={kind} /> : <StudioEditor kind={kind} />}
-          <Tour kind={kind} name="editor" />
+          <Guide id={`studio-${kind}`} steps={kind === "app" ? appGuide : siteGuide} />
         </>
       )}
     </div>
@@ -151,7 +151,7 @@ export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
 const StudioEditor = ({ kind }: { kind: OrderKind }) => {
   const submitted = useWizard((state) => state.submitted);
   const goTo = useWizard((state) => state.goTo);
-  const setTour = useWizard((state) => state.setTour);
+  const openGuide = useGuide((state) => state.open);
   const brandName = useWizard((state) => state.config.brandName);
   const iconButton = "flex size-9 items-center justify-center rounded-xl text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white";
 
@@ -164,7 +164,7 @@ const StudioEditor = ({ kind }: { kind: OrderKind }) => {
           <span className="text-[11px] text-[#8a93a0]">{kind === "app" ? "استودیو اپلیکیشن" : "استودیو وب‌سایت"} · خیام</span>
         </div>
         <div className="ms-auto flex items-center gap-1">
-          <button type="button" onClick={() => setTour({ name: "editor", step: 0 })} aria-label="راهنما" className={iconButton}>
+          <button type="button" onClick={() => openGuide(`studio-${kind}`)} aria-label="راهنما" className={iconButton}>
             <CircleHelp className="size-[18px]" aria-hidden="true" />
           </button>
           <Link href="/" aria-label="خروج" className={iconButton}>

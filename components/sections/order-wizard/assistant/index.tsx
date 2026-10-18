@@ -7,8 +7,9 @@ import { create } from "zustand";
 
 import { KhayyamMark } from "@/components/brand/khayyam-mark";
 
-import { faNumber, getSteps } from "../config";
+import { getSteps } from "../config";
 import { useWizard } from "../store";
+import { useStickToBottom } from "../use-stick-bottom";
 import { askAssistant, quickQuestions, stepGuide, type AssistantAction } from "./brain";
 
 type Message = { id: number; role: "assistant" | "user"; text: string; actions?: AssistantAction[]; applied?: number[] };
@@ -55,30 +56,15 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
   const dragControls = useDragControls();
   const [draft, setDraft] = useState("");
   const [nudge, setNudge] = useState(0);
-  const [tipVisible, setTipVisible] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const stepKey = getSteps(kind)[step].key;
-  const stepTitle = getSteps(kind)[step].title;
-  const suggestions = stepGuide({ kind, step: stepKey, config: useWizard.getState().config }).actions?.length ?? 0;
-  const tip = suggestions ? `برای «${stepTitle}» ${faNumber(suggestions)} پیشنهاد آماده دارم` : `درباره «${stepTitle}» سوالی دارید؟`;
-
-  // Every 5 seconds the closed launcher wiggles so it's noticed.
+  // Now and then the closed launcher gives a small wiggle so it gets noticed — nothing more.
   useEffect(() => {
     if (open || reduce) return;
-    const interval = window.setInterval(() => setNudge((value) => value + 1), 5000);
+    const interval = window.setInterval(() => setNudge((value) => value + 1), 8000);
     return () => window.clearInterval(interval);
   }, [open, reduce]);
 
-  // Arriving at a step shows a short, step-specific tip next to the launcher.
-  useEffect(() => {
-    if (open) return;
-    const show = window.setTimeout(() => setTipVisible(true), 900);
-    const hide = window.setTimeout(() => setTipVisible(false), 5200);
-    return () => {
-      window.clearTimeout(show);
-      window.clearTimeout(hide);
-    };
-  }, [stepKey, open]);
 
   // Greet once, then post a guide for every step the user reaches while the assistant is open.
   useEffect(() => {
@@ -92,9 +78,7 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
     return () => window.clearTimeout(timeout);
   }, [open, stepKey, guided, kind, push, markGuided]);
 
-  useEffect(() => {
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: reduce ? "auto" : "smooth" });
-  }, [messages.length, typing, reduce]);
+  useStickToBottom(listRef, open);
 
   const send = async (text: string) => {
     const message = text.trim();
@@ -134,21 +118,6 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
             <KhayyamMark size={studio ? 36 : 38} state={nudge % 2 === 1 ? "thinking" : "idle"} />
             {studio && <span>دستیار هوشمند</span>}
           </motion.button>
-          <AnimatePresence>
-            {tipVisible && (
-              <motion.button
-                type="button"
-                onClick={() => setOpen(true)}
-                initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 6 }}
-                className={`mb-1 max-w-[230px] rounded-2xl rounded-bl-md bg-white px-3.5 py-2.5 text-right text-[12px] font-bold leading-5 text-[#0b0d12] shadow-xl ${studio ? "" : "max-w-[190px]"}`}
-                dir="rtl"
-              >
-                {tip}
-              </motion.button>
-            )}
-          </AnimatePresence>
         </div>
       )}
 
@@ -191,7 +160,8 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
                 </button>
               </header>
 
-              <div ref={listRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-4 [scrollbar-width:thin]">
+              <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 [scrollbar-width:thin]">
+                <div className="space-y-3">
                 {messages.map((message) =>
                   message.role === "user" ? (
                     <div key={message.id} className="flex justify-end">
@@ -235,6 +205,7 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
                     </span>
                   </div>
                 )}
+                </div>
               </div>
 
               <div className="shrink-0 border-t border-white/6 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2.5">

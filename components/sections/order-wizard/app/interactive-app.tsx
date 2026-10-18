@@ -97,6 +97,31 @@ export const InteractiveApp = ({ config, listen = false, springboard = false }: 
 
   useEffect(() => () => window.clearTimeout(toastTimer.current), []);
 
+  // Switching a feature off removes everything it put on screen, so nothing is left behind.
+  const featureKey = config.features.join(",");
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      const on = (feature: string) => featureKey.split(",").includes(feature);
+      if (!on("darkmode")) setDark(false);
+      if (!on("aiAssistant")) setAiOpen(false);
+      if (!on("visualSearch")) setScanning(false);
+      if (!on("voice")) setListening(false);
+      if (!on("push")) setBanner(false);
+      setPhase((current) => ((current === "onboarding" && !on("onboarding")) || (current === "lock" && !on("biometric")) ? "app" : current));
+    }, 0);
+    return () => window.clearTimeout(timeout);
+  }, [featureKey]);
+
+  // Screens that are switched off can't stay open.
+  const screensKey = config.screens.join(",");
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      setScreen((current) => (current === "home" || screensKey.split(",").includes(current) ? current : "home"));
+      setHistory((stack) => stack.filter((entry) => entry === "home" || screensKey.split(",").includes(entry)));
+    }, 0);
+    return () => window.clearTimeout(timeout);
+  }, [screensKey]);
+
   // The features step asks the phone to act a feature out as soon as it's switched on.
   useEffect(() => {
     if (!listen || demo.tick === 0) return;

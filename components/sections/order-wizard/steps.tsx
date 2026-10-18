@@ -509,6 +509,7 @@ const ExtrasStep = () => {
         <span className="min-w-0 flex-1">
           <strong className="flex items-center gap-1.5 text-[12.5px] leading-5">
             {option.label}
+            {"ai" in option && option.ai && <span className="rounded-full bg-white/8 px-1.5 text-[10px] font-bold text-[#c9d0d9]">AI</span>}
             {!option.visible && (
               <span className="hidden items-center gap-0.5 rounded-full bg-white/6 px-1.5 text-[10px] font-normal text-[#8a93a0] lg:inline-flex" title="در پیش‌نمایش دیده نمی‌شود">
                 <EyeOff className="size-2.5" aria-hidden="true" /> پشت صحنه
@@ -525,20 +526,7 @@ const ExtrasStep = () => {
     );
   };
 
-  const aiOptions = options.filter((option) => "ai" in option && option.ai);
-  return (
-    <div className="flex flex-col gap-5">
-      {aiOptions.length > 0 && (
-        <div className="rounded-2xl bg-[linear-gradient(140deg,rgba(124,108,255,0.14),rgba(77,163,255,0.06))] p-2.5 ring-1 ring-[#7c6cff]/25">
-          <span className="mb-2 flex items-center gap-1.5 px-1 text-[12px] font-bold text-[#c4bbff]">
-            <Sparkles className="size-3.5" aria-hidden="true" /> اتصال به هوش مصنوعی
-          </span>
-          <div className="grid grid-cols-2 gap-1.5 lg:grid-cols-1">{aiOptions.map(row)}</div>
-        </div>
-      )}
-      <div className="grid grid-cols-2 gap-2 lg:grid-cols-1">{options.filter((option) => !("ai" in option && option.ai)).map(row)}</div>
-    </div>
-  );
+  return <div className="grid grid-cols-2 gap-2 lg:grid-cols-1">{options.map(row)}</div>;
 };
 
 const ReferencesStep = () => {

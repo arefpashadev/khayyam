@@ -9,6 +9,7 @@ import { Link } from "@/i18n/navigation";
 import { buildPreviewVars } from "../config";
 import { CustomNote } from "../app/app-stage";
 import { AssistantDock } from "../assistant";
+import { useGuide } from "../guide";
 import { useWizard } from "../store";
 import { useIsSmallScreen } from "../use-small-screen";
 import { FitScene, Laptop, LAPTOP, Phone, PHONE } from "./devices";
@@ -59,7 +60,7 @@ const pill = "flex h-9 items-center gap-2 rounded-full bg-white/8 px-3.5 text-[1
 export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
   const kind = useWizard((state) => state.kind);
   const config = useWizard((state) => state.config);
-  const setTour = useWizard((state) => state.setTour);
+  const openGuide = useGuide((state) => state.open);
   const isSmall = useIsSmallScreen();
   const [deskView, setDeskView] = useState<DeskView>("both");
   const address = config.brandName.trim().replace(/\s+/g, "-") || "your-brand";
@@ -93,7 +94,7 @@ export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
             <Link href="/" aria-label="خروج" className={`${pill} size-9 justify-center px-0`}>
               <X className="size-4" aria-hidden="true" />
             </Link>
-            <button type="button" onClick={() => setTour({ name: "editor", step: 0 })} aria-label="راهنما" className={`${pill} size-9 justify-center px-0`}>
+            <button type="button" onClick={() => openGuide(`studio-${kind}`)} aria-label="راهنما" className={`${pill} size-9 justify-center px-0`}>
               <CircleHelp className="size-4" aria-hidden="true" />
             </button>
           </>

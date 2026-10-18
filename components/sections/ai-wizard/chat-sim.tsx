@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { KhayyamMark } from "@/components/brand/khayyam-mark";
 
+import { useStickToBottom } from "../order-wizard/use-stick-bottom";
 import type { AiConfig, GoalKey, Persona } from "./config";
 
 type Line = { from: "user" | "bot"; text: string; handoff?: boolean };
@@ -39,9 +40,7 @@ export const ChatSim = ({ config }: { config: AiConfig }) => {
     return () => window.clearTimeout(timeout);
   }, [config.persona]);
 
-  useEffect(() => {
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: reduce ? "auto" : "smooth" });
-  }, [lines.length, typing, reduce]);
+  useStickToBottom(listRef);
 
   const ask = (index: number) => {
     if (typing) return;
@@ -66,7 +65,8 @@ export const ChatSim = ({ config }: { config: AiConfig }) => {
         </div>
       </div>
 
-      <div ref={listRef} className="min-h-0 flex-1 space-y-2.5 overflow-y-auto px-4 py-4 [scrollbar-width:thin]">
+      <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto px-4 py-4 [scrollbar-width:thin]">
+        <div className="space-y-2.5">
         <p className="max-w-[85%] rounded-[18px] rounded-br-md bg-[#1a1f28] px-3.5 py-2.5 text-[13px] leading-7 text-[#e1e6ec]">
           {{ friendly: "سلام! 👋 چطور می‌توانم کمکتان کنم؟", formal: "سلام. در خدمت شما هستم.", expert: "سلام. سوالتان را دقیق بپرسید تا با جزئیات جواب بدهم." }[config.persona]}
         </p>
@@ -75,8 +75,8 @@ export const ChatSim = ({ config }: { config: AiConfig }) => {
             <motion.div key={index} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className={`flex flex-col ${line.from === "user" ? "items-end" : "items-start"}`}>
               <p className={`max-w-[85%] rounded-[18px] px-3.5 py-2.5 text-[13px] leading-7 ${line.from === "user" ? "rounded-bl-md bg-[#4da3ff] text-white" : "rounded-br-md bg-[#1a1f28] text-[#e1e6ec]"}`}>{line.text}</p>
               {line.handoff && (
-                <span className="mt-1.5 flex items-center gap-1.5 rounded-full bg-[#f0b44a]/12 px-2.5 py-1 text-[11px] font-bold text-[#f2cf8a]">
-                  <UserCheck className="size-3.5" aria-hidden="true" /> برای تأیید انسانی ارجاع شد
+                <span className="mt-1.5 flex items-center gap-1.5 rounded-full bg-[#4da3ff]/12 px-2.5 py-1 text-[11px] font-bold text-[#9ccbff]">
+                  <UserCheck className="size-3.5" aria-hidden="true" /> همکارتان در جریان قرار گرفت
                 </span>
               )}
             </motion.div>
@@ -87,6 +87,7 @@ export const ChatSim = ({ config }: { config: AiConfig }) => {
             <KhayyamMark size={20} state="thinking" /> در حال فکر کردن…
           </span>
         )}
+        </div>
       </div>
 
       <div className="border-t border-white/6 p-3">

@@ -47,7 +47,7 @@ export const CustomAi = () => {
           </p>
         </motion.header>
 
-        <section>
+        <section data-guide="custom-domains">
           <span className={label}>در چه حوزه‌ای؟</span>
           <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
             {customDomains.map((domain, index) => {
@@ -78,7 +78,7 @@ export const CustomAi = () => {
         </section>
 
         <section className="grid gap-6 lg:grid-cols-2">
-          <label className="block lg:col-span-2">
+          <label data-guide="custom-problem" className="block lg:col-span-2">
             <span className={label}>مسئله یا هدفتان را با زبان خودتان بنویسید</span>
             <textarea value={custom.problem} onChange={(event) => updateCustom({ problem: event.target.value })} rows={4} placeholder="مثلاً: روزانه حدود ۲۰۰ قطعه معیوب از خط رد می‌شود؛ می‌خواهیم قبل از بسته‌بندی با دوربین تشخیص داده شوند." className={`${field} resize-none py-3 leading-7`} />
           </label>
@@ -122,7 +122,7 @@ export const CustomAi = () => {
           </label>
         </section>
 
-        <section>
+        <section data-guide="custom-process">
           <span className={label}>مسیر همکاری</span>
           <ol className="grid gap-3 lg:grid-cols-4">
             {customProcess.map((step, index) => (
@@ -135,7 +135,7 @@ export const CustomAi = () => {
           </ol>
         </section>
 
-        <section className="rounded-[26px] bg-[linear-gradient(140deg,rgba(124,108,255,0.16),rgba(77,163,255,0.08))] p-5 ring-1 ring-[#7c6cff]/30 lg:p-7">
+        <section data-guide="custom-consult" className="rounded-[26px] bg-[linear-gradient(140deg,rgba(124,108,255,0.16),rgba(77,163,255,0.08))] p-5 ring-1 ring-[#7c6cff]/30 lg:p-7">
           <div className="flex items-start gap-3">
             <MessagesSquare className="mt-1 size-5 shrink-0 text-[#c4bbff]" aria-hidden="true" />
             <p className="text-[13px] leading-7 text-[#d6d2ff]">

@@ -122,7 +122,7 @@ export const FlowCanvas = ({ config, vertical }: { config: AiConfig; vertical: b
                 style={{ width: NODE.width, height: NODE.height }}
                 dir="rtl"
               >
-                {gated ? <UserCheck className="size-4 shrink-0 text-[#f0b44a]" aria-label="با تأیید شما" /> : <CheckCircle2 className="size-4 shrink-0 text-[#2fd08a]" aria-hidden="true" />}
+                <CheckCircle2 className="size-4 shrink-0 text-[#2fd08a]" aria-hidden="true" />
                 <span className={vertical ? "line-clamp-2" : "truncate"}>{node.label}</span>
               </motion.div>
             ))}
@@ -138,15 +138,21 @@ export const FlowCanvas = ({ config, vertical }: { config: AiConfig; vertical: b
             <KhayyamMark size={vertical ? 30 : 40} state={reduce ? "still" : "thinking"} />
             <strong className={`${vertical ? "text-[12px]" : "text-[13px]"} text-white`}>هسته هوش مصنوعی</strong>
             <div className="flex max-w-[180px] flex-wrap justify-center gap-1">
-              {picked.slice(0, 3).map((goal) => (
+              {picked.slice(0, 2).map((goal) => (
                 <span key={goal.value} className="rounded-full bg-white/6 px-2 py-0.5 text-[10px] text-[#a7b0bc]">{goal.label}</span>
               ))}
-              {picked.length > 3 && <span className="rounded-full bg-white/6 px-2 py-0.5 text-[10px] text-[#a7b0bc]">+{picked.length - 3}</span>}
+              {picked.length > 2 && <span className="rounded-full bg-white/6 px-2 py-0.5 text-[10px] text-[#a7b0bc]">+{picked.length - 2}</span>}
             </div>
             <span className="absolute -top-3 flex items-center gap-1 rounded-full bg-[#0b0d12] px-2.5 py-1 text-[10px] font-bold text-[#9ccbff] ring-1 ring-white/10">
               {config.hosting === "onprem" ? <Server className="size-3" aria-hidden="true" /> : <Cloud className="size-3" aria-hidden="true" />}
               {config.hosting === "onprem" ? "روی سرور خودتان" : "ابری امن"}
             </span>
+            {gated && (
+              <span className="absolute -bottom-10 flex items-center gap-1 whitespace-nowrap text-[10.5px] text-[#a7b0bc]">
+                <UserCheck className="size-3 text-[#9ccbff]" aria-hidden="true" />
+                {config.autonomy === "suggest" ? "هر کار با تأیید شما" : "موارد حساس با تأیید شما"}
+              </span>
+            )}
             {systems.length > 0 && (
               <span className="absolute -bottom-3.5 flex max-w-[240px] items-center gap-1 truncate rounded-full bg-[#0b0d12] px-2.5 py-1 text-[10px] font-bold text-[#c9d0d9] ring-1 ring-white/10">
                 <ShieldCheck className="size-3 text-[#2fd08a]" aria-hidden="true" />

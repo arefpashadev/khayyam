@@ -8,6 +8,7 @@ import { Link } from "@/i18n/navigation";
 import { AssistantDock } from "../assistant";
 import { appScreens, buildPreviewVars, getSteps } from "../config";
 import { FitScene } from "../preview/devices";
+import { useGuide } from "../guide";
 import { useWizard } from "../store";
 import { useIsSmallScreen } from "../use-small-screen";
 import { AppDevice, APP_PHONE, type DeviceKind } from "./device";
@@ -28,7 +29,7 @@ export const AppStage = ({ studio = false }: { studio?: boolean }) => {
   const config = useWizard((state) => state.config);
   const step = useWizard((state) => state.step);
   const kind = useWizard((state) => state.kind);
-  const setTour = useWizard((state) => state.setTour);
+  const openGuide = useGuide((state) => state.open);
   const open = useAppPreview((state) => state.open);
   const isSmall = useIsSmallScreen();
   const [mobileDevice, setMobileDevice] = useState<"ios" | "android">("ios");
@@ -62,7 +63,7 @@ export const AppStage = ({ studio = false }: { studio?: boolean }) => {
             <Link href="/" aria-label="خروج" className={`${pill} size-9 justify-center px-0`}>
               <X className="size-4" aria-hidden="true" />
             </Link>
-            <button type="button" onClick={() => setTour({ name: "editor", step: 0 })} aria-label="راهنما" className={`${pill} size-9 justify-center px-0`}>
+            <button type="button" onClick={() => openGuide(`studio-${kind}`)} aria-label="راهنما" className={`${pill} size-9 justify-center px-0`}>
               <CircleHelp className="size-4" aria-hidden="true" />
             </button>
           </>

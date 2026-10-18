@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Eye, Globe, Play, Smartphone, Sparkles } from "lucide-react";
+import { Check, Eye, Globe, Play, Smartphone } from "lucide-react";
 
 import { appFeatureList, appNavs, appScreens, iconStyles, platforms, type AppNav, type Platform } from "../config";
 import { Label, ring, Tile, active, idle } from "../steps";
@@ -186,7 +186,10 @@ export const FeaturesStep = () => {
                 <feature.icon className="size-4" aria-hidden="true" />
               </span>
               <span className="min-w-0 flex-1">
-                <strong className="block text-[13px]">{feature.label}</strong>
+                <strong className="flex items-center gap-1.5 text-[13px]">
+                  {feature.label}
+                  {feature.ai && <span className="rounded-full bg-white/8 px-1.5 text-[10px] font-bold text-[#c9d0d9]">AI</span>}
+                </strong>
                 <span className="block text-[11px] opacity-60">{feature.description}</span>
               </span>
               <span className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${on ? "bg-[#4da3ff]" : "bg-[#2a303b]"}`}>
@@ -204,13 +207,7 @@ export const FeaturesStep = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="rounded-2xl bg-[linear-gradient(140deg,rgba(124,108,255,0.14),rgba(77,163,255,0.06))] p-2.5 ring-1 ring-[#7c6cff]/25">
-        <span className="mb-2 flex items-center gap-1.5 px-1 text-[12px] font-bold text-[#c4bbff]">
-          <Sparkles className="size-3.5" aria-hidden="true" /> اتصال به هوش مصنوعی
-        </span>
-        <div className="flex flex-col gap-1.5">{appFeatureList.filter((feature) => feature.ai).map(row)}</div>
-      </div>
-      {appFeatureList.filter((feature) => !feature.ai).map(row)}
+      {appFeatureList.map(row)}
       <p className="mt-1 flex items-center gap-2 rounded-2xl bg-[#171b22] px-3.5 py-3 text-[11.5px] leading-6 text-[#8a93a0]">
         <Eye className="size-4 shrink-0 text-[#4da3ff]" aria-hidden="true" />
         هر قابلیتی که در فهرست نیست هم قابل ساخت است؛ در مرحله سفارش برایمان بنویسید.

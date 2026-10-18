@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, BarChart3, BrainCircuit, Map, MessageSquareText, Sparkles, Waypoints, X, Zap, type LucideIcon } from "lucide-react";
+import { ArrowLeft, ArrowRight, BarChart3, CircleHelp, BrainCircuit, Map, MessageSquareText, Sparkles, Waypoints, X, Zap, type LucideIcon } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 
@@ -8,6 +8,7 @@ import { KhayyamMark } from "@/components/brand/khayyam-mark";
 import { Link } from "@/i18n/navigation";
 
 import { PaymentOverlay } from "../order-wizard/payment-ui";
+import { aiChatGuide, aiCustomGuide, Guide, useGuide } from "../order-wizard/guide";
 import { useIsSmallScreen } from "../order-wizard/use-small-screen";
 import { ChatSim } from "./chat-sim";
 import { fa, type AiView } from "./config";
@@ -20,7 +21,7 @@ import { useAi } from "./store";
 const views: { value: AiView; label: string; icon: LucideIcon }[] = [
   { value: "flow", label: "نقشه", icon: Waypoints },
   { value: "chat", label: "گفتگوی نمونه", icon: MessageSquareText },
-  { value: "impact", label: "صرفه‌جویی", icon: BarChart3 },
+  { value: "impact", label: "اثر بر کسب‌وکار", icon: BarChart3 },
 ];
 
 /**
@@ -117,8 +118,9 @@ const Landing = () => {
 
 /* ------------------------------------------------------------------ */
 
-const TopBar = ({ title, children }: { title: string; children?: React.ReactNode }) => {
+const TopBar = ({ title, guide, children }: { title: string; guide: string; children?: React.ReactNode }) => {
   const setMode = useAi((state) => state.setMode);
+  const openGuide = useGuide((state) => state.open);
   return (
     <header className="flex h-14 shrink-0 items-center gap-3 border-b border-white/6 px-3 lg:px-5">
       <button type="button" onClick={() => setMode("landing")} aria-label="برگشت" className="flex size-9 items-center justify-center rounded-xl text-[#c9d0d9] transition-colors hover:bg-white/6">
@@ -127,6 +129,9 @@ const TopBar = ({ title, children }: { title: string; children?: React.ReactNode
       <KhayyamMark size={30} title="خیام" />
       <strong className="truncate text-[13.5px]">{title}</strong>
       <div className="ms-auto flex items-center gap-2">{children}</div>
+      <button type="button" onClick={() => openGuide(guide)} aria-label="راهنما" className="flex size-9 items-center justify-center rounded-xl text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white">
+        <CircleHelp className="size-[18px]" aria-hidden="true" />
+      </button>
       <Link href="/" aria-label="خروج" className="flex size-9 items-center justify-center rounded-xl text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white">
         <X className="size-[18px]" aria-hidden="true" />
       </Link>
@@ -182,7 +187,7 @@ const Progress = () => {
   const submitted = useAi((state) => state.submitted);
   const done = submitted ? interviewLength : Math.min(stage, interviewLength - 1);
   return (
-    <span className="hidden items-center gap-2 text-[11.5px] text-[#8a93a0] sm:flex">
+    <span data-guide="progress" className="hidden items-center gap-2 text-[11.5px] text-[#8a93a0] sm:flex">
       نقشه {fa(Math.round((done / (interviewLength - 1)) * 100))}٪
       <span className="h-1.5 w-24 overflow-hidden rounded-full bg-white/8">
         <span className="block h-full rounded-full bg-[linear-gradient(90deg,#4da3ff,#7c6cff)] transition-all duration-500" style={{ width: `${(done / (interviewLength - 1)) * 100}%` }} />
@@ -198,7 +203,8 @@ const ChatLayout = () => {
 
   return (
     <div className="flex size-full flex-col">
-      <TopBar title="اتوماسیون و دستیار هوشمند">
+      <Guide id="ai-chat" steps={aiChatGuide} />
+      <TopBar title="اتوماسیون و دستیار هوشمند" guide="ai-chat">
         <Progress />
       </TopBar>
       <div className="flex min-h-0 flex-1">
@@ -206,7 +212,7 @@ const ChatLayout = () => {
           <Interview />
         </section>
         {!isSmall && (
-          <main className="relative min-w-0 flex-1">
+          <main data-guide="blueprint" className="relative min-w-0 flex-1">
             <Blueprint compact={false} />
           </main>
         )}
@@ -217,6 +223,7 @@ const ChatLayout = () => {
           <motion.button
             key={stage}
             type="button"
+            data-guide="blueprint"
             onClick={() => setBlueprintOpen(true)}
             initial={{ scale: 0.9 }}
             animate={{ scale: [1, 1.08, 1] }}
@@ -248,9 +255,10 @@ const ChatLayout = () => {
 
 const CustomLayout = () => (
   <div className="flex size-full flex-col">
-    <TopBar title="هوش مصنوعی اختصاصی" />
+    <TopBar title="هوش مصنوعی اختصاصی" guide="ai-custom" />
     <div className="relative min-h-0 flex-1 bg-[radial-gradient(60%_40%_at_50%_0%,rgba(124,108,255,0.14),transparent_70%)]">
       <CustomAi />
     </div>
+    <Guide id="ai-custom" steps={aiCustomGuide} />
   </div>
 );

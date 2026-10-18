@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Check, Laptop, Palette, Pipette, Smartphone, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, CircleHelp, Laptop, Palette, Pipette, Smartphone, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
@@ -11,6 +11,7 @@ import { colors, estimate, faNumber, industries, projectTypes, suggestAccents, t
 import { DevicePreview } from "./preview/device-preview";
 import { buildProposals } from "./proposals";
 import { amountDue, formatToman, startPayment } from "./payments";
+import { Guide, quickGuide, useGuide } from "./guide";
 import { OutcomeStep } from "./steps";
 import { useWizard } from "./store";
 
@@ -40,6 +41,7 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
   const load = useWizard((state) => state.load);
   const setMode = useWizard((state) => state.setMode);
   const reduce = useReducedMotion();
+  const openGuide = useGuide((state) => state.open);
   const [step, setStep] = useState<QuickStep>("type");
   const [chosen, setChosen] = useState<string | null>(null);
   // Phones start on the phone view; a laptop would be tiny there.
@@ -102,7 +104,12 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
             ))}
           </span>
         )}
-        <Link href="/" aria-label="خروج" className="ms-auto flex size-10 items-center justify-center rounded-xl text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white">
+        {step === "results" && (
+          <button type="button" onClick={() => openGuide("quick")} aria-label="راهنما" className="ms-auto flex size-10 items-center justify-center rounded-xl text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white">
+            <CircleHelp className="size-5" aria-hidden="true" />
+          </button>
+        )}
+        <Link href="/" aria-label="خروج" className={`${step === "results" ? "" : "ms-auto"} flex size-10 items-center justify-center rounded-xl text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white`}>
           <X className="size-5" aria-hidden="true" />
         </Link>
       </header>
@@ -226,7 +233,7 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
                   <p className="mt-1 text-[13px] text-[#8a93a0]">یکی را انتخاب کنید یا در استودیو تک‌تک جزئیاتش را عوض کنید.</p>
                 </div>
                 {kind === "site" && (
-                  <div role="radiogroup" aria-label="دستگاه" className="flex gap-0.5 rounded-full bg-white/8 p-1 ring-1 ring-white/8">
+                  <div role="radiogroup" aria-label="دستگاه" data-guide="quick-devices" className="flex gap-0.5 rounded-full bg-white/8 p-1 ring-1 ring-white/8">
                     {(
                       [
                         { value: "laptop", label: "لپ‌تاپ", icon: Laptop },
@@ -241,7 +248,7 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
                 )}
               </div>
 
-              <div className="-mx-4 mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] lg:mx-0 lg:grid lg:grid-cols-3 lg:overflow-visible lg:px-0">
+              <div data-guide="quick-cards" className="-mx-4 mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] lg:mx-0 lg:grid lg:grid-cols-3 lg:overflow-visible lg:px-0">
                 {proposals.map((proposal, index) => (
                   <article key={proposal.key} className="flex w-[84%] shrink-0 snap-center flex-col overflow-hidden rounded-[26px] bg-[#111419] ring-1 ring-white/8 lg:w-auto">
                     <div className="relative h-[360px] lg:h-[300px] xl:h-[340px]" style={{ background: `radial-gradient(80% 70% at 50% 40%, ${proposal.config.color}33, transparent 70%)` }}>
@@ -265,10 +272,10 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
                         ))}
                       </div>
                       <div className="mt-auto flex gap-2 pt-2">
-                        <button type="button" onClick={() => choose(proposal.key, false)} className="flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-white text-[13px] font-extrabold text-[#0b0d12] transition-colors hover:bg-[#d9ecff]">
+                        <button type="button" data-guide={index === 0 ? "quick-pick" : undefined} onClick={() => choose(proposal.key, false)} className="flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-white text-[13px] font-extrabold text-[#0b0d12] transition-colors hover:bg-[#d9ecff]">
                           <Check className="size-4" aria-hidden="true" /> همین را می‌خواهم
                         </button>
-                        <button type="button" onClick={() => choose(proposal.key, true)} aria-label="شخصی‌سازی در استودیو" title="شخصی‌سازی در استودیو" className="flex size-11 items-center justify-center rounded-2xl bg-white/8 text-white transition-colors hover:bg-white/14">
+                        <button type="button" data-guide={index === 0 ? "quick-customize" : undefined} onClick={() => choose(proposal.key, true)} aria-label="شخصی‌سازی در استودیو" title="شخصی‌سازی در استودیو" className="flex size-11 items-center justify-center rounded-2xl bg-white/8 text-white transition-colors hover:bg-white/14">
                           <Palette className="size-4" aria-hidden="true" />
                         </button>
                       </div>
@@ -276,6 +283,7 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
                   </article>
                 ))}
               </div>
+              <Guide id="quick" steps={quickGuide} />
               <p className="mt-4 text-center text-[12px] text-[#5d6573]">با دکمه پالت، همان طرح در استودیو باز می‌شود تا هر جزئیاتش را خودتان تنظیم کنید.</p>
             </motion.div>
           )}

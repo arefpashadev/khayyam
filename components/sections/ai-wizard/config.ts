@@ -43,8 +43,13 @@ export type Hosting = "cloud" | "onprem";
 export type Persona = "formal" | "friendly" | "expert";
 export type Deliverable = "roadmap" | "poc" | "full";
 
+export type PainKey = "wait" | "repeat" | "errors" | "night" | "scattered" | "growth";
+
 export type AiConfig = {
   company: string;
+  pains: PainKey[];
+  /** share of the team's week spent on these tasks (0–1) */
+  share: number;
   goals: GoalKey[];
   tools: ToolKey[];
   requestsPerDay: number;
@@ -64,12 +69,14 @@ export type AiConfig = {
 
 export const defaultAiConfig: AiConfig = {
   company: "",
+  pains: [],
+  share: 0.5,
   goals: ["support"],
   tools: ["website", "telegram", "crm"],
   requestsPerDay: 120,
   hoursPerWeek: 30,
   staff: 3,
-  hourlyCost: 250,
+  hourlyCost: 150,
   autonomy: "assisted",
   hosting: "cloud",
   persona: "friendly",
@@ -90,15 +97,15 @@ export type AiView = "flow" | "chat" | "impact";
 /* Goals: each adds its own outcomes to the workflow                    */
 /* ------------------------------------------------------------------ */
 
-export const goals: { value: GoalKey; label: string; description: string; icon: LucideIcon; actions: string[] }[] = [
-  { value: "support", label: "پاسخ‌گویی به مشتری", description: "چت‌بات ۲۴ ساعته در سایت و پیام‌رسان‌ها", icon: Headset, actions: ["پاسخ فوری به مشتری", "ارجاع به کارشناس", "ثبت درخواست در CRM"] },
-  { value: "process", label: "اتوماسیون فرایندها", description: "تأییدها، ثبت اسناد، گردش کار", icon: Workflow, actions: ["ثبت خودکار سند", "گرفتن تأیید مدیر", "به‌روزرسانی موجودی"] },
-  { value: "reports", label: "گزارش خودکار", description: "داشبورد و گزارش بدون اکسل‌بازی", icon: BarChart3, actions: ["گزارش روزانه", "داشبورد زنده", "هشدار تغییرات مهم"] },
-  { value: "documents", label: "خواندن اسناد", description: "فاکتور، قرارداد و فرم را خودش می‌خواند", icon: FileSearch, actions: ["استخراج اطلاعات فاکتور", "بایگانی هوشمند", "ورود به حسابداری"] },
-  { value: "marketing", label: "بازاریابی و محتوا", description: "تولید پست، کپشن و پاسخ کامنت", icon: Megaphone, actions: ["تولید پست و کپشن", "زمان‌بندی انتشار", "پاسخ به کامنت‌ها"] },
-  { value: "forecast", label: "پیش‌بینی و تحلیل", description: "فروش، موجودی و رفتار مشتری", icon: LineChart, actions: ["پیش‌بینی فروش", "پیشنهاد سفارش خرید", "شناسایی مشتری در خطر"] },
-  { value: "knowledge", label: "دستیار دانش سازمان", description: "از اسناد خود شرکت جواب می‌دهد", icon: BrainCircuit, actions: ["جواب از اسناد شرکت", "خلاصه جلسات", "جستجوی هوشمند"] },
-  { value: "voice", label: "تماس صوتی هوشمند", description: "پاسخ‌گوی تلفنی و تبدیل گفتار به متن", icon: Phone, actions: ["پاسخ تلفنی خودکار", "تبدیل تماس به متن", "ثبت درخواست تماس"] },
+export const goals: { value: GoalKey; label: string; description: string; icon: LucideIcon; actions: string[]; role?: string }[] = [
+  { value: "support", label: "پاسخ‌گوی ۲۴ ساعته", description: "چت‌بات ۲۴ ساعته در سایت و پیام‌رسان‌ها", icon: Headset, actions: ["پاسخ فوری به مشتری", "ارجاع به کارشناس", "ثبت درخواست در CRM"] },
+  { value: "process", label: "کارمند اداری خودکار", description: "تأییدها، ثبت اسناد، گردش کار", icon: Workflow, actions: ["ثبت خودکار سند", "گرفتن تأیید مدیر", "به‌روزرسانی موجودی"] },
+  { value: "reports", label: "تحلیل‌گر گزارش", description: "داشبورد و گزارش بدون اکسل‌بازی", icon: BarChart3, actions: ["گزارش روزانه", "داشبورد زنده", "هشدار تغییرات مهم"] },
+  { value: "documents", label: "کارشناس اسناد", description: "فاکتور، قرارداد و فرم را خودش می‌خواند", icon: FileSearch, actions: ["استخراج اطلاعات فاکتور", "بایگانی هوشمند", "ورود به حسابداری"] },
+  { value: "marketing", label: "تولیدکننده محتوا", description: "تولید پست، کپشن و پاسخ کامنت", icon: Megaphone, actions: ["تولید پست و کپشن", "زمان‌بندی انتشار", "پاسخ به کامنت‌ها"] },
+  { value: "forecast", label: "پیش‌بین فروش و انبار", description: "فروش، موجودی و رفتار مشتری", icon: LineChart, actions: ["پیش‌بینی فروش", "پیشنهاد سفارش خرید", "شناسایی مشتری در خطر"] },
+  { value: "knowledge", label: "مشاور دانش سازمان", description: "از اسناد خود شرکت جواب می‌دهد", icon: BrainCircuit, actions: ["جواب از اسناد شرکت", "خلاصه جلسات", "جستجوی هوشمند"] },
+  { value: "voice", label: "منشی تلفنی", description: "پاسخ‌گوی تلفنی و تبدیل گفتار به متن", icon: Phone, actions: ["پاسخ تلفنی خودکار", "تبدیل تماس به متن", "ثبت درخواست تماس"] },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -179,9 +186,29 @@ export const aiEstimate = (config: AiConfig) => {
   return { min: Math.round(min), max: Math.round(max), weeks };
 };
 
+/** What hurts today — asked first, so the result speaks to it. */
+export const pains: { value: PainKey; label: string; fix: string; suggests: GoalKey[] }[] = [
+  { value: "wait", label: "مشتری‌ها منتظر جواب می‌مانند", fix: "هیچ مشتری‌ای دیگر منتظر نمی‌ماند", suggests: ["support", "voice"] },
+  { value: "repeat", label: "تیم درگیر کارهای تکراری است", fix: "کارهای تکراری از دوش تیم برداشته می‌شود", suggests: ["process", "documents"] },
+  { value: "errors", label: "خطای انسانی و دوباره‌کاری داریم", fix: "ورود دستی و خطای تایپی تقریباً حذف می‌شود", suggests: ["documents", "process"] },
+  { value: "night", label: "شب‌ها و تعطیلات کسی پاسخ نمی‌دهد", fix: "شب و تعطیل هم کسب‌وکارتان باز است", suggests: ["support", "voice"] },
+  { value: "scattered", label: "اطلاعات پراکنده است و گزارش دیر می‌رسد", fix: "هر صبح گزارش آماده روی میزتان است", suggests: ["reports", "knowledge"] },
+  { value: "growth", label: "برای رشد باید نیروی بیشتری بگیریم", fix: "بدون استخدام تازه، چند برابر کار انجام می‌شود", suggests: ["support", "marketing", "forecast"] },
+];
+
+export const shareChoices = [
+  { value: 0.25, label: "کمی از وقتشان", hint: "حدود یک چهارم" },
+  { value: 0.5, label: "نصف وقتشان", hint: "" },
+  { value: 0.75, label: "بیشتر وقتشان", hint: "" },
+  { value: 1, label: "تمام وقتشان", hint: "کارشان همین است" },
+];
+
+/** A full-time person works about 176 hours a month. */
+const FTE_HOURS = 176;
+
 export const impact = (config: AiConfig) => {
   const rate = autonomyLevels.find((level) => level.value === config.autonomy)?.rate ?? 0.6;
-  const hoursBefore = Math.round(config.hoursPerWeek * 4.3);
+  const hoursBefore = Math.round(config.staff * 44 * config.share * 4.3);
   const hoursSaved = Math.round(hoursBefore * rate);
   const monthlySaving = (hoursSaved * config.hourlyCost) / 1000; // million tomans
   const cost = aiEstimate({ ...config, deliverable: "full" });
@@ -192,8 +219,12 @@ export const impact = (config: AiConfig) => {
     hoursAfter: hoursBefore - hoursSaved,
     monthlySaving: Math.round(monthlySaving * 10) / 10,
     paybackMonths: Math.max(1, Math.round(payback)),
-    responseBefore: config.requestsPerDay > 300 ? "چند ساعت" : "۳۰ دقیقه تا چند ساعت",
+    responseBefore: config.requestsPerDay / Math.max(1, config.staff) > 60 ? "چند ساعت" : "۲۰ تا ۴۵ دقیقه",
     responseAfter: "زیر ۱۰ ثانیه",
+    /** people's worth of work the AI takes on */
+    fte: Math.round((hoursSaved / FTE_HOURS) * 2) / 2,
+    /** requests handled per month */
+    monthlyRequests: config.requestsPerDay * 30,
   };
 };
 
@@ -230,5 +261,5 @@ export const customProcess = [
   { title: "استقرار و آموزش", text: "در سازمان راه‌اندازی، تیم را آموزش و سیستم را پایش می‌کنیم." },
 ];
 
-export const hourChoices = [5, 10, 20, 40, 80];
+
 export const staffChoices = [1, 3, 5, 10, 25];

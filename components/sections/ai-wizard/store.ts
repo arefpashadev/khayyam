@@ -47,7 +47,7 @@ export const useAi = create<AiState>((set) => ({
   config: defaultAiConfig,
   custom: emptyCustom,
   // The interview starts blank so the blueprint visibly draws itself from the answers.
-  setMode: (mode) => set((state) => ({ mode, stage: 0, submitted: false, config: mode === "chat" ? { ...state.config, goals: [], tools: [] } : state.config })),
+  setMode: (mode) => set((state) => ({ mode, stage: 0, submitted: false, config: mode === "chat" ? { ...state.config, goals: [], tools: [], pains: [] } : state.config })),
   answer: (patch) => set((state) => ({ config: { ...state.config, ...patch }, stage: state.stage + 1 })),
   rewind: (stage) => set({ stage, submitted: false }),
   setView: (view) => set({ view }),

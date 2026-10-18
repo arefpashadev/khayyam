@@ -35,21 +35,36 @@ const Screen = ({ children, className = "" }: { children: ReactNode; className?:
   }, [focus]);
 
   // Sections fade/slide in as they scroll into view (styled per motion level in globals.css).
-  // Changing the motion level re-runs it so the difference is visible straight away.
+  // Sections added later (toggling a section or feature) are picked up too, so nothing
+  // is ever left invisible; changing the motion level replays the effect.
   const motionLevel = useWizard((state) => state.config.motion);
   useEffect(() => {
     const scroller = ref.current;
     if (!scroller) return;
-    const sections = Array.from(scroller.querySelectorAll<HTMLElement>(".pv-section"));
-    sections.forEach((section) => delete section.dataset.inview);
     const observer = new IntersectionObserver(
       (entries) => entries.forEach((entry) => entry.isIntersecting && ((entry.target as HTMLElement).dataset.inview = "true")),
-      { root: scroller, threshold: 0.15 },
+      { root: scroller, threshold: 0.05 },
     );
-    const frame = requestAnimationFrame(() => sections.forEach((section) => observer.observe(section)));
+    const watch = () =>
+      scroller.querySelectorAll<HTMLElement>(".pv-section:not([data-watched])").forEach((section) => {
+        section.dataset.watched = "true";
+        observer.observe(section);
+      });
+    scroller.querySelectorAll<HTMLElement>(".pv-section").forEach((section) => {
+      delete section.dataset.inview;
+      delete section.dataset.watched;
+    });
+    const frame = requestAnimationFrame(() => {
+      watch();
+      scroller.dataset.reveal = "on";
+    });
+    const mutations = new MutationObserver(watch);
+    mutations.observe(scroller, { childList: true, subtree: true });
     return () => {
       cancelAnimationFrame(frame);
+      mutations.disconnect();
       observer.disconnect();
+      delete scroller.dataset.reveal;
     };
   }, [motionLevel]);
 
