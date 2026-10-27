@@ -71,16 +71,10 @@ export const Proposal = () => {
         <motion.header {...rise(0)} className="relative overflow-hidden rounded-[32px] bg-[#111419] px-6 py-10 text-center ring-1 ring-white/8 lg:py-14">
           <span className="pointer-events-none absolute -top-24 left-1/2 h-64 w-[80%] -translate-x-1/2 rounded-full bg-[#7c6cff] opacity-25 blur-[90px]" aria-hidden="true" />
           <span className="relative text-[12.5px] font-bold text-[#c4bbff]">پیشنهاد خیام برای {config.company.trim() || "کسب‌وکار شما"}</span>
-          {result.fte >= 1 ? (
-            <h1 className="relative mt-3 text-[30px] font-black leading-[1.4] text-white lg:text-[46px]">
-              کار <span className="bg-[linear-gradient(135deg,#4da3ff,#a78bfa)] bg-clip-text text-transparent"><CountUp to={result.fte} /> نفر</span> تمام‌وقت
-            </h1>
-          ) : (
-            <h1 className="relative mt-3 text-[30px] font-black leading-[1.4] text-white lg:text-[46px]">
-              <span className="bg-[linear-gradient(135deg,#4da3ff,#a78bfa)] bg-clip-text text-transparent"><CountUp to={result.hoursSaved} /> ساعت</span> در ماه
-            </h1>
-          )}
-          <p className="relative mx-auto mt-2 max-w-[40ch] text-[14px] leading-7 text-[#a7b0bc] lg:text-[16px]">را تیم هوش مصنوعی شما انجام می‌دهد؛ شبانه‌روزی و بدون نیاز به استخدام تازه.</p>
+          <h1 className="relative mt-3 text-[30px] font-black leading-[1.4] text-white lg:text-[46px]">
+            <span className="text-[#f3d9a4]"><CountUp to={result.hoursSaved} /> ساعت</span> در ماه
+          </h1>
+          <p className="relative mx-auto mt-2 max-w-[40ch] text-[14px] leading-7 text-[#a7b0bc] lg:text-[16px]">از وقت تیمتان آزاد می‌شود؛ یعنی حدود {fa(result.monthlySaving)} میلیون تومان کمتر هزینه نیرو در هر ماه.</p>
           <button
             type="button"
             onClick={() => startRef.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" })}

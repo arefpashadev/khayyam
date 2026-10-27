@@ -132,18 +132,17 @@ export const Dossier = ({ config, stage }: { config: AiConfig; stage: number }) 
         )}
 
         {stage >= 5 && team.length > 0 && (
-          <Block key="size" title="سهم این تیم از کار شما">
-            <p className="text-[30px] font-black leading-tight text-white">
-              {result.fte >= 1 ? (
-                <>
-                  کار <span className="text-[#f3d9a4]">{fa(result.fte)} نفر</span> تمام‌وقت
-                </>
-              ) : (
-                <>
-                  <span className="text-[#f3d9a4]">{fa(result.hoursSaved)} ساعت</span> در ماه
-                </>
-              )}
-            </p>
+          <Block key="size" title="صرفه‌جویی ماهانه">
+            <div className="grid grid-cols-2 gap-3">
+              <p className="rounded-[20px] bg-[#12151c] p-4 ring-1 ring-white/[0.07]">
+                <span className="block text-[28px] font-black leading-tight text-[#f3d9a4]">{fa(result.hoursSaved)}</span>
+                <span className="text-[12px] text-[#a7b0bc]">ساعت وقت آزاد</span>
+              </p>
+              <p className="rounded-[20px] bg-[#12151c] p-4 ring-1 ring-white/[0.07]">
+                <span className="block text-[28px] font-black leading-tight text-[#f3d9a4]">{fa(result.monthlySaving)}</span>
+                <span className="text-[12px] text-[#a7b0bc]">میلیون تومان کمتر هزینه</span>
+              </p>
+            </div>
             <p className="mt-2 text-[13px] leading-7 text-[#a7b0bc]">
               از {fa(result.hoursBefore)} ساعتی که تیم {fa(config.staff)} نفره شما هر ماه صرف این کارها می‌کند، {fa(result.hoursSaved)} ساعتش را برمی‌دارد.
             </p>
@@ -200,7 +199,7 @@ export const DossierStrip = ({ config, onOpen }: { config: AiConfig; onOpen: () 
         )}
       </span>
       <span className="min-w-0 flex-1 truncate text-[12.5px] text-[#c9d0d9]">
-        {team.length === 0 ? "پرونده تیم شما اینجا ساخته می‌شود" : `${fa(team.length)} هم‌تیمی${result.fte >= 1 ? `، کار ${fa(result.fte)} نفر` : ""}`}
+        {team.length === 0 ? "پرونده تیم شما اینجا ساخته می‌شود" : `${fa(team.length)} هم‌تیمی${result.hoursSaved > 0 ? `، ${fa(result.hoursSaved)} ساعت صرفه‌جویی در ماه` : ""}`}
       </span>
       <span className="shrink-0 text-[12px] font-bold text-[#f3d9a4]">دیدن پرونده</span>
     </button>

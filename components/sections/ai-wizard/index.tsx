@@ -90,7 +90,7 @@ const ChatLayout = () => {
 
   return (
     <div className="relative flex size-full flex-col">
-      <Guide id="ai-chat" steps={aiChatGuide} />
+      <Guide id="ai-chat" steps={aiChatGuide} delay={1800} />
       <TopBar title="هوش مصنوعی برای کسب‌وکار شما" guide="ai-chat">
         <Progress />
       </TopBar>

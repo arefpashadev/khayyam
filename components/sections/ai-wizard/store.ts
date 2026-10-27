@@ -29,6 +29,8 @@ type AiState = {
   submitted: boolean;
   /** the final proposal screen is showing */
   proposal: boolean;
+  /** the proposal has opened by itself once; after that only the button opens it */
+  proposalShown: boolean;
   setProposal: (open: boolean) => void;
   config: AiConfig;
   notes: Note[];
@@ -54,7 +56,8 @@ export const useAi = create<AiState>((set) => ({
   stage: 0,
   submitted: false,
   proposal: false,
-  setProposal: (proposal) => set({ proposal }),
+  proposalShown: false,
+  setProposal: (proposal) => set((state) => ({ proposal, proposalShown: state.proposalShown || proposal })),
   config: defaultAiConfig,
   notes: [],
   thinking: false,
@@ -83,5 +86,5 @@ export const useAi = create<AiState>((set) => ({
     }),
   submit: () => set({ submitted: true }),
   // The interview starts blank so the dossier visibly fills from the answers.
-  reset: () => set({ mode: "chat", stage: 0, submitted: false, proposal: false, notes: [], thinking: false, config: { ...defaultAiConfig, goals: [], tools: [], pains: [] }, custom: emptyCustom }),
+  reset: () => set({ mode: "chat", stage: 0, submitted: false, proposal: false, proposalShown: false, notes: [], thinking: false, config: { ...defaultAiConfig, goals: [], tools: [], pains: [] }, custom: emptyCustom }),
 }));

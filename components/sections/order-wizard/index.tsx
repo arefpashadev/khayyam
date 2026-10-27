@@ -313,7 +313,7 @@ const StepPanel = ({ kind }: { kind: OrderKind }) => {
             <span className="mb-1 hidden text-[11.5px] font-bold text-[#4da3ff] lg:block">
               مرحله {faNumber(step + 1)} از {faNumber(steps.length)}
             </span>
-            <h1 className="text-[16px] font-extrabold leading-[1.65] text-white lg:text-[20px]">{current.question(kind)}</h1>
+            <h1 data-guide="panel-question" className="text-[16px] font-extrabold leading-[1.65] text-white lg:text-[20px]">{current.question(kind)}</h1>
             <p className="mt-1 hidden text-[12px] leading-6 text-[#8a93a0] lg:block">{current.hint}</p>
             <div className="mt-3 lg:mt-6">
               {Panel && <Panel />}

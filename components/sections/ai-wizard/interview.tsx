@@ -175,7 +175,7 @@ const ShowProposal = () => {
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap gap-2">
         <span className="rounded-full bg-white/6 px-3 py-1.5 text-[12px] font-bold text-white">{fa(config.goals.length)} هم‌تیمی هوش مصنوعی</span>
-        <span className="rounded-full bg-white/6 px-3 py-1.5 text-[12px] font-bold text-white">{result.fte >= 1 ? `کار ${fa(result.fte)} نفر` : `${fa(result.hoursSaved)} ساعت در ماه`}</span>
+        <span className="rounded-full bg-white/6 px-3 py-1.5 text-[12px] font-bold text-white">{`${fa(result.hoursSaved)} ساعت در ماه صرفه‌جویی`}</span>
         <span className="rounded-full bg-white/6 px-3 py-1.5 text-[12px] font-bold text-white">۲۴ ساعته</span>
       </div>
       <Confirm label="دیدن پیشنهاد کامل" onClick={() => setProposal(true)} />
@@ -320,11 +320,12 @@ export const Interview = () => {
   // Reaching the end opens the proposal screen by itself, once.
   const setProposal = useAi((state) => state.setProposal);
   const isFinal = stage === questions.length - 1;
+  const proposalShown = useAi((state) => state.proposalShown);
   useEffect(() => {
-    if (!isFinal || submitted) return;
+    if (!isFinal || submitted || proposalShown) return;
     const timeout = window.setTimeout(() => setProposal(true), reduce ? 300 : 1600);
     return () => window.clearTimeout(timeout);
-  }, [isFinal, submitted, reduce, setProposal]);
+  }, [isFinal, submitted, proposalShown, reduce, setProposal]);
 
   // New messages always come into view without the customer scrolling.
   useStickToBottom(listRef);
