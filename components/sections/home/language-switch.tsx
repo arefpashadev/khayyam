@@ -2,12 +2,13 @@
 
 import { Check, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { dirOf, intlTag } from "@/lib/locale";
 
 type Locale = (typeof routing.locales)[number];
 
@@ -54,20 +55,21 @@ const Flag = ({ code, className = "h-3.5 w-5" }: { code: Locale; className?: str
   }
 };
 
-const names: Record<Locale, { short: string; full: string; sub: string }> = {
-  fa: { short: "فا", full: "فارسی", sub: "Persian" },
-  en: { short: "En", full: "English", sub: "انگلیسی" },
-  ar: { short: "عر", full: "العربية", sub: "عربی" },
-  de: { short: "De", full: "Deutsch", sub: "آلمانی" },
+const names: Record<Locale, { short: string; full: string }> = {
+  fa: { short: "فا", full: "فارسی" },
+  en: { short: "En", full: "English" },
+  ar: { short: "عر", full: "العربية" },
+  de: { short: "De", full: "Deutsch" },
 };
 
 const noop = () => () => {};
 
 const order: Locale[] = ["fa", "en", "ar", "de"];
 
-/** The header's language switch: the country flag and «فا»; tapping opens a bottom sheet. */
+/** The language switch: the flag and the short name («فا», En, …); tapping opens a bottom sheet. */
 export const LanguageSwitch = () => {
   const locale = useLocale() as Locale;
+  const t = useTranslations("Lang");
   const pathname = usePathname();
   const router = useRouter();
   const reduce = useReducedMotion();
@@ -92,6 +94,14 @@ export const LanguageSwitch = () => {
   };
 
   const current = names[locale] ?? names.fa;
+  // each language's name in the language the site is shown in now ("Persian", "انگلیسی", …)
+  const inCurrent = (code: Locale) => {
+    try {
+      return new Intl.DisplayNames([intlTag(locale)], { type: "language" }).of(code) ?? code;
+    } catch {
+      return code;
+    }
+  };
 
   return (
     <>
@@ -99,7 +109,7 @@ export const LanguageSwitch = () => {
         type="button"
         aria-haspopup="dialog"
         aria-expanded={open}
-        aria-label={`زبان: ${current.full}`}
+        aria-label={t("current", { name: current.full })}
         onClick={() => setOpen(true)}
         className="flex h-9 items-center gap-2 rounded-full px-3 text-[13px] font-bold text-[#dcd6c9] ring-1 ring-[#f2ecdf]/12 transition-colors hover:bg-[#f2ecdf]/[0.06] hover:text-[#f2ecdf] focus-visible:outline-2 focus-visible:outline-[#e8b95e]"
       >
@@ -111,10 +121,10 @@ export const LanguageSwitch = () => {
         createPortal(
           <AnimatePresence>
             {open && (
-              <div className="fixed inset-0 z-[200]" dir="rtl">
+              <div className="fixed inset-0 z-[200]" dir={dirOf(locale)}>
                 <motion.button
                   type="button"
-                  aria-label="بستن"
+                  aria-label={t("close")}
                   onClick={() => setOpen(false)}
                   className="absolute inset-0 bg-[rgba(4,6,12,0.62)] backdrop-blur-[2px]"
                   initial={{ opacity: 0 }}
@@ -124,7 +134,7 @@ export const LanguageSwitch = () => {
                 <motion.div
                   role="dialog"
                   aria-modal="true"
-                  aria-label="انتخاب زبان"
+                  aria-label={t("dialog")}
                   drag={reduce ? false : "y"}
                   dragConstraints={{ top: 0, bottom: 0 }}
                   dragElastic={{ top: 0, bottom: 0.6 }}
@@ -138,10 +148,10 @@ export const LanguageSwitch = () => {
                   <span className="mx-auto block h-1.5 w-11 rounded-full bg-[#f2ecdf]/20" aria-hidden="true" />
                   <div className="mt-4 flex items-center justify-between px-2">
                     <div>
-                      <strong className="block text-[18px] font-extrabold">زبان سایت</strong>
-                      <span className="text-[12.5px] text-[#9aa3b8]">Language · اللغة · Sprache</span>
+                      <strong className="block text-[18px] font-extrabold">{t("title")}</strong>
+                      <span className="text-[12.5px] text-[#9aa3b8]">Language, اللغة, Sprache, زبان</span>
                     </div>
-                    <button type="button" onClick={() => setOpen(false)} aria-label="بستن" className="flex size-9 items-center justify-center rounded-full bg-[#f2ecdf]/[0.07] text-[#b9bfcc] transition-colors hover:text-[#f2ecdf]">
+                    <button type="button" onClick={() => setOpen(false)} aria-label={t("close")} className="flex size-9 items-center justify-center rounded-full bg-[#f2ecdf]/[0.07] text-[#b9bfcc] transition-colors hover:text-[#f2ecdf]">
                       <X className="size-4" aria-hidden="true" />
                     </button>
                   </div>
@@ -159,8 +169,8 @@ export const LanguageSwitch = () => {
                           >
                             <Flag code={code} className="h-6 w-9" />
                             <span className="flex-1 leading-tight">
-                              <strong className="block text-[15.5px] font-bold"><bdi>{item.full}</bdi></strong>
-                              <span className="text-[12px] text-[#9aa3b8]">{item.sub}</span>
+                              <strong lang={code} className="block text-[15.5px] font-bold"><bdi>{item.full}</bdi></strong>
+                              <span className="text-[12px] text-[#9aa3b8]">{code === locale ? "" : inCurrent(code)}</span>
                             </span>
                             {active && (
                               <span className="flex size-7 items-center justify-center rounded-full bg-[#d9a648] text-[#1c1406]">

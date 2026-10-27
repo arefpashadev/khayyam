@@ -1,17 +1,18 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import { Link, useRouter } from "@/i18n/navigation";
 
 export type Face = "site" | "app" | "ai";
 
-export const faces: { key: Face; title: string; text: string; href: string; cta: string }[] = [
-  { key: "site", title: "وب‌سایت", text: "سایت معرفی، فروشگاه، رزرو یا پلتفرم؛ با ظاهری که خودتان می‌چینید.", href: "/createsite", cta: "طراحی سایت" },
-  { key: "app", title: "اپلیکیشن", text: "آیفون، اندروید یا وب‌اپ؛ روی گوشی می‌بینید و امتحانش می‌کنید.", href: "/createapp", cta: "طراحی اپلیکیشن" },
-  { key: "ai", title: "هوش مصنوعی", text: "تیمی که شبانه‌روز جواب مشتری می‌دهد، سند می‌خواند و گزارش می‌سازد.", href: "/createai", cta: "ساختن تیم هوش مصنوعی" },
-];
+export const faces: { key: Face; href: string }[] = [
+  { key: "site", href: "/createsite" },
+  { key: "app", href: "/createapp" },
+  { key: "ai", href: "/createai" },
+]
 
 // Isometric cube on a 400×400 canvas.
 const P = { top: "200,52", ur: "328,126", ul: "72,126", c: "200,200", lr: "328,274", ll: "72,274", b: "200,348" };
@@ -39,6 +40,7 @@ const IVORY = "#f2ecdf";
 export const StudioCube = ({ onChange }: { onChange?: (face: Face | null) => void }) => {
   const reduce = useReducedMotion();
   const router = useRouter();
+  const t = useTranslations("Cube");
   const [inside, setInside] = useState(false);
   const [held, setHeld] = useState<Face | null>(null);
   const [touch, setTouch] = useState(false);
@@ -61,7 +63,7 @@ export const StudioCube = ({ onChange }: { onChange?: (face: Face | null) => voi
       viewBox="0 0 400 400"
       className="h-auto w-full overflow-visible"
       role="group"
-      aria-label="سه استودیوی خیام"
+      aria-label={t("group")}
       onMouseEnter={() => setInside(true)}
       onMouseLeave={() => {
         setInside(false);
@@ -85,7 +87,7 @@ export const StudioCube = ({ onChange }: { onChange?: (face: Face | null) => voi
             key={face.key}
             role="link"
             tabIndex={0}
-            aria-label={`${face.title}، ${face.cta}`}
+            aria-label={`${t(`${face.key}.title`)}: ${t(`${face.key}.cta`)}`}
             className="cursor-pointer outline-none"
             onMouseEnter={() => setHeld(face.key)}
             onFocus={() => {
@@ -110,14 +112,14 @@ export const StudioCube = ({ onChange }: { onChange?: (face: Face | null) => voi
               transform={label[face.key]}
               textAnchor="middle"
               dominantBaseline="middle"
-              fontSize={face.key === "ai" ? 23 : 28}
+              fontSize={face.key === "ai" && t("ai.label").length > 3 ? 23 : 28}
               fontWeight="800"
               initial={false}
               animate={{ opacity: open ? 1 : 0, fill: on ? "#1c1406" : IVORY }}
               transition={{ duration: 0.35 }}
               style={{ fontFamily: "inherit", pointerEvents: "none" }}
             >
-              {face.title}
+              {t(`${face.key}.label`)}
             </motion.text>
           </g>
         );
@@ -128,19 +130,20 @@ export const StudioCube = ({ onChange }: { onChange?: (face: Face | null) => voi
 
 /** The caption under the cube: an invitation at rest, then what the lit face is. */
 export const FaceCaption = ({ face }: { face: Face | null }) => {
+  const t = useTranslations("Cube");
   const item = faces.find((entry) => entry.key === face);
   if (!item) {
     return (
       <motion.p key="rest" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center text-[14px] leading-7 text-[#8790a6]">
-        نشانگر را روی مکعب ببرید؛ هر وجهش یک استودیو است.
+        {t("rest")}
       </motion.p>
     );
   }
   return (
     <motion.div key={item.key} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="flex flex-col items-center gap-2 text-center">
-      <p className="max-w-[34ch] text-[14px] leading-7 text-[#b9bfcc]">{item.text}</p>
+      <p className="max-w-[34ch] text-[14px] leading-7 text-[#b9bfcc]">{t(`${item.key}.text`)}</p>
       <Link href={item.href} className="text-[14px] font-bold text-[#e9c27a] underline decoration-[#d9a648]/40 underline-offset-[6px] transition-colors hover:text-[#f5d79c]">
-        {item.cta}
+        {t(`${item.key}.cta`)}
       </Link>
     </motion.div>
   );

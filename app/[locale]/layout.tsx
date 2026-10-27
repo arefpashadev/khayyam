@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, getTranslations } from "next-intl/server";
 import "../globals.css";
 import Header from "@/components/layouts/header";
 import { isRTLLocale } from "@/i18n/routing";
@@ -35,12 +35,11 @@ const yekanBakh = localFont({
   preload: true,
 });
 
-export const metadata: Metadata = {
-  title: "خیام | طراحی و توسعه محصولات دیجیتال",
-  description:
-    "طراحی و توسعه وب‌سایت، اپلیکیشن، اتوماسیون و راهکارهای هوش مصنوعی برای رشد کسب‌وکارها.",
-  applicationName: "خیام",
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Meta" });
+  return { title: t("title"), description: t("description"), applicationName: t("app") };
+}
 
 export default async function RootLayout({
   children,

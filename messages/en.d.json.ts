@@ -2,6 +2,164 @@
 // See: https://next-intl.dev/docs/workflows/typescript#messages-arguments
 
 declare const messages: {
-  
+  "Meta": {
+    "title": "Khayyam | Websites, apps and AI for business",
+    "description": "Design and development of websites, apps, automation and AI solutions for growing businesses.",
+    "app": "Khayyam"
+  },
+  "Nav": {
+    "brand": "Khayyam",
+    "home": "Khayyam, home",
+    "main": "Main menu",
+    "site": "Websites",
+    "app": "Apps",
+    "ai": "AI",
+    "blog": "Blog",
+    "start": "Start a project"
+  },
+  "Lang": {
+    "title": "Language",
+    "current": "Language: {name}",
+    "close": "Close",
+    "dialog": "Choose a language"
+  },
+  "Hero": {
+    "badge": "Free design — see it first, then order",
+    "title1": "Built",
+    "title2": "with Khayyam’s precision.",
+    "line1": "Khayyam measured the year at <b>365.24219</b> days. We measure our work just as precisely.",
+    "line2": "A studio that designs and builds websites, apps and AI — from the first sketch to the day your product goes live.",
+    "line3": "Designers, engineers and AI specialists in one team, on one project.",
+    "line4": "For businesses that want to grow, not just have a website.",
+    "lines": "Lines",
+    "line": "Line {n}",
+    "cta": "Start my project",
+    "ctaAi": "What can AI do for me?"
+  },
+  "Cube": {
+    "group": "Khayyam’s three studios",
+    "rest": "Point at the cube — each face is a studio.",
+    "site": {
+      "label": "Web",
+      "title": "Website",
+      "text": "Company site, shop, booking or platform — with a look you arrange yourself.",
+      "cta": "Design a website"
+    },
+    "app": {
+      "label": "App",
+      "title": "App",
+      "text": "iPhone, Android or web app — see it and try it on your phone.",
+      "cta": "Design an app"
+    },
+    "ai": {
+      "label": "AI",
+      "title": "AI",
+      "text": "A team that answers customers around the clock, reads documents and writes reports.",
+      "cta": "Build an agent"
+    }
+  },
+  "Ai": {
+    "eyebrow": "AI",
+    "title": "Say one sentence. <g>Khayyam’s agent</g> does the rest.",
+    "sub": "It creates content, reads documents, talks to customers and follows up on sales — with your own data and tools.",
+    "can1": "Creates Instagram and TikTok content",
+    "can2": "Reads and files invoices and documents",
+    "can3": "Answers customer messages",
+    "can4": "Works inside the tools you already use",
+    "cta": "Start an agent"
+  },
+  "Agent": {
+    "name": "Khayyam Agent",
+    "online": "Online",
+    "working": "Working…",
+    "sample": "Sample",
+    "replay": "Watch again",
+    "ask": "Get a holiday campaign ready, and file this week’s invoices too.",
+    "content": "Your campaign content is ready:",
+    "post": "Instagram post",
+    "story": "Story",
+    "reels": "Reels",
+    "tiktok": "TikTok",
+    "invoices": "I read the invoices and filed them in your accounting.",
+    "vendor": "Alborz Supplies",
+    "accounting": "Accounting",
+    "filed": "Filed",
+    "replies": "From tonight, I’ll answer your customers’ messages.",
+    "dm": "Instagram DM",
+    "whatsapp": "WhatsApp",
+    "website": "Website",
+    "placeholder": "Tell the agent…",
+    "send": "Send"
+  },
+  "Products": {
+    "title": "Looking good isn’t enough. It has to work.",
+    "site": {
+      "title": "A website that sells while you sleep",
+      "text": "Shop, booking or order form — whatever time a customer buys, the order is in and paid.",
+      "cta": "Start a website"
+    },
+    "app": {
+      "title": "An app that brings customers back",
+      "text": "Timely notifications, one-tap checkout and a loyalty club — customers don’t come once, they stay.",
+      "cta": "Start an app"
+    },
+    "ai": {
+      "title": "It answers customers on its own",
+      "text": "It understands what the customer means, answers from your calendar and stock, and books it through to the end.",
+      "cta": "Start an agent"
+    },
+    "o1t": "02:14",
+    "o1": "New order, 2 items",
+    "o1a": "$48",
+    "o2t": "02:41",
+    "o2": "Booking, tomorrow 10 am",
+    "o2a": "Paid",
+    "o3t": "03:05",
+    "o3": "New order, 1 item",
+    "o3a": "$17",
+    "o4t": "04:27",
+    "o4": "Consultation request",
+    "o4a": "Form done",
+    "clock": "9:41",
+    "yourApp": "Your app",
+    "push": "Order your usual coffee again? ☕",
+    "ask": "Hi, any openings Thursday evening?",
+    "c1": "Booking",
+    "c2": "Thursday",
+    "c3": "After 4 pm",
+    "reply": "Yes, 5:30 pm is free. Shall I book it for you?",
+    "booked": "Added to your calendar"
+  },
+  "Steps": {
+    "title": "Three steps to a product that works",
+    "s1": "You arrange it in the studio",
+    "s1t": "Pick the look and features and see the price and timeline instantly. Free.",
+    "s2": "We finish it in Figma",
+    "s2t": "We send detailed designs of every screen for your approval — it’s part of the project.",
+    "s3": "We build and deliver",
+    "s3t": "On the date we promised, with launch and support after handover."
+  },
+  "Clients": {
+    "title": "What our clients say"
+  },
+  "Closing": {
+    "translation": "This caravan of life passes strangely by — seize the moment that passes in joy.",
+    "poet": "Omar Khayyam",
+    "sub": "See your design today — it’s free."
+  },
+  "Footer": {
+    "cta": "Your next project starts here.",
+    "about": "A studio that designs and builds websites, apps and AI for businesses that want to grow.",
+    "studios": "Studios",
+    "company": "Khayyam",
+    "aboutUs": "About",
+    "careers": "Careers",
+    "contact": "Contact",
+    "follow": "Follow us",
+    "rights": "© {year} Khayyam. All rights reserved.",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "wordmark": "KHAYYAM"
+  }
 };
 export default messages;

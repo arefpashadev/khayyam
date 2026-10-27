@@ -1,3 +1,161 @@
 {
-    
+  "Meta": {
+    "title": "Khayyam | Websites, Apps und KI für Unternehmen",
+    "description": "Design und Entwicklung von Websites, Apps, Automatisierung und KI-Lösungen für wachsende Unternehmen.",
+    "app": "Khayyam"
+  },
+  "Nav": {
+    "brand": "Khayyam",
+    "home": "Khayyam, Startseite",
+    "main": "Hauptmenü",
+    "site": "Websites",
+    "app": "Apps",
+    "ai": "KI",
+    "blog": "Blog",
+    "start": "Projekt starten"
+  },
+  "Lang": {
+    "title": "Sprache",
+    "current": "Sprache: {name}",
+    "close": "Schließen",
+    "dialog": "Sprache wählen"
+  },
+  "Hero": {
+    "badge": "Kostenloses Design – erst ansehen, dann bestellen",
+    "title1": "Gebaut",
+    "title2": "mit Khayyams Präzision.",
+    "line1": "Khayyam berechnete das Jahr auf <b>365,24219</b> Tage. Wir messen unsere Arbeit genauso präzise.",
+    "line2": "Ein Studio, das Websites, Apps und KI entwirft und baut – vom ersten Entwurf bis zum Launch.",
+    "line3": "Designer, Entwickler und KI-Fachleute in einem Team, für ein Projekt.",
+    "line4": "Für Unternehmen, die wachsen wollen – nicht nur eine Website haben.",
+    "lines": "Zeilen",
+    "line": "Zeile {n}",
+    "cta": "Mein Projekt starten",
+    "ctaAi": "Was kann KI für mich tun?"
+  },
+  "Cube": {
+    "group": "Khayyams drei Studios",
+    "rest": "Zeigen Sie auf den Würfel – jede Seite ist ein Studio.",
+    "site": {
+      "label": "Web",
+      "title": "Website",
+      "text": "Firmenseite, Shop, Buchung oder Plattform – im Look, den Sie selbst zusammenstellen.",
+      "cta": "Website gestalten"
+    },
+    "app": {
+      "label": "App",
+      "title": "App",
+      "text": "iPhone, Android oder Web-App – auf dem Handy ansehen und ausprobieren.",
+      "cta": "App gestalten"
+    },
+    "ai": {
+      "label": "KI",
+      "title": "KI",
+      "text": "Ein Team, das Kunden rund um die Uhr antwortet, Dokumente liest und Berichte schreibt.",
+      "cta": "Agent bauen"
+    }
+  },
+  "Ai": {
+    "eyebrow": "KI",
+    "title": "Ein Satz genügt – <g>Khayyams Agent</g> erledigt den Rest.",
+    "sub": "Es erstellt Inhalte, liest Dokumente, spricht mit Kunden und verfolgt Verkäufe – mit Ihren eigenen Daten und Tools.",
+    "can1": "Erstellt Inhalte für Instagram und TikTok",
+    "can2": "Liest und verbucht Rechnungen und Dokumente",
+    "can3": "Beantwortet Kundennachrichten",
+    "can4": "Arbeitet in den Tools, die Sie schon nutzen",
+    "cta": "Agent starten"
+  },
+  "Agent": {
+    "name": "Khayyam-Agent",
+    "online": "Online",
+    "working": "Arbeitet…",
+    "sample": "Beispiel",
+    "replay": "Nochmal ansehen",
+    "ask": "Bereite eine Feiertagskampagne vor und verbuche auch die Rechnungen dieser Woche.",
+    "content": "Die Kampagneninhalte sind fertig:",
+    "post": "Instagram-Post",
+    "story": "Story",
+    "reels": "Reels",
+    "tiktok": "TikTok",
+    "invoices": "Ich habe die Rechnungen gelesen und in der Buchhaltung erfasst.",
+    "vendor": "Alborz Großhandel",
+    "accounting": "Buchhaltung",
+    "filed": "Verbucht",
+    "replies": "Ab heute Abend beantworte ich die Nachrichten Ihrer Kunden.",
+    "dm": "Instagram-DM",
+    "whatsapp": "WhatsApp",
+    "website": "Website",
+    "placeholder": "Sag dem Agenten…",
+    "send": "Senden"
+  },
+  "Products": {
+    "title": "Gut aussehen reicht nicht. Es muss funktionieren.",
+    "site": {
+      "title": "Eine Website, die auch nachts verkauft",
+      "text": "Shop, Buchung oder Bestellformular – egal wann Kunden kaufen, die Bestellung ist da und bezahlt.",
+      "cta": "Website starten"
+    },
+    "app": {
+      "title": "Eine App, die Kunden zurückholt",
+      "text": "Rechtzeitige Benachrichtigungen, Kauf mit einem Tipp und ein Treueprogramm – Kunden kommen nicht einmal, sie bleiben.",
+      "cta": "App starten"
+    },
+    "ai": {
+      "title": "Beantwortet Kunden selbstständig",
+      "text": "Versteht, was der Kunde meint, antwortet anhand Ihres Kalenders und Lagers und bucht alles bis zum Ende.",
+      "cta": "Agent starten"
+    },
+    "o1t": "02:14",
+    "o1": "Neue Bestellung, 2 Artikel",
+    "o1a": "48 €",
+    "o2t": "02:41",
+    "o2": "Termin, morgen 10 Uhr",
+    "o2a": "Bezahlt",
+    "o3t": "03:05",
+    "o3": "Neue Bestellung, 1 Artikel",
+    "o3a": "17 €",
+    "o4t": "04:27",
+    "o4": "Beratungsanfrage",
+    "o4a": "Formular fertig",
+    "clock": "9:41",
+    "yourApp": "Ihre App",
+    "push": "Ihren Lieblingskaffee nochmal bestellen? ☕",
+    "ask": "Hallo, habt ihr Donnerstagabend noch einen Termin?",
+    "c1": "Termin",
+    "c2": "Donnerstag",
+    "c3": "Nach 16 Uhr",
+    "reply": "Ja, 17:30 Uhr ist frei. Soll ich ihn für Sie buchen?",
+    "booked": "Im Kalender eingetragen"
+  },
+  "Steps": {
+    "title": "Drei Schritte zu einem Produkt, das funktioniert",
+    "s1": "Sie stellen es im Studio zusammen",
+    "s1t": "Wählen Sie Look und Funktionen und sehen Sie Preis und Zeitplan sofort. Kostenlos.",
+    "s2": "Wir vollenden es in Figma",
+    "s2t": "Wir schicken Ihnen detaillierte Entwürfe aller Seiten zur Freigabe – das ist Teil des Projekts.",
+    "s3": "Wir bauen und liefern",
+    "s3t": "Zum zugesagten Termin, mit Launch und Support nach der Übergabe."
+  },
+  "Clients": {
+    "title": "Was unsere Kunden sagen"
+  },
+  "Closing": {
+    "translation": "Die Karawane des Lebens zieht seltsam vorbei – ergreife den Augenblick, der in Freude vergeht.",
+    "poet": "Omar Khayyam",
+    "sub": "Sehen Sie Ihr Design noch heute – kostenlos."
+  },
+  "Footer": {
+    "cta": "Ihr nächstes Projekt beginnt hier.",
+    "about": "Ein Studio, das Websites, Apps und KI für wachsende Unternehmen entwirft und baut.",
+    "studios": "Studios",
+    "company": "Khayyam",
+    "aboutUs": "Über uns",
+    "careers": "Karriere",
+    "contact": "Kontakt",
+    "follow": "Folgen Sie uns",
+    "rights": "© {year} Khayyam. Alle Rechte vorbehalten.",
+    "privacy": "Datenschutz",
+    "terms": "AGB",
+    "wordmark": "KHAYYAM"
+  }
 }
