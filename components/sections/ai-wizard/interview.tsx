@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Check, Pencil, Sparkles, UserRoundCheck } from "lucide-react";
+import { ArrowLeft, BrainCircuit, Check, Pencil, Sparkles, UserRoundCheck } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
@@ -63,6 +63,7 @@ const reasonFor = (goal: GoalKey, picked: string[]) => pains.find((pain) => pick
 
 const PainPick = () => {
   const picked = useAi((state) => state.config.pains);
+  const setMode = useAi((state) => state.setMode);
   const update = useAi((state) => state.update);
   const answer = useAi((state) => state.answer);
   const toggle = (value: (typeof pains)[number]["value"]) => update({ pains: picked.includes(value) ? picked.filter((item) => item !== value) : [...picked, value] });
@@ -80,11 +81,16 @@ const PainPick = () => {
           );
         })}
       </div>
+      <button type="button" onClick={() => setMode("custom")} className={`${chip} ${chipOff} flex items-center gap-2.5 border border-dashed border-white/15 px-3.5 py-3 text-[13px] font-bold ring-0`}>
+        <BrainCircuit className="size-4 shrink-0 text-[#f3d9a4]" aria-hidden="true" />
+        نیاز ما خاص است؛ مثلاً خط تولید، پزشکی یا مالی
+      </button>
       <Confirm
         count={picked.length}
         onClick={() => {
           // pre-pick the teammates that fix these pains; the customer can still change them
-          answer({ goals: suggestFor(picked) });
+          // keep teammates already added from a written message
+          answer({ goals: [...new Set([...useAi.getState().config.goals, ...suggestFor(picked)])] });
         }}
       />
     </div>
@@ -331,7 +337,7 @@ export const Interview = () => {
         {questions.slice(0, stage).map((question, index) => (
           <div key={question.key} className="flex flex-col gap-3">
             <Bot>{question.ask(config)}</Bot>
-            <motion.button {...rise} type="button" onClick={() => rewind(index)} className="group flex max-w-[85%] items-center gap-2 self-end rounded-[20px] rounded-tl-md bg-[#4da3ff] px-4 py-3 text-right text-[13.5px] leading-7 text-white" title="تغییر پاسخ">
+            <motion.button {...rise} type="button" onClick={() => rewind(index)} className="group flex max-w-[85%] items-center gap-2 self-end rounded-[20px] rounded-tl-md bg-[#1d2431] px-4 py-3 text-right text-[13.5px] leading-7 text-white ring-1 ring-white/[0.06]" title="تغییر پاسخ">
               <span>{question.said(config)}</span>
               <Pencil className="size-3.5 shrink-0 opacity-50 transition-opacity group-hover:opacity-100" aria-hidden="true" />
             </motion.button>
@@ -365,7 +371,7 @@ export const Interview = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        {stage > 0 && !submitted && <p className="text-center text-[11px] text-[#5d6573]">برای تغییر هر پاسخ، روی حباب آبی‌اش بزنید.</p>}
+        {stage > 0 && !submitted && <p className="text-center text-[11px] text-[#5d6573]">برای تغییر هر پاسخ، رویش بزنید.</p>}
       </div>
     </div>
   );

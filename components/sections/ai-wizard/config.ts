@@ -90,7 +90,6 @@ export const defaultAiConfig: AiConfig = {
 /* Steps                                                               */
 /* ------------------------------------------------------------------ */
 
-export type AiView = "flow" | "chat" | "impact";
 
 /* ------------------------------------------------------------------ */
 /* Goals: each adds its own outcomes to the workflow                    */
