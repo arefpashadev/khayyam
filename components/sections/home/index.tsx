@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Bell, Search, ShoppingBag } from "lucide-react";
+import { ArrowLeft, Bell, Globe, ShoppingBag, Smartphone, Sparkles } from "lucide-react";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
@@ -9,7 +9,7 @@ import { Link } from "@/i18n/navigation";
 
 import { fa } from "../ai-wizard/config";
 
-import { startingPrices, testimonials } from "./content";
+import { testimonials } from "./content";
 import { AgentDemo } from "./ai-agent";
 import { LanguageSwitch } from "./language-switch";
 import { FaceCaption, StudioCube, type Face } from "./studio-cube";
@@ -239,30 +239,35 @@ const NightSales = () => {
   );
 };
 
-const queries = ["قنادی نزدیک من", "رزرو کلینیک دندانپزشکی", "خرید آنلاین قهوه"];
-
-const SearchRise = () => {
-  const { ref, index } = useTicker(queries.length, 3200);
+const AiReply = () => {
+  const { ref, index } = useTicker(5, 1400);
   return (
     <div ref={ref} className="flex h-[176px] flex-col gap-2 overflow-hidden">
-      <div className="flex h-11 items-center gap-2 rounded-full bg-[#0c1222] px-4 ring-1 ring-[#f2ecdf]/[0.09]">
-        <Search className="size-4 text-[#7f889c]" aria-hidden="true" />
-        <AnimatePresence mode="wait">
-          <motion.span key={queries[index]} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="text-[13px] text-[#dcd6c9]">
-            {queries[index]}
+      <p className="max-w-[92%] self-end rounded-[16px] rounded-bl-md bg-[#f2ecdf]/[0.07] px-3 py-2 text-[12.5px] leading-6 text-[#dcd6c9]">سلام، برای پنجشنبه عصر نوبت دارین؟</p>
+      <div className="flex min-h-[26px] flex-wrap gap-1.5">
+        {["رزرو نوبت", "پنجشنبه", "بعد از ساعت ۱۶"].map((chip, chipIndex) => (
+          <motion.span
+            key={chip}
+            initial={false}
+            animate={index >= 1 ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3, delay: index >= 1 ? chipIndex * 0.1 : 0, ease }}
+            className="rounded-full bg-[#d9a648]/[0.12] px-2.5 py-0.5 text-[11px] font-bold text-[#f5d79c] ring-1 ring-[#d9a648]/30"
+          >
+            {chip}
           </motion.span>
-        </AnimatePresence>
+        ))}
       </div>
-      <motion.div key={`you-${index}`} initial={{ y: 50, opacity: 0.4 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, delay: 0.3, ease }} className="rounded-[16px] bg-[#d9a648]/[0.1] px-4 py-3 ring-1 ring-[#d9a648]/35">
-        <span className="block text-[13.5px] font-bold text-[#f5d79c]">سایت شما، اولین نتیجه</span>
-        <span className="text-[12px] text-[#9aa3b8]">سریع، درست برای گوشی و آماده برای گوگل</span>
-      </motion.div>
-      {[0, 1].map((row) => (
-        <div key={row} className="rounded-[16px] bg-[#0c1222] px-4 py-3 opacity-50 ring-1 ring-[#f2ecdf]/[0.05]">
-          <span className="block h-2.5 w-2/5 rounded-full bg-[#f2ecdf]/15" />
-          <span className="mt-2 block h-2 w-3/4 rounded-full bg-[#f2ecdf]/10" />
-        </div>
-      ))}
+      <motion.p
+        initial={false}
+        animate={index >= 2 ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+        transition={{ duration: 0.4, ease }}
+        className="max-w-[92%] self-start rounded-[16px] rounded-br-md bg-[#d9a648]/[0.14] px-3 py-2 text-[12.5px] leading-6 text-[#f5e6c6]"
+      >
+        بله، ساعت ۱۷:۳۰ خالی است. برایتان ثبت کنم؟
+      </motion.p>
+      <motion.span initial={false} animate={{ opacity: index >= 3 ? 1 : 0 }} className="mt-auto flex items-center gap-1.5 text-[11.5px] font-bold text-[#7fd6a8]">
+        <span className="size-1.5 rounded-full bg-[#2fd08a]" /> نوبت در تقویم ثبت شد
+      </motion.span>
     </div>
   );
 };
@@ -293,11 +298,11 @@ const ComeBack = () => {
   );
 };
 
-const products: { title: string; text: string; scene: ReactNode; price: { from: number; weeks: number }; href: string; cta: string }[] = [
-  { title: "سایتی که شب هم می‌فروشد", text: "فروشگاه، رزرو یا فرم سفارش؛ مشتری هر ساعتی بخرد، سفارشش ثبت شده و پولش پرداخت شده است.", scene: <NightSales />, price: startingPrices.site, href: "/createsite", cta: "طراحی سایت" },
-  { title: "در گوگل دیده می‌شوید", text: "سرعت بالا، نمایش درست روی گوشی و ساختار آماده برای گوگل؛ از روز اول، نه بعداً.", scene: <SearchRise />, price: startingPrices.site, href: "/createsite?mode=quick", cta: "سه سوال، سه طرح آماده" },
-  { title: "اپی که مشتری را برمی‌گرداند", text: "اعلان به‌موقع، خرید با یک لمس و باشگاه مشتریان؛ مشتری یک‌بار نمی‌آید، می‌ماند.", scene: <ComeBack />, price: startingPrices.app, href: "/createapp", cta: "طراحی اپلیکیشن" },
-];
+const products: { kind: string; icon: typeof Bell; title: string; text: string; scene: ReactNode; href: string; cta: string }[] = [
+  { kind: "وب‌سایت", icon: Globe, title: "سایتی که شب هم می‌فروشد", text: "فروشگاه، رزرو یا فرم سفارش؛ مشتری هر ساعتی بخرد، سفارشش ثبت و پولش پرداخت شده است.", scene: <NightSales />, href: "/createsite", cta: "طراحی سایت" },
+  { kind: "اپلیکیشن", icon: Smartphone, title: "اپی که مشتری را برمی‌گرداند", text: "اعلان به‌موقع، خرید با یک لمس و باشگاه مشتریان؛ مشتری یک‌بار نمی‌آید، می‌ماند.", scene: <ComeBack />, href: "/createapp", cta: "طراحی اپلیکیشن" },
+  { kind: "هوش مصنوعی", icon: Sparkles, title: "پیام مشتری را خودش جواب می‌دهد", text: "منظور مشتری را می‌فهمد، از تقویم و انبار شما جواب درست می‌دهد و کار را تا آخر ثبت می‌کند.", scene: <AiReply />, href: "/createai", cta: "ساختن ایجنت" },
+]
 
 const SLIDE_MS = 6500;
 
@@ -352,7 +357,7 @@ const Products = () => {
     <section id="start" aria-labelledby="products-title" className="scroll-mt-6 bg-[#0e1527]">
       <div className="mx-auto max-w-[1240px] px-5 py-24 lg:px-10 lg:py-32">
         <Reveal>
-          <span className="text-[13px] font-bold text-[#e9c27a]">سایت و اپلیکیشن</span>
+          <span className="text-[13px] font-bold text-[#e9c27a]">سایت، اپلیکیشن، هوش مصنوعی</span>
           <h2 id="products-title" className="mt-3 max-w-[22ch] text-[32px] font-extrabold leading-[1.4] lg:text-[50px]">
             قشنگ بودن کافی نیست؛ باید کار کند.
           </h2>
@@ -365,16 +370,18 @@ const Products = () => {
           className="-mx-5 mt-12 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] lg:mx-0 lg:grid lg:grid-cols-3 lg:gap-4 lg:overflow-visible lg:px-0 [&::-webkit-scrollbar]:hidden"
         >
           {products.map((item) => (
-            <article key={item.title} className={`${card} flex w-[86%] shrink-0 snap-center flex-col p-6 sm:w-[60%] lg:w-auto lg:p-7`}>
-              {item.scene}
-              <h3 className="mt-7 text-[20px] font-extrabold leading-[1.5]">{item.title}</h3>
-              <p className="mt-2 flex-1 text-[13.5px] leading-7 text-[#9aa3b8]">{item.text}</p>
-              <div className="mt-6 flex items-center justify-between gap-3 border-t border-[#f2ecdf]/[0.08] pt-5">
-                <span className="text-[12px] text-[#9aa3b8]">
-                  از <strong className="text-[17px] text-[#f2ecdf]">{fa(item.price.from)}</strong> میلیون، {fa(item.price.weeks)} هفته
+            <article key={item.title} className={`${card} group flex w-[86%] shrink-0 snap-center flex-col p-3 sm:w-[60%] lg:w-auto`}>
+              <div className="relative overflow-hidden rounded-[24px] bg-[radial-gradient(120%_90%_at_50%_0%,rgba(217,166,72,0.14),transparent_60%),#0f1628] p-5 ring-1 ring-[#f2ecdf]/[0.06]">
+                <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#0c1222]/80 px-2.5 py-1 text-[11.5px] font-bold text-[#e9c27a] ring-1 ring-[#d9a648]/25">
+                  <item.icon className="size-3.5" aria-hidden="true" /> {item.kind}
                 </span>
-                <Link href={item.href} className="flex items-center gap-1 text-[13px] font-bold text-[#e9c27a] transition-colors hover:text-[#f5d79c]">
-                  {item.cta} <ArrowLeft className="size-3.5" aria-hidden="true" />
+                {item.scene}
+              </div>
+              <div className="flex flex-1 flex-col px-3 pb-3 pt-5">
+                <h3 className="text-[20px] font-extrabold leading-[1.5]">{item.title}</h3>
+                <p className="mt-2 flex-1 text-[13.5px] leading-7 text-[#9aa3b8]">{item.text}</p>
+                <Link href={item.href} className="mt-5 flex w-fit items-center gap-1.5 text-[13.5px] font-bold text-[#e9c27a] transition-colors hover:text-[#f5d79c]">
+                  {item.cta} <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-1" aria-hidden="true" />
                 </Link>
               </div>
             </article>
