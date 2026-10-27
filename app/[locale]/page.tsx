@@ -1,26 +1,15 @@
 import Footer from "@/components/layouts/footer";
-import { AiProjectEstimator } from "@/components/sections/ai-project-estimator";
-import { AiRelatedBlogs } from "@/components/sections/ai-related-blogs";
-import { BusinessSolutions } from "@/components/sections/business-solutions";
-import { FeaturedServices } from "@/components/sections/featured-services";
-import { ServicesHero } from "@/components/sections/services-hero";
-import { StoryHero } from "@/components/sections/story-hero";
+import { HomePage } from "@/components/sections/home";
 
 const Page = () => {
   return (
     <>
-      <main>
-        <StoryHero />
-        <ServicesHero />
-        <FeaturedServices />
-        <BusinessSolutions />
-        <AiProjectEstimator />
-        <AiRelatedBlogs
-          title="وبلاگ‌های اخیر"
-          description="جدیدترین مقالات و مطالب تخصصی درباره طراحی سایت، اپلیکیشن، هوش مصنوعی و فناوری‌های روز را دنبال کنید."
-        />
+      <main className="bg-[#0c1222]">
+        <HomePage />
       </main>
-      <Footer />
+      <div className="bg-[#0c1222]">
+        <Footer />
+      </div>
     </>
   );
 };

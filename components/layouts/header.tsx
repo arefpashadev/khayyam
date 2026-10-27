@@ -60,7 +60,8 @@ const Header = () => {
     };
   }, [isLanguageMenuOpen]);
 
-  if (/\/(createapp|createsite)\/?$/.test(pathname)) {
+  // The home page and the studios bring their own header.
+  if (pathname === "/" || /\/(createapp|createsite|createai)\/?$/.test(pathname)) {
     return null;
   }
 
