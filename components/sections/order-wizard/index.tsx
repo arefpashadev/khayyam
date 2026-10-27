@@ -1,5 +1,6 @@
 "use client";
 
+import { tx, studioDir, sx } from "@/lib/tx";
 import {
   ArrowLeft,
   ArrowRight,
@@ -83,21 +84,21 @@ const stepIcons: Record<StepKey, LucideIcon> = {
 };
 
 const shortTitles: Record<StepKey, string> = {
-  palette: "پالت",
-  radius: "گوشه‌ها",
-  type: "نوشته",
-  backdrop: "پس‌زمینه",
-  business: "کسب‌وکار",
-  design: "چیدمان",
-  sections: "بخش‌ها",
-  extras: "امکانات",
-  references: "الهام",
-  outcome: "سفارش",
-  platform: "پلتفرم",
-  navigation: "ناوبری",
-  screens: "صفحه‌ها",
-  icon: "آیکون",
-  features: "قابلیت‌ها",
+  palette: tx("پالت"),
+  radius: tx("گوشه‌ها"),
+  type: tx("نوشته"),
+  backdrop: tx("پس‌زمینه"),
+  business: tx("کسب‌وکار"),
+  design: tx("چیدمان"),
+  sections: tx("بخش‌ها"),
+  extras: tx("امکانات"),
+  references: tx("الهام"),
+  outcome: tx("سفارش"),
+  platform: tx("پلتفرم"),
+  navigation: tx("ناوبری"),
+  screens: tx("صفحه‌ها"),
+  icon: tx("آیکون"),
+  features: tx("قابلیت‌ها"),
 };
 
 const panels = { ...stepPanels, platform: PlatformStep, navigation: NavigationStep, screens: ScreensStep, icon: IconStep, features: FeaturesStep };
@@ -128,7 +129,7 @@ export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
   const mode = useWizard((state) => state.mode);
 
   return (
-    <div dir="rtl" className="fixed inset-0 z-[100] overflow-hidden bg-[#0b0d12] font-sans text-[#eef1f5] [color-scheme:dark]">
+    <div dir={studioDir()} className="fixed inset-0 z-[100] overflow-hidden bg-[#0b0d12] font-sans text-[#eef1f5] [color-scheme:dark]">
       <PaymentOverlay />
       {mode === "choose" ? (
         <PathChooser kind={kind} />
@@ -158,16 +159,16 @@ const StudioEditor = ({ kind }: { kind: OrderKind }) => {
   return (
     <div className="flex size-full flex-col">
       <header className="flex h-14 shrink-0 items-center gap-3 border-b border-white/6 px-4">
-        <KhayyamMark size={36} title="خیام" />
+        <KhayyamMark size={36} title={tx("خیام")} />
         <div className="leading-tight">
-          <strong className="block text-[13px]">{brandName.trim() || "پروژه جدید"}</strong>
-          <span className="text-[11px] text-[#8a93a0]">{kind === "app" ? "استودیو اپلیکیشن" : "استودیو وب‌سایت"} · خیام</span>
+          <strong className="block text-[13px]">{brandName.trim() || tx("پروژه جدید")}</strong>
+          <span className="text-[11px] text-[#8a93a0]">{kind === "app" ? tx("استودیو اپلیکیشن") : tx("استودیو وب‌سایت")}{" "}{tx("· خیام")}</span>
         </div>
         <div className="ms-auto flex items-center gap-1">
-          <button type="button" onClick={() => openGuide(`studio-${kind}`)} aria-label="راهنما" className={iconButton}>
+          <button type="button" onClick={() => openGuide(`studio-${kind}`)} aria-label={tx("راهنما")} className={iconButton}>
             <CircleHelp className="size-[18px]" aria-hidden="true" />
           </button>
-          <Link href="/" aria-label="خروج" className={iconButton}>
+          <Link href="/" aria-label={tx("خروج")} className={iconButton}>
             <X className="size-[18px]" aria-hidden="true" />
           </Link>
           <button
@@ -176,14 +177,13 @@ const StudioEditor = ({ kind }: { kind: OrderKind }) => {
             onClick={() => goTo(getSteps(kind).length - 1)}
             className="ms-2 flex h-9 items-center gap-2 rounded-xl bg-white px-4 text-[12.5px] font-extrabold text-[#0b0d12] transition-colors hover:bg-[#d9ecff]"
           >
-            <Check className="size-4" aria-hidden="true" /> ثبت درخواست
-          </button>
+            <Check className="size-4" aria-hidden="true" />{" "}{tx("ثبت درخواست")}</button>
         </div>
       </header>
 
       <div className="flex min-h-0 flex-1">
         <StepRail />
-        <aside data-tour="panel" className="flex w-[380px] shrink-0 flex-col border-l border-white/6 bg-[#111419] xl:w-[400px]">
+        <aside data-tour="panel" className="flex w-[380px] shrink-0 flex-col border-e border-white/6 bg-[#111419] xl:w-[400px]">
           {submitted ? <SubmittedPanel kind={kind} /> : <StepPanel kind={kind} />}
         </aside>
         <main className="relative min-w-0 flex-1">
@@ -202,7 +202,7 @@ const StepRail = () => {
   const steps = getSteps(useWizard((state) => state.kind));
 
   return (
-    <nav data-tour="steps" aria-label="مراحل" className="flex w-[76px] shrink-0 flex-col items-center gap-1 overflow-y-auto border-l border-white/6 py-3">
+    <nav data-tour="steps" aria-label={tx("مراحل")} className="flex w-[76px] shrink-0 flex-col items-center gap-1 overflow-y-auto border-e border-white/6 py-3">
       {steps.map((item, index) => {
         const Icon = stepIcons[item.key];
         const current = index === step && !submitted;
@@ -218,7 +218,7 @@ const StepRail = () => {
             <Icon className="size-[19px]" aria-hidden="true" />
             <span className="text-[10.5px] font-bold">{shortTitles[item.key]}</span>
             {done && (
-              <span className="absolute left-2 top-2 flex size-3.5 items-center justify-center rounded-full bg-[#2fd08a] text-[#0b0d12]">
+              <span className="absolute end-2 top-2 flex size-3.5 items-center justify-center rounded-full bg-[#2fd08a] text-[#0b0d12]">
                 <Check className="size-2" strokeWidth={4} aria-hidden="true" />
               </span>
             )}
@@ -309,10 +309,8 @@ const StepPanel = ({ kind }: { kind: OrderKind }) => {
     <>
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-3 pt-3 lg:px-6 lg:pt-6 [scrollbar-color:#2a303b_transparent] [scrollbar-width:thin]">
         <AnimatePresence mode="wait" initial={false} custom={direction}>
-          <motion.div key={current.key} initial={{ opacity: 0, x: -direction * offset }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: direction * offset }} transition={{ duration: still ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}>
-            <span className="mb-1 hidden text-[11.5px] font-bold text-[#4da3ff] lg:block">
-              مرحله {faNumber(step + 1)} از {faNumber(steps.length)}
-            </span>
+          <motion.div key={current.key} initial={{ opacity: 0, x: sx(-direction * offset) }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: sx(direction * offset) }} transition={{ duration: still ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}>
+            <span className="mb-1 hidden text-[11.5px] font-bold text-[#4da3ff] lg:block">{tx("مرحله {0} از {1}", [faNumber(step + 1), faNumber(steps.length)])}</span>
             <h1 data-guide="panel-question" className="text-[16px] font-extrabold leading-[1.65] text-white lg:text-[20px]">{current.question(kind)}</h1>
             <p className="mt-1 hidden text-[12px] leading-6 text-[#8a93a0] lg:block">{current.hint}</p>
             <div className="mt-3 lg:mt-6">
@@ -327,10 +325,10 @@ const StepPanel = ({ kind }: { kind: OrderKind }) => {
           type="button"
           onClick={prev}
           disabled={step === 0}
-          aria-label="قبلی"
+          aria-label={tx("قبلی")}
           className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#171b22] text-[#c9d0d9] transition hover:bg-[#1d222b] focus-visible:outline-2 focus-visible:outline-[#4da3ff] disabled:opacity-30"
         >
-          <ArrowRight className="size-[18px]" aria-hidden="true" />
+          <ArrowRight className="size-[18px] ltr:-scale-x-100" aria-hidden="true" />
         </button>
         <button
           type="button"
@@ -343,8 +341,8 @@ const StepPanel = ({ kind }: { kind: OrderKind }) => {
           data-tour={isSmall ? "submit" : undefined}
           className="flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#4da3ff,#7c6cff)] text-[13px] font-extrabold text-white shadow-[0_10px_30px_-12px_rgba(77,163,255,0.8)] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4da3ff] active:scale-[0.98]"
         >
-          {isLast ? `پرداخت ${formatToman(amountDue(config.plan, estimate(kind, config).min))} و ثبت` : `بعدی: ${steps[step + 1].title}`}
-          {isLast ? <Check className="size-4" aria-hidden="true" /> : <ArrowLeft className="size-4" aria-hidden="true" />}
+          {isLast ? tx("پرداخت {0} و ثبت", [formatToman(amountDue(config.plan, estimate(kind, config).min))]) : tx("بعدی: {0}", [steps[step + 1].title])}
+          {isLast ? <Check className="size-4" aria-hidden="true" /> : <ArrowLeft className="size-4 ltr:-scale-x-100" aria-hidden="true" />}
         </button>
       </footer>
     </>
@@ -360,24 +358,24 @@ const SubmittedPanel = ({ kind }: { kind: OrderKind }) => {
   const cost = estimate(kind, config);
 
   const summary = [
-    { label: "مسیر", value: config.plan === "consult" ? "اول مشاوره" : "شروع پروژه (با طراحی فیگما)" },
-    { label: "پرداخت‌شده", value: formatToman(amountDue(config.plan, cost.min)) },
-    { label: "برآورد", value: `${faNumber(cost.min)} تا ${faNumber(cost.max)} میلیون تومان · ${faNumber(Math.max(1, cost.weeks))} هفته` },
-    { label: "نوع پروژه", value: projectTypes.find((item) => item.value === config.projectType)?.label },
+    { label: tx("مسیر"), value: config.plan === "consult" ? tx("اول مشاوره") : tx("شروع پروژه (با طراحی فیگما)") },
+    { label: tx("پرداخت‌شده"), value: formatToman(amountDue(config.plan, cost.min)) },
+    { label: tx("برآورد"), value: tx("{0} تا {1} میلیون تومان · {2} هفته", [faNumber(cost.min), faNumber(cost.max), faNumber(Math.max(1, cost.weeks))]) },
+    { label: tx("نوع پروژه"), value: projectTypes.find((item) => item.value === config.projectType)?.label },
     ...(kind === "site"
-      ? [{ label: "وب‌اپ", value: config.webApp ? "دارد (قابل نصب روی گوشی)" : "ندارد" }]
-      : [{ label: "قابلیت‌ها", value: appFeatureList.filter((item) => config.features.includes(item.value)).map((item) => item.label).join("، ") || "—" }]),
-    { label: "برند", value: config.brandName.trim() || "بدون نام" },
-    { label: "حوزه", value: industries[config.industry].label },
-    { label: "رنگ‌ها", value: <span className="inline-flex gap-1" dir="ltr">{[config.color, config.accent].map((color) => <span key={color} className="size-4 rounded-full ring-1 ring-white/20" style={{ backgroundColor: color }} />)}</span> },
-    { label: "فضا", value: themes.find((item) => item.value === config.theme)?.label },
-    { label: "گوشه‌ها", value: radii.find((item) => item.value === config.radius)?.label },
-    { label: "نوشته‌ها", value: typeStyles.find((item) => item.value === config.type)?.label },
-    { label: "پس‌زمینه", value: `${backdrops.find((item) => item.value === config.backdrop)?.label}، حرکت ${motionLevels.find((item) => item.value === config.motion)?.label}` },
-    { label: "چیدمان", value: kind === "app" ? `طرح ${faNumber(config.variant + 1)}` : `${siteLayouts[config.variant]?.label} · ${artLabels[industryArts[config.industry][config.art]]}` },
-    { label: kind === "app" ? "امکانات" : "بخش‌ها", value: sectionLabels.join("، ") || "هیچ" },
-    { label: "امکانات فنی", value: (kind === "app" ? appExtras : siteExtras).filter((item) => config.extras.includes(item.value)).map((item) => item.label).join("، ") || "هیچ" },
-    { label: "نمونه‌ها", value: references.length ? `${faNumber(references.length)} لینک` : "ندارد" },
+      ? [{ label: tx("وب‌اپ"), value: config.webApp ? tx("دارد (قابل نصب روی گوشی)") : tx("ندارد") }]
+      : [{ label: tx("قابلیت‌ها"), value: appFeatureList.filter((item) => config.features.includes(item.value)).map((item) => item.label).join(tx("، ")) || "—" }]),
+    { label: tx("برند"), value: config.brandName.trim() || tx("بدون نام") },
+    { label: tx("حوزه"), value: industries[config.industry].label },
+    { label: tx("رنگ‌ها"), value: <span className="inline-flex gap-1" dir="ltr">{[config.color, config.accent].map((color) => <span key={color} className="size-4 rounded-full ring-1 ring-white/20" style={{ backgroundColor: color }} />)}</span> },
+    { label: tx("فضا"), value: themes.find((item) => item.value === config.theme)?.label },
+    { label: tx("گوشه‌ها"), value: radii.find((item) => item.value === config.radius)?.label },
+    { label: tx("نوشته‌ها"), value: typeStyles.find((item) => item.value === config.type)?.label },
+    { label: tx("پس‌زمینه"), value: tx("{0}، حرکت {1}", [backdrops.find((item) => item.value === config.backdrop)?.label, motionLevels.find((item) => item.value === config.motion)?.label]) },
+    { label: tx("چیدمان"), value: kind === "app" ? tx("طرح {0}", [faNumber(config.variant + 1)]) : `${siteLayouts[config.variant]?.label} · ${artLabels[industryArts[config.industry][config.art]]}` },
+    { label: kind === "app" ? tx("امکانات") : tx("بخش‌ها"), value: sectionLabels.join(tx("، ")) || tx("هیچ") },
+    { label: tx("امکانات فنی"), value: (kind === "app" ? appExtras : siteExtras).filter((item) => config.extras.includes(item.value)).map((item) => item.label).join(tx("، ")) || tx("هیچ") },
+    { label: tx("نمونه‌ها"), value: references.length ? tx("{0} لینک", [faNumber(references.length)]) : tx("ندارد") },
   ];
 
   return (
@@ -387,29 +385,26 @@ const SubmittedPanel = ({ kind }: { kind: OrderKind }) => {
           <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#2fd08a] text-[#0b0d12]">
             <Check className="size-5" strokeWidth={3} aria-hidden="true" />
           </span>
-          <h1 className="text-[18px] font-extrabold text-white lg:text-[20px]">درخواست شما ثبت شد</h1>
+          <h1 className="text-[18px] font-extrabold text-white lg:text-[20px]">{tx("درخواست شما ثبت شد")}</h1>
         </div>
-        <p className="mt-2 text-[12px] leading-6 text-[#8a93a0]">طرح اولیه بر اساس همین انتخاب‌ها آماده می‌شود و مشاور پروژه برای جزئیات با شما تماس می‌گیرد.</p>
+        <p className="mt-2 text-[12px] leading-6 text-[#8a93a0]">{tx("طرح اولیه بر اساس همین انتخاب‌ها آماده می‌شود و مشاور پروژه برای جزئیات با شما تماس می‌گیرد.")}</p>
         <dl className="mt-4 divide-y divide-white/6 rounded-2xl bg-[#171b22]">
           {summary.map((row) => (
             <div key={row.label} className="flex items-start justify-between gap-4 px-4 py-2.5 text-[12px]">
               <dt className="shrink-0 text-[#8a93a0]">{row.label}</dt>
-              <dd className="text-left font-bold leading-5 text-[#eef1f5]">{row.value}</dd>
+              <dd className="text-end font-bold leading-5 text-[#eef1f5]">{row.value}</dd>
             </div>
           ))}
         </dl>
         <p className="mt-3 flex gap-2 rounded-2xl bg-[#3a2c10]/60 px-3.5 py-3 text-[11.5px] leading-6 text-[#f2cf8a]">
-          <Info className="mt-1 size-3.5 shrink-0" aria-hidden="true" />
-          این مقادیر طبق خواسته شما قابل تغییر است؛ هر تغییری بخواهید برای مشاور بفرستید.
-        </p>
+          <Info className="mt-1 size-3.5 shrink-0" aria-hidden="true" />{tx("این مقادیر طبق خواسته شما قابل تغییر است؛ هر تغییری بخواهید برای مشاور بفرستید.")}</p>
       </div>
       <footer className="flex shrink-0 items-center gap-2 border-t border-white/6 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 lg:px-6 lg:py-4">
-        <button type="button" onClick={restart} aria-label="از اول" className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#171b22] text-[#c9d0d9] transition hover:bg-[#1d222b]">
+        <button type="button" onClick={restart} aria-label={tx("از اول")} className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#171b22] text-[#c9d0d9] transition hover:bg-[#1d222b]">
           <RotateCcw className="size-[18px]" aria-hidden="true" />
         </button>
         <button type="button" onClick={() => goTo(0)} className="flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-white text-[13px] font-extrabold text-[#0b0d12] transition hover:bg-[#d9ecff]">
-          <PencilLine className="size-4" aria-hidden="true" /> ویرایش انتخاب‌ها
-        </button>
+          <PencilLine className="size-4" aria-hidden="true" />{" "}{tx("ویرایش انتخاب‌ها")}</button>
       </footer>
     </>
   );

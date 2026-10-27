@@ -62,15 +62,14 @@ export const KhayyamMark = ({
   );
 };
 
-const facts = [
+const defaultFacts = [
   "خیام طول سال را ۳۶۵٫۲۴۲۱۹ روز حساب کرد؛ دقیق‌تر از تقویم میلادی.",
-  "تقویم جلالی، حاصل محاسبات خیام و همکارانش در رصدخانه اصفهان است.",
   "خیام معادله‌های درجه سوم را با هندسه حل کرد.",
   "دقت، از خیام به ما رسیده؛ در حال آماده‌سازی…",
-];
+]
 
 /** Full-area loading state with the mark and a rotating Khayyam fact. */
-export const KhayyamLoader = ({ tone = "light", label = "در حال بارگذاری" }: { tone?: "light" | "dark"; label?: string }) => (
+export const KhayyamLoader = ({ tone = "light", label = "در حال بارگذاری", facts = defaultFacts }: { tone?: "light" | "dark"; label?: string; facts?: string[] }) => (
   <div role="status" aria-live="polite" className={`flex size-full min-h-[50vh] flex-col items-center justify-center gap-6 px-6 text-center ${tone === "dark" ? "bg-[#0b0d12] text-[#eef1f5]" : "bg-white text-[#14202b]"}`}>
     <KhayyamMark size={88} state="thinking" tone={tone === "dark" ? "light" : "dark"} />
     <span className="sr-only">{label}</span>

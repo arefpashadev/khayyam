@@ -1,5 +1,6 @@
 "use client";
 
+import { tx } from "@/lib/tx";
 import { ArrowLeft, Palette, X, Zap } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 
@@ -13,51 +14,47 @@ import { useWizard } from "./store";
 export const PathChooser = ({ kind }: { kind: OrderKind }) => {
   const setMode = useWizard((state) => state.setMode);
   const reduce = useReducedMotion();
-  const subject = kind === "app" ? "اپلیکیشن" : "سایت";
+  const subject = kind === "app" ? tx("اپلیکیشن") : tx("سایت");
   const rise = (delay: number) => (reduce ? {} : { initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] as const } });
 
   const paths = [
     {
       mode: "quick" as const,
       icon: Zap,
-      badge: "پیشنهادی",
-      title: "مسیر سریع",
-      text: "سه سوال ساده؛ سه طرح کامل و آماده تحویل می‌گیرید. حدود یک دقیقه.",
-      points: ["بدون نیاز به دانش طراحی", "سه نسخه متفاوت برای انتخاب"],
+      badge: tx("پیشنهادی"),
+      title: tx("مسیر سریع"),
+      text: tx("سه سوال ساده؛ سه طرح کامل و آماده تحویل می‌گیرید. حدود یک دقیقه."),
+      points: [tx("بدون نیاز به دانش طراحی"), tx("سه نسخه متفاوت برای انتخاب")],
     },
     {
       mode: "studio" as const,
       icon: Palette,
-      badge: "برای سلیقه‌های دقیق",
-      title: "استودیو طراحی",
-      text: "پالت، گوشه‌ها، نوشته، حرکت، چیدمان و ماژول‌ها را خودتان تنظیم کنید.",
-      points: ["کنترل کامل روی هر جزئیات", "دستیار هوشمند کنار شما"],
+      badge: tx("برای سلیقه‌های دقیق"),
+      title: tx("استودیو طراحی"),
+      text: tx("پالت، گوشه‌ها، نوشته، حرکت، چیدمان و ماژول‌ها را خودتان تنظیم کنید."),
+      points: [tx("کنترل کامل روی هر جزئیات"), tx("دستیار هوشمند کنار شما")],
     },
   ];
 
   return (
     <div className="relative flex size-full flex-col overflow-y-auto bg-[radial-gradient(70%_55%_at_50%_10%,rgba(124,108,255,0.18),transparent_70%),radial-gradient(50%_40%_at_80%_90%,rgba(77,163,255,0.12),transparent_70%),#0b0d12]">
-      <Link href="/" aria-label="خروج" className="absolute left-4 top-4 flex size-10 items-center justify-center rounded-xl text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white">
+      <Link href="/" aria-label={tx("خروج")} className="absolute end-4 top-4 flex size-10 items-center justify-center rounded-xl text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white">
         <X className="size-5" aria-hidden="true" />
       </Link>
 
       <div className="mx-auto flex w-full max-w-[880px] flex-1 flex-col items-center justify-center px-5 py-14 text-center">
         <KhayyamMark size={76} state="intro" />
-        <motion.h1 {...rise(0.4)} className="mt-6 text-[28px] font-extrabold leading-[1.45] text-white lg:text-[44px]">
-          {subject} خودتان را بسازید
-        </motion.h1>
-        <motion.p {...rise(0.5)} className="mt-3 max-w-[46ch] text-[14px] leading-7 text-[#a7b0bc] lg:text-[16px]">
-          طرح را همین‌جا می‌بینید؛ بعد یا طرح فیگما برایتان می‌فرستیم یا کاملش را می‌سازیم.
-        </motion.p>
+        <motion.h1 {...rise(0.4)} className="mt-6 text-[28px] font-extrabold leading-[1.45] text-white lg:text-[44px]">{tx("{0} خودتان را بسازید", [subject])}</motion.h1>
+        <motion.p {...rise(0.5)} className="mt-3 max-w-[46ch] text-[14px] leading-7 text-[#a7b0bc] lg:text-[16px]">{tx("طرح را همین‌جا می‌بینید؛ بعد یا طرح فیگما برایتان می‌فرستیم یا کاملش را می‌سازیم.")}</motion.p>
 
-        <div className="mt-10 grid w-full gap-3 text-right lg:grid-cols-2 lg:gap-4">
+        <div className="mt-10 grid w-full gap-3 text-start lg:grid-cols-2 lg:gap-4">
           {paths.map((path, index) => (
             <motion.button
               key={path.mode}
               type="button"
               {...rise(0.6 + index * 0.08)}
               onClick={() => setMode(path.mode)}
-              className={`group flex flex-col gap-4 rounded-[26px] p-6 text-right outline-none ring-1 transition focus-visible:ring-2 focus-visible:ring-[#4da3ff] lg:p-7 ${
+              className={`group flex flex-col gap-4 rounded-[26px] p-6 text-start outline-none ring-1 transition focus-visible:ring-2 focus-visible:ring-[#4da3ff] lg:p-7 ${
                 index === 0 ? "bg-[linear-gradient(160deg,rgba(77,163,255,0.18),rgba(124,108,255,0.1))] ring-[#4da3ff]/35 hover:ring-[#4da3ff]/70" : "bg-[#111419] ring-white/8 hover:ring-white/20"
               }`}
             >
@@ -78,13 +75,12 @@ export const PathChooser = ({ kind }: { kind: OrderKind }) => {
                   </li>
                 ))}
               </ul>
-              <span className="mt-auto flex items-center gap-2 pt-2 text-[13px] font-extrabold text-white">
-                شروع <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" aria-hidden="true" />
+              <span className="mt-auto flex items-center gap-2 pt-2 text-[13px] font-extrabold text-white">{tx("شروع")}{" "}<ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1 ltr:-scale-x-100" aria-hidden="true" />
               </span>
             </motion.button>
           ))}
         </div>
-        <p className="mt-6 text-[12px] text-[#5d6573]">در هر دو مسیر، همه‌چیز بعداً هم طبق خواسته شما قابل تغییر است.</p>
+        <p className="mt-6 text-[12px] text-[#5d6573]">{tx("در هر دو مسیر، همه‌چیز بعداً هم طبق خواسته شما قابل تغییر است.")}</p>
       </div>
     </div>
   );

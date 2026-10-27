@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { getPathname, usePathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { dirOf, intlTag } from "@/lib/locale";
 
@@ -71,7 +71,6 @@ export const LanguageSwitch = () => {
   const locale = useLocale() as Locale;
   const t = useTranslations("Lang");
   const pathname = usePathname();
-  const router = useRouter();
   const reduce = useReducedMotion();
   const [open, setOpen] = useState(false);
   const mounted = useSyncExternalStore(noop, () => true, () => false);
@@ -90,7 +89,8 @@ export const LanguageSwitch = () => {
 
   const choose = (code: Locale) => {
     setOpen(false);
-    if (code !== locale) router.replace(pathname, { locale: code });
+    // a full load, so every part of the site (studios included) starts in the new language
+    if (code !== locale) window.location.assign(getPathname({ href: pathname, locale: code }) + window.location.search);
   };
 
   const current = names[locale] ?? names.fa;

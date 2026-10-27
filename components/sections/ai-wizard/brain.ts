@@ -1,3 +1,4 @@
+import { tx, numberTag } from "@/lib/tx";
 import { goals, pains, tools, type AiConfig, type GoalKey, type PainKey, type ToolKey } from "./config";
 
 /**
@@ -61,18 +62,18 @@ export const understand = (message: string, config: AiConfig): KhayyamReply => {
 
   if (customWords.test(text)) {
     return {
-      text: "این کار تخصصی است و قبل از قیمت دادن باید داده‌ها و فرایندتان را ببینیم. برای این نوع پروژه‌ها مسیر «هوش مصنوعی اختصاصی» داریم: مسئله را می‌نویسید و کارشناس ما برای جلسه با شما تماس می‌گیرد.",
+      text: tx("این کار تخصصی است و قبل از قیمت دادن باید داده‌ها و فرایندتان را ببینیم. برای این نوع پروژه‌ها مسیر «هوش مصنوعی اختصاصی» داریم: مسئله را می‌نویسید و کارشناس ما برای جلسه با شما تماس می‌گیرد."),
       custom: true,
     };
   }
   if (/قیمت|هزینه|چقدر می.?شود|تومان/.test(text)) {
-    return { text: "هزینه به تعداد هم‌تیمی‌ها و اتصال‌ها بستگی دارد. وقتی سوال‌ها تمام شود، برآورد دقیق و زمان بازگشت سرمایه را در پیشنهاد نهایی می‌بینید. طراحی و نقشه اجرا هم جزو پروژه است." };
+    return { text: tx("هزینه به تعداد هم‌تیمی‌ها و اتصال‌ها بستگی دارد. وقتی سوال‌ها تمام شود، برآورد دقیق و زمان بازگشت سرمایه را در پیشنهاد نهایی می‌بینید. طراحی و نقشه اجرا هم جزو پروژه است.") };
   }
   if (/امن|امنیت|داده.?ها|محرمانه|سرور/.test(text)) {
     return {
-      text: "اگر نمی‌خواهید اطلاعات از سازمان بیرون برود، همه‌چیز را روی سرور خودتان راه‌اندازی می‌کنیم.",
+      text: tx("اگر نمی‌خواهید اطلاعات از سازمان بیرون برود، همه‌چیز را روی سرور خودتان راه‌اندازی می‌کنیم."),
       patch: { hosting: "onprem" },
-      actionLabel: "روی سرور خودمان باشد",
+      actionLabel: tx("روی سرور خودمان باشد"),
     };
   }
 
@@ -84,7 +85,7 @@ export const understand = (message: string, config: AiConfig): KhayyamReply => {
 
   if (!foundPains.length && !foundGoals.length && !foundTools.length && staff === undefined) {
     return {
-      text: "برای اینکه دقیق‌تر کمکتان کنم، بنویسید روزانه چه کاری بیشترین وقت تیم را می‌گیرد، یا مشتری‌ها از کجا با شما در ارتباطند. مثلاً: «روزی ۲۰۰ پیام در اینستاگرام و تلگرام می‌گیریم و ۳ نفر فقط جواب می‌دهند.»",
+      text: tx("برای اینکه دقیق‌تر کمکتان کنم، بنویسید روزانه چه کاری بیشترین وقت تیم را می‌گیرد، یا مشتری‌ها از کجا با شما در ارتباطند. مثلاً: «روزی ۲۰۰ پیام در اینستاگرام و تلگرام می‌گیریم و ۳ نفر فقط جواب می‌دهند.»"),
     };
   }
 
@@ -92,26 +93,26 @@ export const understand = (message: string, config: AiConfig): KhayyamReply => {
   const parts: string[] = [];
   if (foundPains.length) {
     patch.pains = unique([...config.pains, ...foundPains]);
-    parts.push(pains.filter((pain) => foundPains.includes(pain.value)).map((pain) => pain.label).join("، "));
+    parts.push(pains.filter((pain) => foundPains.includes(pain.value)).map((pain) => pain.label).join(tx("، ")));
   }
   const goalList = unique([...foundGoals, ...pains.filter((pain) => foundPains.includes(pain.value)).flatMap((pain) => pain.suggests)]);
   if (goalList.length) {
     patch.goals = unique([...config.goals, ...goalList]);
-    parts.push(`هم‌تیمی ${goals.filter((goal) => goalList.includes(goal.value)).map((goal) => `«${goal.label}»`).join(" و ")}`);
+    parts.push(tx("هم‌تیمی {0}", [goals.filter((goal) => goalList.includes(goal.value)).map((goal) => `«${goal.label}»`).join(tx(" و "))]));
   }
   if (foundTools.length) {
     patch.tools = unique([...config.tools, ...foundTools]);
-    parts.push(`کار در ${tools.filter((tool) => foundTools.includes(tool.value)).map((tool) => tool.label).join("، ")}`);
+    parts.push(tx("کار در {0}", [tools.filter((tool) => foundTools.includes(tool.value)).map((tool) => tool.label).join(tx("، "))]));
   }
   if (staff !== undefined) {
     patch.staff = staff;
-    parts.push(`${staff.toLocaleString("fa-IR")} نفر درگیر این کارها`);
+    parts.push(tx("{0} نفر درگیر این کارها", [staff.toLocaleString(numberTag())]));
   }
 
   return {
-    text: `متوجه شدم. پیشنهادم: ${parts.join("؛ ")}.`,
+    text: tx("متوجه شدم. پیشنهادم: {0}.", [parts.join(tx("؛ "))]),
     patch,
-    actionLabel: "اضافه کن به پرونده",
+    actionLabel: tx("اضافه کن به پرونده"),
   };
 };
 

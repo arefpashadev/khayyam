@@ -1,5 +1,6 @@
 "use client";
 
+import { tx, studioDir } from "@/lib/tx";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -173,7 +174,7 @@ export const Guide = ({ id, steps, autoStart = true, delay = 900 }: { id: string
   const move = reduce ? { duration: 0 } : { type: "spring" as const, bounce: 0, duration: 0.45 };
 
   return (
-    <div className="fixed inset-0 z-[400] text-[#eef1f5]" dir="rtl" role="dialog" aria-modal="true" aria-label="راهنما">
+    <div className="fixed inset-0 z-[400] text-[#eef1f5]" dir={studioDir()} role="dialog" aria-modal="true" aria-label={tx("راهنما")}>
       {hole ? (
         <>
           {/* the dim is four plain panels around the target (no giant shadows, which some pages don't paint) */}
@@ -211,7 +212,7 @@ export const Guide = ({ id, steps, autoStart = true, delay = 900 }: { id: string
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
           >
             {/* progress: one segment per step */}
-            <div className="flex gap-1 px-5 pt-4" aria-label={`${faNumber(step + 1)} از ${faNumber(items.length)}`}>
+            <div className="flex gap-1 px-5 pt-4" aria-label={tx("{0} از {1}", [faNumber(step + 1), faNumber(items.length)])}>
               {items.map((item, index) => (
                 <span key={item.title} className={`h-[3px] flex-1 rounded-full transition-colors duration-300 ${index <= step ? "bg-[#f0b44a]" : "bg-white/10"}`} />
               ))}
@@ -220,20 +221,18 @@ export const Guide = ({ id, steps, autoStart = true, delay = 900 }: { id: string
               <div className="flex items-center gap-3">
                 {!current.target && <KhayyamMark size={30} />}
                 <strong className="flex-1 text-[17px] font-extrabold leading-7 text-white">{current.title}</strong>
-                <button type="button" onClick={finish} className="text-[12.5px] font-bold text-[#8a93a0]">
-                  رد کردن
-                </button>
+                <button type="button" onClick={finish} className="text-[12.5px] font-bold text-[#8a93a0]">{tx("رد کردن")}</button>
               </div>
               <p className="mt-2 text-[14px] leading-7 text-[#b4bcc8]">{current.text}</p>
               <div className="mt-4 flex items-center gap-2">
                 {step > 0 && (
-                  <button type="button" onClick={() => go(step - 1)} aria-label="قبلی" className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-white/[0.06] text-[#c9d0d9]">
-                    <ArrowRight className="size-[18px]" aria-hidden="true" />
+                  <button type="button" onClick={() => go(step - 1)} aria-label={tx("قبلی")} className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-white/[0.06] text-[#c9d0d9]">
+                    <ArrowRight className="size-[18px] ltr:-scale-x-100" aria-hidden="true" />
                   </button>
                 )}
                 <button type="button" autoFocus onClick={() => (isLast ? finish() : go(step + 1))} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-[#f0b44a] text-[14px] font-extrabold text-[#1a1306] active:scale-[0.98]">
-                  {isLast ? "شروع کنیم" : "بعدی"}
-                  {!isLast && <ArrowLeft className="size-4" aria-hidden="true" />}
+                  {isLast ? tx("شروع کنیم") : tx("بعدی")}
+                  {!isLast && <ArrowLeft className="size-4 ltr:-scale-x-100" aria-hidden="true" />}
                 </button>
               </div>
             </div>
@@ -267,23 +266,21 @@ export const Guide = ({ id, steps, autoStart = true, delay = 900 }: { id: string
           <div className="flex items-center gap-2">
             {!current.target && <KhayyamMark size={26} />}
             <strong className="flex-1 text-[14.5px] font-extrabold">{current.title}</strong>
-            <span className="text-[11px] text-[#5d6573]">
-              {faNumber(step + 1)} از {faNumber(items.length)}
-            </span>
-            <button type="button" onClick={finish} aria-label="بستن راهنما" className="-me-1 flex size-7 items-center justify-center rounded-lg text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white">
+            <span className="text-[11px] text-[#5d6573]">{tx("{0} از {1}", [faNumber(step + 1), faNumber(items.length)])}</span>
+            <button type="button" onClick={finish} aria-label={tx("بستن راهنما")} className="-me-1 flex size-7 items-center justify-center rounded-lg text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white">
               <X className="size-4" aria-hidden="true" />
             </button>
           </div>
           <p className="mt-2 text-[13px] leading-7 text-[#a7b0bc]">{current.text}</p>
           <div className="mt-3 flex items-center gap-2">
             {step > 0 && (
-              <button type="button" onClick={() => go(step - 1)} aria-label="قبلی" className="flex size-9 items-center justify-center rounded-xl text-[#c9d0d9] transition-colors hover:bg-white/6">
-                <ArrowRight className="size-4" aria-hidden="true" />
+              <button type="button" onClick={() => go(step - 1)} aria-label={tx("قبلی")} className="flex size-9 items-center justify-center rounded-xl text-[#c9d0d9] transition-colors hover:bg-white/6">
+                <ArrowRight className="size-4 ltr:-scale-x-100" aria-hidden="true" />
               </button>
             )}
             <button type="button" autoFocus onClick={() => (isLast ? finish() : go(step + 1))} className="ms-auto flex h-9 items-center gap-1.5 rounded-xl bg-white px-4 text-[12.5px] font-extrabold text-[#0b0d12] transition-colors hover:bg-[#d9ecff]">
-              {isLast ? "متوجه شدم" : "بعدی"}
-              {!isLast && <ArrowLeft className="size-3.5" aria-hidden="true" />}
+              {isLast ? tx("متوجه شدم") : tx("بعدی")}
+              {!isLast && <ArrowLeft className="size-3.5 ltr:-scale-x-100" aria-hidden="true" />}
             </button>
           </div>
         </motion.div>
@@ -298,41 +295,41 @@ export const Guide = ({ id, steps, autoStart = true, delay = 900 }: { id: string
 /* ------------------------------------------------------------------ */
 
 export const siteGuide: GuideStep[] = [
-  { title: "سایتتان را قدم‌به‌قدم بسازید", text: "از رنگ و گوشه‌ها شروع می‌کنید و به چیدمان کامل می‌رسید. هر انتخاب همان لحظه در پیش‌نمایش دیده می‌شود." },
-  { target: "steps", title: "مراحل", text: "ترتیب اجباری نیست؛ هر وقت خواستید به هر مرحله برگردید و تغییرش دهید." },
-  { target: "panel-question", title: "سوال این مرحله", text: "گزینه‌هایش همین زیر است؛ هر کدام را بزنید، پیش‌نمایش همان لحظه عوض می‌شود." },
-  { target: "stage", title: "پیش‌نمایش زنده", text: "روی منو، دکمه‌ها و محصولات بزنید؛ مثل سایت واقعی کار می‌کنند." },
-  { target: "devices", title: "لپ‌تاپ یا موبایل", text: "نمایش را بین دستگاه‌ها عوض کنید." },
-  { target: "assistant", title: "دستیار خیام", text: "هر جا سوال داشتید یا پیشنهاد خواستید، اینجا را بزنید." },
-  { target: "submit", title: "ثبت سفارش", text: "هر وقت آماده بودید ثبت کنید؛ همه‌چیز بعداً هم قابل تغییر است." },
+  { title: tx("سایتتان را قدم‌به‌قدم بسازید"), text: tx("از رنگ و گوشه‌ها شروع می‌کنید و به چیدمان کامل می‌رسید. هر انتخاب همان لحظه در پیش‌نمایش دیده می‌شود.") },
+  { target: "steps", title: tx("مراحل"), text: tx("ترتیب اجباری نیست؛ هر وقت خواستید به هر مرحله برگردید و تغییرش دهید.") },
+  { target: "panel-question", title: tx("سوال این مرحله"), text: tx("گزینه‌هایش همین زیر است؛ هر کدام را بزنید، پیش‌نمایش همان لحظه عوض می‌شود.") },
+  { target: "stage", title: tx("پیش‌نمایش زنده"), text: tx("روی منو، دکمه‌ها و محصولات بزنید؛ مثل سایت واقعی کار می‌کنند.") },
+  { target: "devices", title: tx("لپ‌تاپ یا موبایل"), text: tx("نمایش را بین دستگاه‌ها عوض کنید.") },
+  { target: "assistant", title: tx("دستیار خیام"), text: tx("هر جا سوال داشتید یا پیشنهاد خواستید، اینجا را بزنید.") },
+  { target: "submit", title: tx("ثبت سفارش"), text: tx("هر وقت آماده بودید ثبت کنید؛ همه‌چیز بعداً هم قابل تغییر است.") },
 ];
 
 export const appGuide: GuideStep[] = [
-  { title: "اپلیکیشنتان را قدم‌به‌قدم بسازید", text: "پلتفرم، رنگ، صفحه‌ها و قابلیت‌ها را انتخاب کنید؛ نتیجه همان لحظه روی گوشی اجرا می‌شود." },
-  { target: "steps", title: "مراحل", text: "هر وقت خواستید به هر مرحله برگردید." },
-  { target: "panel-question", title: "سوال این مرحله", text: "گزینه‌هایش همین زیر است. قابلیت‌هایی که روشن می‌کنید روی گوشی اجرا می‌شوند." },
-  { target: "stage", title: "گوشی واقعاً کار می‌کند", text: "روی کارت‌ها، سبد، منو و تنظیمات بزنید؛ مثل اپ واقعی جواب می‌دهد." },
-  { target: "devices", title: "صفحه‌ها و دستگاه", text: "از اینجا هر صفحه اپ را باز کنید یا بین آیفون و اندروید جابه‌جا شوید." },
-  { target: "assistant", title: "دستیار خیام", text: "هر جا سوال داشتید یا پیشنهاد خواستید، اینجا را بزنید." },
-  { target: "submit", title: "ثبت سفارش", text: "هر وقت آماده بودید ثبت کنید؛ همه‌چیز بعداً هم قابل تغییر است." },
+  { title: tx("اپلیکیشنتان را قدم‌به‌قدم بسازید"), text: tx("پلتفرم، رنگ، صفحه‌ها و قابلیت‌ها را انتخاب کنید؛ نتیجه همان لحظه روی گوشی اجرا می‌شود.") },
+  { target: "steps", title: tx("مراحل"), text: tx("هر وقت خواستید به هر مرحله برگردید.") },
+  { target: "panel-question", title: tx("سوال این مرحله"), text: tx("گزینه‌هایش همین زیر است. قابلیت‌هایی که روشن می‌کنید روی گوشی اجرا می‌شوند.") },
+  { target: "stage", title: tx("گوشی واقعاً کار می‌کند"), text: tx("روی کارت‌ها، سبد، منو و تنظیمات بزنید؛ مثل اپ واقعی جواب می‌دهد.") },
+  { target: "devices", title: tx("صفحه‌ها و دستگاه"), text: tx("از اینجا هر صفحه اپ را باز کنید یا بین آیفون و اندروید جابه‌جا شوید.") },
+  { target: "assistant", title: tx("دستیار خیام"), text: tx("هر جا سوال داشتید یا پیشنهاد خواستید، اینجا را بزنید.") },
+  { target: "submit", title: tx("ثبت سفارش"), text: tx("هر وقت آماده بودید ثبت کنید؛ همه‌چیز بعداً هم قابل تغییر است.") },
 ];
 
 export const quickGuide: GuideStep[] = [
-  { target: "quick-cards", title: "سه طرح آماده", text: "هر کارت یک طرح کامل است؛ روی موبایل ورقشان بزنید." },
-  { target: "quick-devices", title: "لپ‌تاپ یا موبایل", text: "هر سه طرح را روی دستگاه دلخواه ببینید." },
-  { target: "quick-customize", title: "شخصی‌سازی", text: "همان طرح در استودیو باز می‌شود تا جزئیاتش را خودتان عوض کنید." },
-  { target: "quick-pick", title: "انتخاب", text: "«همین را می‌خواهم» شما را به ثبت سفارش می‌برد." },
+  { target: "quick-cards", title: tx("سه طرح آماده"), text: tx("هر کارت یک طرح کامل است؛ روی موبایل ورقشان بزنید.") },
+  { target: "quick-devices", title: tx("لپ‌تاپ یا موبایل"), text: tx("هر سه طرح را روی دستگاه دلخواه ببینید.") },
+  { target: "quick-customize", title: tx("شخصی‌سازی"), text: tx("همان طرح در استودیو باز می‌شود تا جزئیاتش را خودتان عوض کنید.") },
+  { target: "quick-pick", title: tx("انتخاب"), text: tx("«همین را می‌خواهم» شما را به ثبت سفارش می‌برد.") },
 ];
 
 export const aiChatGuide: GuideStep[] = [
-  { target: "answers", title: "جواب دادن", text: "روی گزینه‌ها بزنید؛ لازم نیست چیزی تایپ کنید. هر جواب را بعداً با زدن رویش عوض کنید." },
-  { target: "talk", title: "با خیام حرف بزنید", text: "اگر راحت‌ترید، کارتان را با زبان خودتان بنویسید؛ خیام می‌خواند و پیشنهاد می‌دهد چه کسانی به تیم اضافه شوند." },
-  { target: "dossier", title: "پرونده تیم", text: "اعضای تیم، کارهایشان و اثرشان بر کسب‌وکارتان با هر جواب اینجا کامل می‌شود." },
+  { target: "answers", title: tx("جواب دادن"), text: tx("روی گزینه‌ها بزنید؛ لازم نیست چیزی تایپ کنید. هر جواب را بعداً با زدن رویش عوض کنید.") },
+  { target: "talk", title: tx("با خیام حرف بزنید"), text: tx("اگر راحت‌ترید، کارتان را با زبان خودتان بنویسید؛ خیام می‌خواند و پیشنهاد می‌دهد چه کسانی به تیم اضافه شوند.") },
+  { target: "dossier", title: tx("پرونده تیم"), text: tx("اعضای تیم، کارهایشان و اثرشان بر کسب‌وکارتان با هر جواب اینجا کامل می‌شود.") },
 ];
 
 export const aiCustomGuide: GuideStep[] = [
-  { target: "custom-domains", title: "حوزه کار", text: "یک یا چند حوزه را انتخاب کنید؛ هر کدام نمونه کاربرد دارد." },
-  { target: "custom-problem", title: "مسئله شما", text: "با زبان خودتان بنویسید؛ لازم نیست فنی باشد." },
-  { target: "custom-process", title: "مسیر همکاری", text: "این پروژه‌ها با گفتگو و بررسی داده شروع می‌شوند تا نتیجه واقعاً به کار بیاید." },
-  { target: "custom-consult", title: "رزرو مشاوره", text: "با یک مبلغ کم جلسه رزرو کنید؛ این مبلغ از قرارداد کم می‌شود." },
+  { target: "custom-domains", title: tx("حوزه کار"), text: tx("یک یا چند حوزه را انتخاب کنید؛ هر کدام نمونه کاربرد دارد.") },
+  { target: "custom-problem", title: tx("مسئله شما"), text: tx("با زبان خودتان بنویسید؛ لازم نیست فنی باشد.") },
+  { target: "custom-process", title: tx("مسیر همکاری"), text: tx("این پروژه‌ها با گفتگو و بررسی داده شروع می‌شوند تا نتیجه واقعاً به کار بیاید.") },
+  { target: "custom-consult", title: tx("رزرو مشاوره"), text: tx("با یک مبلغ کم جلسه رزرو کنید؛ این مبلغ از قرارداد کم می‌شود.") },
 ];

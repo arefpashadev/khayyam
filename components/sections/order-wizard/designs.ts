@@ -1,3 +1,4 @@
+import { tx } from "@/lib/tx";
 import type { IndustryKey } from "./config";
 
 /**
@@ -26,25 +27,25 @@ export const industryArts: Record<IndustryKey, HeroArtKey[]> = {
 };
 
 export const artLabels: Record<HeroArtKey, string> = {
-  dashboard: "داشبورد رشد", services: "خدمات", stats: "آمار", logos: "مشتریان", quote: "نظر مشتری", team: "تیم",
-  products: "محصولات", categories: "دسته‌بندی", sale: "حراج", showcase: "محصول ویژه", deal: "پیشنهاد ویژه", cart: "سبد خرید",
-  menu: "منو", plate: "غذای ویژه", reserve: "رزرو میز", delivery: "پیک", chef: "سرآشپز", hours: "ساعت کاری",
-  courses: "دوره‌ها", live: "کلاس زنده", progress: "پیشرفت", teacher: "استاد", schedule: "برنامه", certificate: "گواهی",
-  appointment: "نوبت‌دهی", doctors: "پزشکان", vitals: "سلامت", clinic: "نقشه کلینیک", calendar: "تقویم", prescription: "داروها",
-  portrait: "پرتره", projects: "نمونه‌کار", monogram: "حرف اول", skills: "مهارت‌ها", timeline: "مسیر کاری", contact: "تماس",
+  dashboard: tx("داشبورد رشد"), services: tx("خدمات"), stats: tx("آمار"), logos: tx("مشتریان"), quote: tx("نظر مشتری"), team: tx("تیم"),
+  products: tx("محصولات"), categories: tx("دسته‌بندی"), sale: tx("حراج"), showcase: tx("محصول ویژه"), deal: tx("پیشنهاد ویژه"), cart: tx("سبد خرید"),
+  menu: tx("منو"), plate: tx("غذای ویژه"), reserve: tx("رزرو میز"), delivery: tx("پیک"), chef: tx("سرآشپز"), hours: tx("ساعت کاری"),
+  courses: tx("دوره‌ها"), live: tx("کلاس زنده"), progress: tx("پیشرفت"), teacher: tx("استاد"), schedule: tx("برنامه"), certificate: tx("گواهی"),
+  appointment: tx("نوبت‌دهی"), doctors: tx("پزشکان"), vitals: tx("سلامت"), clinic: tx("نقشه کلینیک"), calendar: tx("تقویم"), prescription: tx("داروها"),
+  portrait: tx("پرتره"), projects: tx("نمونه‌کار"), monogram: tx("حرف اول"), skills: tx("مهارت‌ها"), timeline: tx("مسیر کاری"), contact: tx("تماس"),
 };
 
 export const siteLayouts = [
-  { value: "split", label: "کلاسیک" },
-  { value: "bento", label: "بنتو" },
-  { value: "editorial", label: "مجله‌ای" },
-  { value: "glass", label: "شیشه‌ای" },
-  { value: "stack3d", label: "سه‌بعدی" },
-  { value: "marquee", label: "نوار متحرک" },
-  { value: "media", label: "قاب بزرگ" },
-  { value: "centered", label: "وسط‌چین" },
-  { value: "mirror", label: "برعکس" },
-  { value: "fullbleed", label: "تمام‌رنگ" },
+  { value: "split", label: tx("کلاسیک") },
+  { value: "bento", label: tx("بنتو") },
+  { value: "editorial", label: tx("مجله‌ای") },
+  { value: "glass", label: tx("شیشه‌ای") },
+  { value: "stack3d", label: tx("سه‌بعدی") },
+  { value: "marquee", label: tx("نوار متحرک") },
+  { value: "media", label: tx("قاب بزرگ") },
+  { value: "centered", label: tx("وسط‌چین") },
+  { value: "mirror", label: tx("برعکس") },
+  { value: "fullbleed", label: tx("تمام‌رنگ") },
 ] as const;
 
 export type SiteLayout = (typeof siteLayouts)[number]["value"];

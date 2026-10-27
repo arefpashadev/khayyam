@@ -383,9 +383,9 @@ const Products = () => {
           className="-mx-5 mt-12 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] lg:mx-0 lg:grid lg:grid-cols-3 lg:gap-4 lg:overflow-visible lg:px-0 [&::-webkit-scrollbar]:hidden"
         >
           {products.map((item) => (
-            <article key={item.key} className={`${card} group flex w-[86%] shrink-0 snap-center flex-col p-3 sm:w-[60%] lg:w-auto`}>
-              <div className="relative overflow-hidden rounded-[24px] bg-[radial-gradient(120%_90%_at_50%_0%,rgba(217,166,72,0.14),transparent_60%),#0f1628] p-5 ring-1 ring-[#f2ecdf]/[0.06]">{item.scene}</div>
-              <div className="flex flex-1 flex-col px-3 pb-3 pt-5">
+            <article key={item.key} className={`${card} group flex w-[86%] shrink-0 snap-center flex-col bg-[radial-gradient(120%_70%_at_50%_0%,rgba(217,166,72,0.11),transparent_60%),#121a2e] p-5 sm:w-[60%] lg:w-auto lg:p-6`}>
+              {item.scene}
+              <div className="flex flex-1 flex-col pt-6">
                 <h3 className="text-[20px] font-extrabold leading-[1.5]">{t(`${item.key}.title`)}</h3>
                 <p className="mt-2 flex-1 text-[13.5px] leading-7 text-[#9aa3b8]">{t(`${item.key}.text`)}</p>
                 <Link href={item.href} className="mt-5 flex w-fit items-center gap-1.5 text-[13.5px] font-bold text-[#e9c27a] transition-colors hover:text-[#f5d79c]">
@@ -433,24 +433,25 @@ const Steps = () => {
   const t = useTranslations("Steps");
   const locale = useLocale();
   return (
-    <section className="mx-auto max-w-[1240px] px-5 py-24 lg:px-10 lg:py-28">
+    <section className="mx-auto max-w-[1240px] px-5 py-20 lg:px-10 lg:py-28">
       <Reveal>
-        <h2 className="text-[28px] font-extrabold leading-[1.4] lg:text-[40px]">{t("title")}</h2>
+        <h2 className="text-[26px] font-extrabold leading-[1.4] lg:text-[36px]">{t("title")}</h2>
       </Reveal>
-      <ol className="mt-12 grid gap-10 lg:grid-cols-3 lg:gap-12">
+      <ol className="relative mt-10 grid gap-3 lg:grid-cols-3 lg:gap-4">
         {(["s1", "s2", "s3"] as const).map((key, index) => (
           <motion.li
             key={key}
-            initial={{ opacity: 0, y: 22 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.7, delay: index * 0.12, ease }}
-            className="relative border-t border-[#f2ecdf]/15 pt-8"
+            transition={{ duration: 0.6, delay: index * 0.1, ease }}
+            className="flex items-start gap-4 rounded-[24px] bg-[#121a2e] p-5 ring-1 ring-[#f2ecdf]/[0.07] lg:p-6"
           >
-            <span className="absolute -top-[7px] start-0 size-3.5 rotate-45 bg-[#0c1222] ring-2 ring-[#d9a648]" aria-hidden="true" />
-            <span className="text-[40px] font-black leading-none text-[#d9a648]/40">{formatNumber(locale, index + 1)}</span>
-            <h3 className="mt-3 text-[20px] font-extrabold">{t(key)}</h3>
-            <p className="mt-2 max-w-[38ch] text-[14px] leading-7 text-[#9aa3b8]">{t(`${key}t`)}</p>
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#d9a648] text-[15px] font-black text-[#1c1406]">{formatNumber(locale, index + 1)}</span>
+            <span>
+              <strong className="block text-[17px] font-extrabold leading-7">{t(key)}</strong>
+              <span className="mt-1 block text-[13.5px] leading-7 text-[#9aa3b8]">{t(`${key}t`)}</span>
+            </span>
           </motion.li>
         ))}
       </ol>

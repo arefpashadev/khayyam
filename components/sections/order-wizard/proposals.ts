@@ -1,3 +1,4 @@
+import { tx } from "@/lib/tx";
 import { defaultScreens, defaultSections, suggestAccents, type OrderKind, type WizardConfig } from "./config";
 import { siteLayouts } from "./designs";
 import { recommended } from "./assistant/brain";
@@ -22,20 +23,20 @@ export const buildProposals = (kind: OrderKind, base: WizardConfig): Proposal[] 
   return [
     {
       key: "calm",
-      title: "آرام و حرفه‌ای",
-      traits: ["روشن", "گوشه نرم", "حرکت نرم"],
+      title: tx("آرام و حرفه‌ای"),
+      traits: [tx("روشن"), tx("گوشه نرم"), tx("حرکت نرم")],
       config: { ...common, accent: analogous.value, theme: "light", radius: "soft", type: "balanced", backdrop: "grid", motion: "subtle", variant: layoutIndex(tips.layouts[0]), art: 0, appNav: "tabs", iconStyle: "solid" },
     },
     {
       key: "bold",
-      title: "مدرن و جسور",
-      traits: ["رنگی", "گوشه گرد", "تیتر درشت", "حرکت سریع"],
+      title: tx("مدرن و جسور"),
+      traits: [tx("رنگی"), tx("گوشه گرد"), tx("تیتر درشت"), tx("حرکت سریع")],
       config: { ...common, accent: triadic.value, theme: "tinted", radius: "round", type: "heavy", backdrop: "aurora", motion: "snappy", variant: layoutIndex(tips.layouts[1] ?? "bento"), art: 1, appNav: "floating", iconStyle: "gradient" },
     },
     {
       key: "luxe",
-      title: "لوکس و شبانه",
-      traits: ["نیمه‌شب", "گوشه تیز", "نوشته ظریف", "درخشش"],
+      title: tx("لوکس و شبانه"),
+      traits: [tx("نیمه‌شب"), tx("گوشه تیز"), tx("نوشته ظریف"), tx("درخشش")],
       config: { ...common, accent: complementary.value, theme: "midnight", radius: "sharp", type: "light", backdrop: "glow", motion: "lively", variant: layoutIndex(tips.layouts[2] ?? "editorial"), art: 2, appNav: "drawer", iconStyle: "duo" },
     },
   ];

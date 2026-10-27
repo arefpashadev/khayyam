@@ -1,5 +1,6 @@
 "use client";
 
+import { tx } from "@/lib/tx";
 import { animate, motion, useMotionValue } from "motion/react";
 import { useEffect, useRef, type ReactNode } from "react";
 
@@ -34,7 +35,7 @@ export const DraggableSheet = ({ children, className = "", ...rest }: { children
     <motion.aside {...rest} style={{ height }} className={`flex w-full shrink-0 flex-col ${className}`}>
       <button
         type="button"
-        aria-label="تغییر اندازه پنل"
+        aria-label={tx("تغییر اندازه پنل")}
         className="flex h-6 shrink-0 cursor-grab touch-none items-center justify-center active:cursor-grabbing"
         onPointerDown={(event) => {
           event.currentTarget.setPointerCapture(event.pointerId);

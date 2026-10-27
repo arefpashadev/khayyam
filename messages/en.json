@@ -71,14 +71,14 @@
     "working": "Working…",
     "sample": "Sample",
     "replay": "Watch again",
-    "ask": "Get a holiday campaign ready, and file this week’s invoices too.",
+    "ask": "Get an end-of-season sale campaign ready, and file this week’s invoices too.",
     "content": "Your campaign content is ready:",
     "post": "Instagram post",
     "story": "Story",
     "reels": "Reels",
     "tiktok": "TikTok",
     "invoices": "I read the invoices and filed them in your accounting.",
-    "vendor": "Alborz Supplies",
+    "vendor": "Nova Supplies",
     "accounting": "Accounting",
     "filed": "Filed",
     "replies": "From tonight, I’ll answer your customers’ messages.",
@@ -128,12 +128,12 @@
     "booked": "Added to your calendar"
   },
   "Steps": {
-    "title": "Three steps to a product that works",
-    "s1": "You arrange it in the studio",
-    "s1t": "Pick the look and features and see the price and timeline instantly. Free.",
-    "s2": "We finish it in Figma",
-    "s2t": "We send detailed designs of every screen for your approval — it’s part of the project.",
-    "s3": "We build and deliver",
+    "title": "From idea to launch in three steps",
+    "s1": "You put it together",
+    "s1t": "Pick the look and features in the studio and see the price and timeline instantly.",
+    "s2": "You approve the final design",
+    "s2t": "You see every screen in detail; we don’t move on until you’re happy.",
+    "s3": "We build and launch",
     "s3t": "On the date we promised, with launch and support after handover."
   },
   "Clients": {
@@ -157,5 +157,17 @@
     "privacy": "Privacy",
     "terms": "Terms",
     "wordmark": "KHAYYAM"
+  },
+  "Loader": {
+    "label": "Loading",
+    "studio": "Getting the studio ready",
+    "f1": "Khayyam measured the year at 365.24219 days, more precisely than the Gregorian calendar.",
+    "f2": "Khayyam solved cubic equations with geometry.",
+    "f3": "Precision is what we got from Khayyam; getting things ready…"
+  },
+  "Studio": {
+    "site": "Design your website | Khayyam",
+    "app": "Design your app | Khayyam",
+    "ai": "AI studio | Khayyam"
   }
 }

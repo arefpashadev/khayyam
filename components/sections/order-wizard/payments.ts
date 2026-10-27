@@ -1,3 +1,4 @@
+import { tx, numberTag } from "@/lib/tx";
 import { create } from "zustand";
 
 /**
@@ -19,7 +20,7 @@ export const DEPOSIT_RATE = 0.3;
 export const amountDue = (plan: Plan, estimateMin: number) => (plan === "consult" ? CONSULT_FEE : Math.round(estimateMin * DEPOSIT_RATE * 1000));
 
 export const formatToman = (thousands: number) =>
-  thousands >= 1000 ? `${new Intl.NumberFormat("fa-IR", { maximumFractionDigits: 1 }).format(thousands / 1000)} میلیون تومان` : `${new Intl.NumberFormat("fa-IR").format(thousands)} هزار تومان`;
+  thousands >= 1000 ? tx("{0} میلیون تومان", [new Intl.NumberFormat(numberTag(), { maximumFractionDigits: 1 }).format(thousands / 1000)]) : tx("{0} هزار تومان", [new Intl.NumberFormat(numberTag()).format(thousands)]);
 
 type PaymentState = {
   status: "idle" | "redirecting" | "paid";

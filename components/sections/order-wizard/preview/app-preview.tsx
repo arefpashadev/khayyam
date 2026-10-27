@@ -1,3 +1,4 @@
+import { tx, studioDir } from "@/lib/tx";
 import { Bell, Heart, House, Search, UserRound } from "lucide-react";
 import type { CSSProperties } from "react";
 
@@ -15,16 +16,16 @@ const heading = (size: number): CSSProperties => ({
 export const AppPreview = ({ config }: { config: WizardConfig }) => {
   const content = industries[config.industry];
   const design = getAppDesign(config.variant);
-  const name = config.brandName.trim() || "برند شما";
+  const name = config.brandName.trim() || tx("برند شما");
   const headline = config.tagline.trim() || content.headline;
   const enabled = appFeatures.filter((feature) => config.sections.includes(feature.value));
-  const tabs = [{ value: "home", label: "خانه", icon: House }, ...enabled.slice(0, 3), { value: "profile", label: "پروفایل", icon: UserRound }];
+  const tabs = [{ value: "home", label: tx("خانه"), icon: House }, ...enabled.slice(0, 3), { value: "profile", label: tx("پروفایل"), icon: UserRound }];
   const tile = (amount: number) => ({ backgroundColor: mix(config.color, isDark(config.theme) ? "#0f151c" : "#ffffff", amount) });
 
   const banner = {
     solid: (
       <div className="relative overflow-hidden rounded-(--pv-r-card) bg-(--pv-primary) p-5 text-(--pv-on-primary)">
-        <div className="absolute -left-10 -top-10 size-36 rounded-full bg-white/15" />
+        <div className="absolute -end-10 -top-10 size-36 rounded-full bg-white/15" />
         <span className="relative text-[11px] font-bold opacity-80">{content.badge}</span>
         <p className="relative mt-2 max-w-[18ch]" style={heading(20)}>{headline}</p>
         <span className="relative mt-4 inline-flex h-9 items-center rounded-(--pv-r-ctrl) bg-(--pv-bg) px-4 text-[12px] font-bold text-(--pv-text)">{content.cta}</span>
@@ -49,8 +50,7 @@ export const AppPreview = ({ config }: { config: WizardConfig }) => {
       <div className="rounded-(--pv-r-card) bg-(--pv-soft) p-4">
         <p style={heading(18)}>{headline}</p>
         <div className="mt-3 flex h-11 items-center gap-2 rounded-(--pv-r-ctrl) bg-(--pv-bg) px-3 text-[12px] text-(--pv-muted)">
-          <Search className="size-4" aria-hidden="true" /> جستجو در {name}
-        </div>
+          <Search className="size-4" aria-hidden="true" />{" "}{tx("جستجو در {0}", [name])}</div>
       </div>
     ),
     greeting: (
@@ -62,11 +62,11 @@ export const AppPreview = ({ config }: { config: WizardConfig }) => {
   }[design.banner];
 
   return (
-    <div dir="rtl" data-motion={config.motion} className="pv-root flex min-h-full flex-col bg-(--pv-bg) font-sans text-(--pv-text)">
+    <div dir={studioDir()} data-motion={config.motion} className="pv-root flex min-h-full flex-col bg-(--pv-bg) font-sans text-(--pv-text)">
       <div className="sticky top-0 z-10 bg-(--pv-bg)">
         <div className="flex items-center justify-between px-5 py-3">
           <div>
-            <span className="block text-[12px] text-(--pv-muted)">سلام، خوش آمدید</span>
+            <span className="block text-[12px] text-(--pv-muted)">{tx("سلام، خوش آمدید")}</span>
             <strong style={heading(20)}>{name}</strong>
           </div>
           <span className="flex size-11 items-center justify-center rounded-full bg-(--pv-soft) text-(--pv-primary)">
@@ -118,18 +118,18 @@ export const AppPreview = ({ config }: { config: WizardConfig }) => {
           </div>
         )}
 
-        <strong style={heading(16)}>پیشنهاد امروز</strong>
+        <strong style={heading(16)}>{tx("پیشنهاد امروز")}</strong>
 
         {design.layout === "cards" && (
           <div className="grid grid-cols-2 gap-3">
             {content.features.map((item, index) => (
               <div key={item.label} className="overflow-hidden rounded-(--pv-r-card) border border-(--pv-border) bg-(--pv-surface)">
                 <div className="relative aspect-square" style={tile(0.25 + index * 0.15)}>
-                  <Heart className="absolute left-2.5 top-2.5 size-4 text-white" aria-hidden="true" />
+                  <Heart className="absolute end-2.5 top-2.5 size-4 text-white" aria-hidden="true" />
                 </div>
                 <div className="p-3">
                   <strong className="block text-[12px]">{item.label}</strong>
-                  <span className="mt-1 block text-[11px] text-(--pv-primary)">مشاهده</span>
+                  <span className="mt-1 block text-[11px] text-(--pv-primary)">{tx("مشاهده")}</span>
                 </div>
               </div>
             ))}
@@ -143,9 +143,9 @@ export const AppPreview = ({ config }: { config: WizardConfig }) => {
                 <span className="size-14 shrink-0 rounded-(--pv-r-ctrl)" style={tile(0.25 + index * 0.15)} />
                 <div className="flex-1">
                   <strong className="block text-[13px]">{item.label}</strong>
-                  <span className="mt-1 block text-[11px] text-(--pv-muted)">توضیح کوتاه این گزینه</span>
+                  <span className="mt-1 block text-[11px] text-(--pv-muted)">{tx("توضیح کوتاه این گزینه")}</span>
                 </div>
-                <span className="rounded-(--pv-r-ctrl) bg-(--pv-soft) px-3 py-1.5 text-[11px] font-bold text-(--pv-primary)">باز کن</span>
+                <span className="rounded-(--pv-r-ctrl) bg-(--pv-soft) px-3 py-1.5 text-[11px] font-bold text-(--pv-primary)">{tx("باز کن")}</span>
               </div>
             ))}
           </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { tx } from "@/lib/tx";
 import { CircleHelp, Laptop as LaptopIcon, MonitorSmartphone, Smartphone, X } from "lucide-react";
 import { motion } from "motion/react";
 import { useState, type ReactNode } from "react";
@@ -45,9 +46,9 @@ const Composition = ({ laptop, phone, small }: { laptop: ReactNode; phone: React
 export type DeskView = "both" | "laptop" | "phone";
 
 export const deskViews: { value: DeskView; label: string; icon: typeof LaptopIcon }[] = [
-  { value: "both", label: "هر دو", icon: MonitorSmartphone },
-  { value: "laptop", label: "لپ‌تاپ", icon: LaptopIcon },
-  { value: "phone", label: "موبایل", icon: Smartphone },
+  { value: "both", label: tx("هر دو"), icon: MonitorSmartphone },
+  { value: "laptop", label: tx("لپ‌تاپ"), icon: LaptopIcon },
+  { value: "phone", label: tx("موبایل"), icon: Smartphone },
 ];
 
 const pill = "flex h-9 items-center gap-2 rounded-full bg-white/8 px-3.5 text-[12px] font-bold text-[#c9d0d9] ring-1 ring-white/8 backdrop-blur";
@@ -83,18 +84,18 @@ export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
     <div className="relative size-full overflow-hidden bg-[#0b0d12]" style={buildPreviewVars(config)}>
       {/* stage lighting from the brand colours */}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <span className="absolute left-[10%] top-[8%] h-[55%] w-[45%] rounded-full opacity-35 blur-[120px] transition-colors duration-700" style={{ backgroundColor: config.color }} />
-        <span className="absolute bottom-[0%] right-[8%] h-[50%] w-[40%] rounded-full opacity-25 blur-[120px] transition-colors duration-700" style={{ backgroundColor: config.accent }} />
+        <span className="absolute end-[10%] top-[8%] h-[55%] w-[45%] rounded-full opacity-35 blur-[120px] transition-colors duration-700" style={{ backgroundColor: config.color }} />
+        <span className="absolute bottom-[0%] start-[8%] h-[50%] w-[40%] rounded-full opacity-25 blur-[120px] transition-colors duration-700" style={{ backgroundColor: config.accent }} />
         <span className="absolute inset-0 opacity-50" style={{ backgroundImage: "radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px)", backgroundSize: "26px 26px", maskImage: "radial-gradient(ellipse at center, #000 40%, transparent 80%)", WebkitMaskImage: "radial-gradient(ellipse at center, #000 40%, transparent 80%)" }} />
       </div>
 
-      <div className={`absolute z-10 flex items-center gap-2 ${studio ? "right-5 top-5" : "right-3 top-4"}`}>
+      <div className={`absolute z-10 flex items-center gap-2 ${studio ? "start-5 top-5" : "start-3 top-4"}`}>
         {!studio && (
           <>
-            <Link href="/" aria-label="خروج" className={`${pill} size-9 justify-center px-0`}>
+            <Link href="/" aria-label={tx("خروج")} className={`${pill} size-9 justify-center px-0`}>
               <X className="size-4" aria-hidden="true" />
             </Link>
-            <button type="button" onClick={() => openGuide(`studio-${kind}`)} aria-label="راهنما" className={`${pill} size-9 justify-center px-0`}>
+            <button type="button" onClick={() => openGuide(`studio-${kind}`)} aria-label={tx("راهنما")} className={`${pill} size-9 justify-center px-0`}>
               <CircleHelp className="size-4" aria-hidden="true" />
             </button>
           </>
@@ -103,17 +104,15 @@ export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
           <span className="relative flex size-1.5">
             <span className="absolute hidden size-full rounded-full bg-[#2fd08a] opacity-60 lg:motion-safe:inline-flex lg:motion-safe:animate-ping" />
             <span className="relative inline-flex size-1.5 rounded-full bg-[#2fd08a]" />
-          </span>
-          پیش‌نمایش زنده
-        </span>
+          </span>{tx("پیش‌نمایش زنده")}</span>
       </div>
 
       {kind === "site" && (
         <div
           role="radiogroup"
-          aria-label="نمایش"
+          aria-label={tx("نمایش")}
           data-tour="devices"
-          className={`absolute z-10 flex gap-0.5 rounded-full bg-white/8 p-1 ring-1 ring-white/8 backdrop-blur ${studio ? "left-1/2 top-5 -translate-x-1/2" : "left-3 top-4"}`}
+          className={`absolute z-10 flex gap-0.5 rounded-full bg-white/8 p-1 ring-1 ring-white/8 backdrop-blur ${studio ? "left-1/2 top-5 -translate-x-1/2" : "end-3 top-4"}`}
         >
           {options.map((option) => {
             const selected = view === option.value;
@@ -136,7 +135,7 @@ export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
         </div>
       )}
 
-      {studio && <CustomNote className="absolute bottom-5 right-5 z-10 max-w-[min(420px,calc(100%-360px))]" />}
+      {studio && <CustomNote className="absolute bottom-5 start-5 z-10 max-w-[min(420px,calc(100%-360px))]" />}
       <AssistantDock studio={studio} />
 
       <div data-tour="stage" className={`absolute ${studio ? "inset-x-10 bottom-8 top-20" : "inset-0 px-3 pb-3 pt-16"}`}>

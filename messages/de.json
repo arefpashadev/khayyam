@@ -71,14 +71,14 @@
     "working": "Arbeitet…",
     "sample": "Beispiel",
     "replay": "Nochmal ansehen",
-    "ask": "Bereite eine Feiertagskampagne vor und verbuche auch die Rechnungen dieser Woche.",
+    "ask": "Bereite eine Kampagne für den Saisonschlussverkauf vor und verbuche auch die Rechnungen dieser Woche.",
     "content": "Die Kampagneninhalte sind fertig:",
     "post": "Instagram-Post",
     "story": "Story",
     "reels": "Reels",
     "tiktok": "TikTok",
     "invoices": "Ich habe die Rechnungen gelesen und in der Buchhaltung erfasst.",
-    "vendor": "Alborz Großhandel",
+    "vendor": "Nova Großhandel",
     "accounting": "Buchhaltung",
     "filed": "Verbucht",
     "replies": "Ab heute Abend beantworte ich die Nachrichten Ihrer Kunden.",
@@ -128,12 +128,12 @@
     "booked": "Im Kalender eingetragen"
   },
   "Steps": {
-    "title": "Drei Schritte zu einem Produkt, das funktioniert",
-    "s1": "Sie stellen es im Studio zusammen",
-    "s1t": "Wählen Sie Look und Funktionen und sehen Sie Preis und Zeitplan sofort. Kostenlos.",
-    "s2": "Wir vollenden es in Figma",
-    "s2t": "Wir schicken Ihnen detaillierte Entwürfe aller Seiten zur Freigabe – das ist Teil des Projekts.",
-    "s3": "Wir bauen und liefern",
+    "title": "Von der Idee zum Launch in drei Schritten",
+    "s1": "Sie stellen es zusammen",
+    "s1t": "Wählen Sie im Studio Look und Funktionen und sehen Sie Preis und Zeitplan sofort.",
+    "s2": "Sie geben das finale Design frei",
+    "s2t": "Sie sehen jeden Screen im Detail; wir machen erst weiter, wenn Sie zufrieden sind.",
+    "s3": "Wir bauen und starten",
     "s3t": "Zum zugesagten Termin, mit Launch und Support nach der Übergabe."
   },
   "Clients": {
@@ -157,5 +157,17 @@
     "privacy": "Datenschutz",
     "terms": "AGB",
     "wordmark": "KHAYYAM"
+  },
+  "Loader": {
+    "label": "Wird geladen",
+    "studio": "Studio wird vorbereitet",
+    "f1": "Khayyam berechnete das Jahr auf 365,24219 Tage – genauer als der gregorianische Kalender.",
+    "f2": "Khayyam löste kubische Gleichungen mit Geometrie.",
+    "f3": "Präzision haben wir von Khayyam; wird vorbereitet…"
+  },
+  "Studio": {
+    "site": "Website gestalten | Khayyam",
+    "app": "App gestalten | Khayyam",
+    "ai": "KI-Studio | Khayyam"
   }
 }

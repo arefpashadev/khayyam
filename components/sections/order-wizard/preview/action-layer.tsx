@@ -1,5 +1,6 @@
 "use client";
 
+import { tx, studioDir } from "@/lib/tx";
 import { Sparkles } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
@@ -23,13 +24,13 @@ export const ActionLayer = ({ children, className = "flex min-h-full flex-col" }
         if (clicked.closest("[data-live]")) return;
         const target = clicked.closest<HTMLElement>(".pv-act");
         if (!target) return;
-        const label = (target.dataset.act ?? target.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 28) || "این بخش";
+        const label = (target.dataset.act ?? target.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 28) || tx("این بخش");
         setToast({ label, id: Date.now() });
         window.clearTimeout(timer.current);
         timer.current = window.setTimeout(() => setToast(null), 2800);
       }}
     >
-      <div className="pointer-events-none sticky top-5 z-50 h-0" dir="rtl">
+      <div className="pointer-events-none sticky top-5 z-50 h-0" dir={studioDir()}>
         <AnimatePresence>
           {toast && (
             <motion.div
@@ -39,9 +40,7 @@ export const ActionLayer = ({ children, className = "flex min-h-full flex-col" }
               exit={{ opacity: 0, y: -14 }}
               className="mx-auto flex w-fit max-w-[92%] items-center gap-2 rounded-full bg-(--pv-text) px-5 py-3 text-[13px] font-bold text-(--pv-bg) shadow-2xl"
             >
-              <Sparkles className="size-4 shrink-0" aria-hidden="true" />
-              «{toast.label}» در نسخه واقعی هر کاری بخواهید انجام می‌دهد.
-            </motion.div>
+              <Sparkles className="size-4 shrink-0" aria-hidden="true" />{tx("«{0}» در نسخه واقعی هر کاری بخواهید انجام می‌دهد.", [toast.label])}</motion.div>
           )}
         </AnimatePresence>
       </div>

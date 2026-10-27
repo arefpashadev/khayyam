@@ -1,5 +1,6 @@
 "use client";
 
+import { tx, ld } from "@/lib/tx";
 import { Check, Droplet, EyeOff, Info, Link2, Moon, Pipette, Smartphone, Sparkles, Sun, Sunset, Waves, Wind, Zap } from "lucide-react";
 import type { CSSProperties, ReactNode } from "react";
 
@@ -38,7 +39,7 @@ export const idle = "bg-[#171b22] text-[#c9d0d9] hover:bg-[#1d222b]";
 export const active = "bg-[#4da3ff]/14 text-[#9ccbff]";
 
 export const Tile = ({ selected, onClick, children, className = "", label }: { selected: boolean; onClick: () => void; children: ReactNode; className?: string; label?: string }) => (
-  <button type="button" aria-pressed={selected} aria-label={label} onClick={onClick} className={`relative rounded-2xl text-right transition-colors duration-150 ${ring} ${selected ? active : idle} ${className}`}>
+  <button type="button" aria-pressed={selected} aria-label={label} onClick={onClick} className={`relative rounded-2xl text-start transition-colors duration-150 ${ring} ${selected ? active : idle} ${className}`}>
     {children}
   </button>
 );
@@ -88,11 +89,11 @@ const PaletteStep = () => {
   const toneIcons = { light: <Sun className="size-3.5" />, tinted: <Droplet className="size-3.5" />, dark: <Moon className="size-3.5" />, midnight: <Sunset className="size-3.5" /> };
   const vars = buildPreviewVars(config) as Record<string, string>;
   const strip = [
-    { label: "اصلی", value: config.color },
-    { label: "دوم", value: config.accent },
-    { label: "ملایم", value: vars["--pv-soft"] },
-    { label: "زمینه", value: vars["--pv-bg"] },
-    { label: "متن", value: vars["--pv-text"] },
+    { label: tx("اصلی"), value: config.color },
+    { label: tx("دوم"), value: config.accent },
+    { label: tx("ملایم"), value: vars["--pv-soft"] },
+    { label: tx("زمینه"), value: vars["--pv-bg"] },
+    { label: tx("متن"), value: vars["--pv-text"] },
   ];
 
   return (
@@ -115,17 +116,17 @@ const PaletteStep = () => {
       </div>
 
       <div>
-        <Label hint="هر رنگی بخواهید">رنگ اصلی</Label>
-        <div role="radiogroup" aria-label="رنگ اصلی" className="grid grid-cols-9 gap-2">
+        <Label hint={tx("هر رنگی بخواهید")}>{tx("رنگ اصلی")}</Label>
+        <div role="radiogroup" aria-label={tx("رنگ اصلی")} className="grid grid-cols-9 gap-2">
           {colors.map((color) => (
             <Swatch key={color.value} value={color.value} label={color.label} selected={config.color === color.value} onPick={() => update({ color: color.value, accent: suggestAccents(color.value)[0].value })} />
           ))}
-          <CustomColor value={config.color} label="رنگ دلخواه" onChange={(value) => update({ color: value })} />
+          <CustomColor value={config.color} label={tx("رنگ دلخواه")} onChange={(value) => update({ color: value })} />
         </div>
       </div>
 
       <div>
-        <Label hint="پیشنهاد هماهنگ با رنگ اصلی">رنگ دوم</Label>
+        <Label hint={tx("پیشنهاد هماهنگ با رنگ اصلی")}>{tx("رنگ دوم")}</Label>
         <div className="grid grid-cols-5 gap-2">
           {accents.map((accent) => {
             const selected = config.accent.toLowerCase() === accent.value.toLowerCase();
@@ -140,14 +141,14 @@ const PaletteStep = () => {
             );
           })}
           <div className="flex flex-col items-center gap-1.5 rounded-2xl bg-[#171b22] p-2">
-            <span className="w-8"><CustomColor value={config.accent} label="رنگ دوم دلخواه" onChange={(value) => update({ accent: value })} /></span>
-            <span className="text-[10.5px] font-bold text-[#c9d0d9]">دلخواه</span>
+            <span className="w-8"><CustomColor value={config.accent} label={tx("رنگ دوم دلخواه")} onChange={(value) => update({ accent: value })} /></span>
+            <span className="text-[10.5px] font-bold text-[#c9d0d9]">{tx("دلخواه")}</span>
           </div>
         </div>
       </div>
 
       <div>
-        <Label>فضای کلی</Label>
+        <Label>{tx("فضای کلی")}</Label>
         <div className="grid grid-cols-4 gap-2">
           {themes.map((theme) => {
             const selected = config.theme === theme.value;
@@ -242,7 +243,7 @@ const TypeStep = () => {
         const selected = config.type === type.value;
         return (
           <Tile key={type.value} selected={selected} onClick={() => update({ type: type.value })} className="flex items-center gap-4 p-4">
-            <span className="w-16 shrink-0 text-center leading-none text-white" style={{ ...sample[type.value], fontSize: 44 }}>آب</span>
+            <span className="w-16 shrink-0 text-center leading-none text-white" style={{ ...sample[type.value], fontSize: 44 }}>{tx("آب")}</span>
             <span className="min-w-0 flex-1">
               <span className="block leading-tight text-white" style={sample[type.value]}>{type.sample}</span>
               <span className="mt-1.5 block text-[11px] opacity-60">{type.label}</span>
@@ -282,7 +283,7 @@ const BackdropStep = () => {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <Label>پس‌زمینه بخش اول</Label>
+        <Label>{tx("پس‌زمینه بخش اول")}</Label>
         <div className="grid grid-cols-2 gap-2.5">
           {backdrops.map((backdrop, index) => {
             const selected = config.backdrop === backdrop.value;
@@ -302,7 +303,7 @@ const BackdropStep = () => {
         </div>
       </div>
       <div>
-        <Label hint="هر کارت حرکت خودش را نشان می‌دهد">انیمیشن و حرکت</Label>
+        <Label hint={tx("هر کارت حرکت خودش را نشان می‌دهد")}>{tx("انیمیشن و حرکت")}</Label>
         <div className="grid grid-cols-2 gap-2.5">
           {motionLevels.map((level) => {
             const selected = config.motion === level.value;
@@ -340,7 +341,7 @@ const BusinessStep = () => {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <Label>نوع پروژه</Label>
+        <Label>{tx("نوع پروژه")}</Label>
         <div className="grid grid-cols-2 gap-2">
           {types.map((type) => {
             const selected = config.projectType === type.value;
@@ -360,8 +361,8 @@ const BusinessStep = () => {
         <Tile selected={config.webApp} onClick={() => update({ webApp: !config.webApp }, "top")} className="flex items-center gap-3 p-3.5">
           <Smartphone className="size-5 shrink-0" aria-hidden="true" />
           <span className="min-w-0 flex-1">
-            <strong className="block text-[13px] text-white">نسخه وب‌اپ هم داشته باشد</strong>
-            <span className="text-[11px] opacity-60">روی گوشی نصب می‌شود و مثل اپ کار می‌کند؛ بدون فروشگاه</span>
+            <strong className="block text-[13px] text-white">{tx("نسخه وب‌اپ هم داشته باشد")}</strong>
+            <span className="text-[11px] opacity-60">{tx("روی گوشی نصب می‌شود و مثل اپ کار می‌کند؛ بدون فروشگاه")}</span>
           </span>
           <span className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${config.webApp ? "bg-[#4da3ff]" : "bg-[#2a303b]"}`} aria-hidden="true">
             <span className="absolute top-0.5 size-4 rounded-full bg-white shadow transition-[left]" style={{ left: config.webApp ? 2 : 18 }} />
@@ -369,7 +370,7 @@ const BusinessStep = () => {
         </Tile>
       )}
       <div>
-        <Label>حوزه فعالیت</Label>
+        <Label>{tx("حوزه فعالیت")}</Label>
         <div className="grid grid-cols-3 gap-2">
           {(Object.keys(industries) as IndustryKey[]).map((key) => {
             const item = industries[key];
@@ -384,11 +385,11 @@ const BusinessStep = () => {
         </div>
       </div>
       <label className="block">
-        <Label>نام برند</Label>
-        <input value={config.brandName} onChange={(event) => update({ brandName: event.target.value }, "top")} placeholder="مثلاً کافه خیام" maxLength={28} className={`${field} h-12 font-bold placeholder:font-normal`} />
+        <Label>{tx("نام برند")}</Label>
+        <input value={config.brandName} onChange={(event) => update({ brandName: event.target.value }, "top")} placeholder={tx("مثلاً کافه خیام")} maxLength={28} className={`${field} h-12 font-bold placeholder:font-normal`} />
       </label>
       <label className="block">
-        <Label hint="اختیاری">جمله اصلی صفحه</Label>
+        <Label hint={tx("اختیاری")}>{tx("جمله اصلی صفحه")}</Label>
         <input value={config.tagline} onChange={(event) => update({ tagline: event.target.value }, "hero")} placeholder={industries[config.industry].headline} maxLength={48} className={`${field} h-12`} />
       </label>
     </div>
@@ -410,15 +411,14 @@ const DesignStep = () => {
     return (
       <p className="flex gap-2 rounded-2xl bg-[#171b22] px-4 py-4 text-[12.5px] leading-7 text-[#a7b0bc]">
         <Info className="mt-1.5 size-4 shrink-0 text-[#4da3ff]" aria-hidden="true" />
-        {config.projectType === "dashboard" ? "پنل‌های داخلی چیدمان استاندارد و کاربردی دارند" : "پلتفرم‌های جامعه چیدمان فید و گروه دارند"}؛ ظاهرش با پالت، گوشه‌ها و نوشته‌هایی که انتخاب کردید ساخته می‌شود. ماژول‌ها را در مرحله بعد انتخاب کنید.
-      </p>
+        {config.projectType === "dashboard" ? tx("پنل‌های داخلی چیدمان استاندارد و کاربردی دارند") : tx("پلتفرم‌های جامعه چیدمان فید و گروه دارند")}{tx("؛ ظاهرش با پالت، گوشه‌ها و نوشته‌هایی که انتخاب کردید ساخته می‌شود. ماژول‌ها را در مرحله بعد انتخاب کنید.")}</p>
     );
   }
 
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <Label hint={`${faNumber(count)} چیدمان`}>چیدمان صفحه</Label>
+        <Label hint={tx("{0} چیدمان", [faNumber(count)])}>{tx("چیدمان صفحه")}</Label>
         <div className="grid grid-cols-2 gap-2.5">
           {Array.from({ length: count }, (_, design) => {
             const selected = design === config.variant;
@@ -427,15 +427,15 @@ const DesignStep = () => {
                 key={design}
                 type="button"
                 aria-pressed={selected}
-                aria-label={kind === "app" ? `طرح ${faNumber(design + 1)}` : siteLayouts[design].label}
+                aria-label={kind === "app" ? tx("طرح {0}", [faNumber(design + 1)]) : siteLayouts[design].label}
                 onClick={() => setVariant(design)}
-                className={`overflow-hidden rounded-2xl p-1.5 text-right transition-colors ${ring} ${selected ? active : idle}`}
+                className={`overflow-hidden rounded-2xl p-1.5 text-start transition-colors ${ring} ${selected ? active : idle}`}
               >
                 <div className="overflow-hidden rounded-xl">
                   <DesignThumb kind={kind} config={{ ...config, variant: design }} />
                 </div>
                 <span className="flex items-center justify-between px-1 pb-0.5 pt-2 text-[12px] font-bold">
-                  {kind === "app" ? `طرح ${faNumber(design + 1)}` : siteLayouts[design].label}
+                  {kind === "app" ? tx("طرح {0}", [faNumber(design + 1)]) : siteLayouts[design].label}
                   {selected && <span className="flex size-5 items-center justify-center rounded-full bg-[#4da3ff] text-white"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>}
                 </span>
               </button>
@@ -444,7 +444,7 @@ const DesignStep = () => {
         </div>
       </div>
       <div>
-        <Label>تصویر اصلی</Label>
+        <Label>{tx("تصویر اصلی")}</Label>
         <div className="flex flex-wrap gap-1.5">
           {industryArts[config.industry].map((art, index) => (
             <button key={art} type="button" aria-pressed={config.art === index} onClick={() => update({ art: index }, "hero")} className={`h-9 rounded-full px-3.5 text-[12px] font-bold transition-colors ${ring} ${config.art === index ? active : idle}`}>
@@ -454,9 +454,7 @@ const DesignStep = () => {
         </div>
       </div>
       <p className="flex gap-2 rounded-2xl bg-[#171b22] px-3.5 py-3 text-[11.5px] leading-6 text-[#8a93a0]">
-        <Info className="mt-1 size-3.5 shrink-0 text-[#4da3ff]" aria-hidden="true" />
-        این‌ها همه کارهایی نیست که می‌توانیم انجام دهیم. نزدیک‌ترین را انتخاب کنید؛ بعد از ثبت درخواست هر تغییری بخواهید اعمال می‌کنیم.
-      </p>
+        <Info className="mt-1 size-3.5 shrink-0 text-[#4da3ff]" aria-hidden="true" />{tx("این‌ها همه کارهایی نیست که می‌توانیم انجام دهیم. نزدیک‌ترین را انتخاب کنید؛ بعد از ثبت درخواست هر تغییری بخواهید اعمال می‌کنیم.")}</p>
     </div>
   );
 };
@@ -485,7 +483,7 @@ const SectionsStep = () => {
           );
         })}
       </div>
-      <p className="mt-3 text-[11px] text-[#5d6573]">{faNumber(sections.length)} مورد انتخاب شده</p>
+      <p className="mt-3 text-[11px] text-[#5d6573]">{tx("{0} مورد انتخاب شده", [faNumber(sections.length)])}</p>
     </div>
   );
 };
@@ -511,9 +509,8 @@ const ExtrasStep = () => {
             {option.label}
             {"ai" in option && option.ai && <span className="rounded-full bg-white/8 px-1.5 text-[10px] font-bold text-[#c9d0d9]">AI</span>}
             {!option.visible && (
-              <span className="hidden items-center gap-0.5 rounded-full bg-white/6 px-1.5 text-[10px] font-normal text-[#8a93a0] lg:inline-flex" title="در پیش‌نمایش دیده نمی‌شود">
-                <EyeOff className="size-2.5" aria-hidden="true" /> پشت صحنه
-              </span>
+              <span className="hidden items-center gap-0.5 rounded-full bg-white/6 px-1.5 text-[10px] font-normal text-[#8a93a0] lg:inline-flex" title={tx("در پیش‌نمایش دیده نمی‌شود")}>
+                <EyeOff className="size-2.5" aria-hidden="true" />{" "}{tx("پشت صحنه")}</span>
             )}
           </strong>
           <span className="hidden text-[11px] text-[#8a93a0] lg:block">{option.description}</span>
@@ -537,11 +534,11 @@ const ReferencesStep = () => {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-2">
-        <Label hint="اختیاری">لینک نمونه‌ها</Label>
+        <Label hint={tx("اختیاری")}>{tx("لینک نمونه‌ها")}</Label>
         {references.map((value, index) => (
           <label key={index} className="relative block">
-            <span className="sr-only">لینک نمونه {faNumber(index + 1)}</span>
-            <Link2 className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-[#5d6573]" aria-hidden="true" />
+            <span className="sr-only">{tx("لینک نمونه {0}", [faNumber(index + 1)])}</span>
+            <Link2 className="pointer-events-none absolute end-4 top-1/2 size-4 -translate-y-1/2 text-[#5d6573]" aria-hidden="true" />
             <input
               dir="ltr"
               type="url"
@@ -549,19 +546,17 @@ const ReferencesStep = () => {
               value={value}
               placeholder={["dribbble.com/...", "digikala.com", "..."][index]}
               onChange={(event) => update({ references: references.map((item, itemIndex) => (itemIndex === index ? event.target.value : item)) }, "top")}
-              className={`${field} h-11 pl-11 text-left`}
+              className={`${field} h-11 pe-11 text-end`}
             />
           </label>
         ))}
       </div>
       <label className="block">
-        <Label>چه چیزی در آن‌ها دوست دارید؟</Label>
-        <textarea value={notes} rows={3} onChange={(event) => update({ notes: event.target.value }, "top")} placeholder="مثلاً رنگ‌های سایت اول و منوی ساده سایت دوم" className={`${field} resize-none py-3 leading-6`} />
+        <Label>{tx("چه چیزی در آن‌ها دوست دارید؟")}</Label>
+        <textarea value={notes} rows={3} onChange={(event) => update({ notes: event.target.value }, "top")} placeholder={tx("مثلاً رنگ‌های سایت اول و منوی ساده سایت دوم")} className={`${field} resize-none py-3 leading-6`} />
       </label>
       <p className="flex gap-2 rounded-2xl bg-[#3a2c10]/60 px-3.5 py-3 text-[11.5px] leading-6 text-[#f2cf8a]">
-        <Info className="mt-1 size-3.5 shrink-0" aria-hidden="true" />
-        همه این مقادیر طبق خواسته شما قابل تغییر است. بعد از ثبت درخواست هم می‌توانید هر تغییری را برایمان بفرستید.
-      </p>
+        <Info className="mt-1 size-3.5 shrink-0" aria-hidden="true" />{tx("همه این مقادیر طبق خواسته شما قابل تغییر است. بعد از ثبت درخواست هم می‌توانید هر تغییری را برایمان بفرستید.")}</p>
     </div>
   );
 };
@@ -576,27 +571,25 @@ export const OutcomeStep = () => {
   return (
     <div className="flex flex-col gap-5">
       <div className="rounded-2xl bg-[linear-gradient(135deg,rgba(77,163,255,0.16),rgba(124,108,255,0.12))] p-4 ring-1 ring-[#4da3ff]/25">
-        <span className="text-[11.5px] font-bold text-[#9ccbff]">برآورد اولیه</span>
+        <span className="text-[11.5px] font-bold text-[#9ccbff]">{tx("برآورد اولیه")}</span>
         <div className="mt-1 flex items-baseline gap-2">
-          <strong className="text-[24px] font-black text-white">
-            {faNumber(cost.min)} تا {faNumber(cost.max)}
-          </strong>
-          <span className="text-[12px] text-[#a7b0bc]">میلیون تومان</span>
+          <strong className="text-[24px] font-black text-white">{tx("{0} تا {1}", [faNumber(cost.min), faNumber(cost.max)])}</strong>
+          <span className="text-[12px] text-[#a7b0bc]">{tx("میلیون تومان")}</span>
         </div>
-        <span className="mt-1 block text-[12px] text-[#a7b0bc]">زمان تقریبی: {faNumber(Math.max(1, cost.weeks))} هفته</span>
-        <span className="mt-2 block text-[11px] leading-5 text-[#8a93a0]">شامل طراحی فیگما؛ با هر انتخاب به‌روز می‌شود و قیمت نهایی را مشاور بعد از بررسی اعلام می‌کند.</span>
+        <span className="mt-1 block text-[12px] text-[#a7b0bc]">{tx("زمان تقریبی: {0} هفته", [faNumber(Math.max(1, cost.weeks))])}</span>
+        <span className="mt-2 block text-[11px] leading-5 text-[#8a93a0]">{tx("شامل طراحی فیگما؛ با هر انتخاب به‌روز می‌شود و قیمت نهایی را مشاور بعد از بررسی اعلام می‌کند.")}</span>
       </div>
 
       <PlanChoice plan={config.plan} estimateMin={cost.min} onChange={(plan) => update({ plan })} />
 
       <div className="grid grid-cols-1 gap-2.5">
         <label className="block">
-          <Label>نام شما</Label>
-          <input value={config.contactName} onChange={(event) => update({ contactName: event.target.value })} placeholder="مثلاً سارا محمدی" autoComplete="name" className={`${field} h-12`} />
+          <Label>{tx("نام شما")}</Label>
+          <input value={config.contactName} onChange={(event) => update({ contactName: event.target.value })} placeholder={tx("مثلاً سارا محمدی")} autoComplete="name" className={`${field} h-12`} />
         </label>
         <label className="block">
-          <Label>شماره تماس</Label>
-          <input value={config.contactPhone} onChange={(event) => update({ contactPhone: event.target.value })} placeholder="۰۹۱۲ ۰۰۰ ۰۰۰۰" inputMode="tel" autoComplete="tel" dir="ltr" className={`${field} h-12 text-left`} />
+          <Label>{tx("شماره تماس")}</Label>
+          <input value={config.contactPhone} onChange={(event) => update({ contactPhone: event.target.value })} placeholder={ld("۰۹۱۲ ۰۰۰ ۰۰۰۰")} inputMode="tel" autoComplete="tel" dir="ltr" className={`${field} h-12 text-end`} />
         </label>
       </div>
     </div>

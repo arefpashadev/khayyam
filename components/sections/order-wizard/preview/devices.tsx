@@ -1,5 +1,6 @@
 "use client";
 
+import { tx } from "@/lib/tx";
 import { BatteryFull, Signal, Wifi } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
@@ -87,14 +88,14 @@ export const Laptop = ({ address, installable = false, children }: { address: st
           <span className="size-3 rounded-full bg-[#28c840]" />
           <span className="mx-auto flex h-7 w-[440px] items-center justify-center rounded-lg bg-white text-[13px] text-[#7a868d] ring-1 ring-black/5">
             <bdi>{address}</bdi>.ir
-            {installable && <span className="ms-3 rounded-md bg-[#e6f2fc] px-2 py-0.5 text-[11px] font-bold text-[#0a5a9c]">⤓ نصب اپ</span>}
+            {installable && <span className="ms-3 rounded-md bg-[#e6f2fc] px-2 py-0.5 text-[11px] font-bold text-[#0a5a9c]">{tx("⤓ نصب اپ")}</span>}
           </span>
         </div>
         <Screen className="min-h-0 flex-1">{children}</Screen>
       </div>
     </div>
     {/* base */}
-    <div className="absolute bottom-0 left-0 h-8 w-full rounded-b-[30px] rounded-t-[3px] bg-[linear-gradient(180deg,#e3e7ea_0%,#c3cace_55%,#9ea7ad_100%)] shadow-[0_30px_50px_-20px_rgba(15,23,32,0.55)]">
+    <div className="absolute bottom-0 end-0 h-8 w-full rounded-b-[30px] rounded-t-[3px] bg-[linear-gradient(180deg,#e3e7ea_0%,#c3cace_55%,#9ea7ad_100%)] shadow-[0_30px_50px_-20px_rgba(15,23,32,0.55)]">
       <div className="mx-auto h-[9px] w-[230px] rounded-b-[12px] bg-[#a9b1b7]" />
     </div>
   </div>

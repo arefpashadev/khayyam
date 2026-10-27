@@ -1,3 +1,4 @@
+import { tx, studioDir, ld } from "@/lib/tx";
 import { Bell, CheckCircle2, CircleDashed, LayoutDashboard, Menu, Search, TrendingUp } from "lucide-react";
 import type { CSSProperties } from "react";
 
@@ -22,15 +23,15 @@ export const DashboardPreview = ({ config, compact }: { config: WizardConfig; co
   const bars = [42, 58, 47, 70, 63, 82, 76, 94, 88, 100, 92, 110];
 
   const kpis = [
-    { label: "درخواست‌های امروز", value: "۱۲۸", delta: "+۱۲٪" },
-    { label: "در انتظار تأیید", value: "۲۴", delta: "−۸٪" },
-    { label: "رضایت مشتری", value: "۹۴٪", delta: "+۳٪" },
+    { label: tx("درخواست‌های امروز"), value: ld("۱۲۸"), delta: ld("+۱۲٪") },
+    { label: tx("در انتظار تأیید"), value: ld("۲۴"), delta: ld("−۸٪") },
+    { label: tx("رضایت مشتری"), value: ld("۹۴٪"), delta: ld("+۳٪") },
   ];
 
   return (
-    <ActionLayer><div dir="rtl" data-motion={config.motion} className="pv-root flex min-h-full flex-1 bg-(--pv-surface) font-sans text-(--pv-text)">
+    <ActionLayer><div dir={studioDir()} data-motion={config.motion} className="pv-root flex min-h-full flex-1 bg-(--pv-surface) font-sans text-(--pv-text)">
       {!compact && (
-        <aside className="flex w-64 shrink-0 flex-col gap-1 border-l border-(--pv-border) bg-(--pv-bg) p-5">
+        <aside className="flex w-64 shrink-0 flex-col gap-1 border-e border-(--pv-border) bg-(--pv-bg) p-5">
           <div className="mb-6 flex items-center gap-2.5">
             <span className="flex size-9 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-primary) text-(--pv-on-primary)">
               <LayoutDashboard className="size-5" aria-hidden="true" />
@@ -38,8 +39,7 @@ export const DashboardPreview = ({ config, compact }: { config: WizardConfig; co
             <strong className="text-[15px]">{name}</strong>
           </div>
           <span className="flex items-center gap-3 rounded-(--pv-r-ctrl) bg-(--pv-soft) px-3 py-2.5 text-[13px] font-bold text-(--pv-primary)">
-            <LayoutDashboard className="size-4" aria-hidden="true" /> داشبورد
-          </span>
+            <LayoutDashboard className="size-4" aria-hidden="true" />{" "}{tx("داشبورد")}</span>
           {modules.map((module) => (
             <span key={module.value} data-pv={module.value} className="pv-section flex items-center gap-3 rounded-(--pv-r-ctrl) px-3 py-2.5 text-[13px] text-(--pv-muted)">
               <module.icon className="size-4" aria-hidden="true" /> {module.label}
@@ -52,16 +52,15 @@ export const DashboardPreview = ({ config, compact }: { config: WizardConfig; co
         <header className="flex items-center gap-3 border-b border-(--pv-border) bg-(--pv-bg) px-5 py-3.5">
           {compact && <Menu className="size-5" aria-hidden="true" />}
           <div className={`flex h-10 items-center gap-2 rounded-(--pv-r-ctrl) bg-(--pv-surface) px-3 text-[12px] text-(--pv-muted) ${compact ? "flex-1" : "w-80"}`}>
-            <Search className="size-4" aria-hidden="true" /> جستجو در پرونده‌ها…
-          </div>
+            <Search className="size-4" aria-hidden="true" />{" "}{tx("جستجو در پرونده‌ها…")}</div>
           <span className="ms-auto flex size-10 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-surface)"><Bell className="size-4" aria-hidden="true" /></span>
           <span className="size-10 rounded-full" style={{ backgroundColor: shade(0.35) }} />
         </header>
 
         <div key={config.motion} data-pv="hero" className={`pv-section pv-rise flex flex-col gap-5 ${compact ? "p-4" : "p-8"}`}>
           <div>
-            <h1 style={heading(compact ? 20 : 28)}>صبح بخیر، تیم {name}</h1>
-            <p className="mt-1 text-[13px] text-(--pv-muted)">۸ کار امروز منتظر شماست.</p>
+            <h1 style={heading(compact ? 20 : 28)}>{tx("صبح بخیر، تیم {0}", [name])}</h1>
+            <p className="mt-1 text-[13px] text-(--pv-muted)">{tx("۸ کار امروز منتظر شماست.")}</p>
           </div>
 
           <div className={`grid gap-4 ${compact ? "grid-cols-1" : "grid-cols-3"}`}>
@@ -79,8 +78,8 @@ export const DashboardPreview = ({ config, compact }: { config: WizardConfig; co
           <div className={`grid gap-4 ${compact ? "" : "grid-cols-[1.6fr_1fr]"}`}>
             <div data-pv="reports" className={`pv-section ${card} p-5`}>
               <div className="flex items-center justify-between">
-                <strong className="text-[14px]">روند درخواست‌ها</strong>
-                <span className="flex items-center gap-1 text-[12px] font-bold text-(--pv-primary)"><TrendingUp className="size-3.5" aria-hidden="true" />۳۲٪ رشد</span>
+                <strong className="text-[14px]">{tx("روند درخواست‌ها")}</strong>
+                <span className="flex items-center gap-1 text-[12px] font-bold text-(--pv-primary)"><TrendingUp className="size-3.5" aria-hidden="true" />{tx("۳۲٪ رشد")}</span>
               </div>
               <div className="mt-5 flex h-40 items-end gap-2">
                 {bars.map((height, index) => (
@@ -90,9 +89,9 @@ export const DashboardPreview = ({ config, compact }: { config: WizardConfig; co
             </div>
 
             <div data-pv="workflow" className={`pv-section ${card} p-5`}>
-              <strong className="text-[14px]">گردش کار خرید</strong>
+              <strong className="text-[14px]">{tx("گردش کار خرید")}</strong>
               <div className="mt-4 flex flex-col gap-3">
-                {[["ثبت درخواست", true], ["تأیید مدیر واحد", true], ["تأیید مالی", false], ["صدور سفارش", false]].map(([label, done]) => (
+                {[[tx("ثبت درخواست"), true], [tx("تأیید مدیر واحد"), true], [tx("تأیید مالی"), false], [tx("صدور سفارش"), false]].map(([label, done]) => (
                   <div key={label as string} className="flex items-center gap-3 text-[13px]">
                     {done ? <CheckCircle2 className="size-5 text-(--pv-primary)" aria-hidden="true" /> : <CircleDashed className="size-5 text-(--pv-muted)" aria-hidden="true" />}
                     <span className={done ? "" : "text-(--pv-muted)"}>{label as string}</span>
@@ -104,10 +103,10 @@ export const DashboardPreview = ({ config, compact }: { config: WizardConfig; co
 
           <div data-pv="users" className={`pv-section ${card} overflow-hidden`}>
             <div className="flex items-center justify-between border-b border-(--pv-border) px-5 py-3.5">
-              <strong className="text-[14px]">آخرین پرونده‌ها</strong>
-              <span className="rounded-(--pv-r-ctrl) bg-(--pv-primary) px-3 py-1.5 text-[12px] font-bold text-(--pv-on-primary)">+ پرونده جدید</span>
+              <strong className="text-[14px]">{tx("آخرین پرونده‌ها")}</strong>
+              <span className="rounded-(--pv-r-ctrl) bg-(--pv-primary) px-3 py-1.5 text-[12px] font-bold text-(--pv-on-primary)">{tx("+ پرونده جدید")}</span>
             </div>
-            {[["سفارش خرید تجهیزات", "در انتظار", "سارا محمدی"], ["قرارداد پشتیبانی", "تأیید شد", "علی رضایی"], ["درخواست مرخصی", "در حال بررسی", "نگار احمدی"]].map(([title, status, owner], index) => (
+            {[[tx("سفارش خرید تجهیزات"), tx("در انتظار"), tx("سارا محمدی")], [tx("قرارداد پشتیبانی"), tx("تأیید شد"), tx("علی رضایی")], [tx("درخواست مرخصی"), tx("در حال بررسی"), tx("نگار احمدی")]].map(([title, status, owner], index) => (
               <div key={title} className="flex items-center gap-4 border-b border-(--pv-border) px-5 py-3 text-[13px] last:border-0">
                 <span className="font-mono text-[11px] text-(--pv-muted)">#{faNumber(1040 + index)}</span>
                 <span className="flex-1 font-bold">{title}</span>

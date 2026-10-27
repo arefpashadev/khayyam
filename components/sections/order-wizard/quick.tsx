@@ -1,5 +1,6 @@
 "use client";
 
+import { tx } from "@/lib/tx";
 import { ArrowLeft, ArrowRight, Check, CircleHelp, Laptop, Palette, Pipette, Smartphone, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
@@ -18,7 +19,7 @@ import { useWizard } from "./store";
 type QuickStep = "type" | "business" | "color" | "making" | "results" | "order" | "done";
 const questionSteps: QuickStep[] = ["type", "business", "color"];
 
-const tile = "rounded-2xl text-right transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#4da3ff]";
+const tile = "rounded-2xl text-start transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#4da3ff]";
 const idle = "bg-[#151920] text-[#c9d0d9] hover:bg-[#1b2029]";
 const active = "bg-[#4da3ff]/14 text-[#9ccbff] ring-1 ring-[#4da3ff]/40";
 
@@ -31,7 +32,7 @@ const Question = ({ eyebrow, title, hint, children }: { eyebrow: string; title: 
   </div>
 );
 
-const making = ["چیدمان مناسب حوزه شما را انتخاب می‌کنم…", "رنگ‌ها را هماهنگ می‌کنم…", "متن‌ها و بخش‌ها را می‌چینم…"];
+const making = [tx("چیدمان مناسب حوزه شما را انتخاب می‌کنم…"), tx("رنگ‌ها را هماهنگ می‌کنم…"), tx("متن‌ها و بخش‌ها را می‌چینم…")];
 
 export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
   const config = useWizard((state) => state.config);
@@ -91,25 +92,25 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
     <div className="flex size-full flex-col bg-[radial-gradient(90%_60%_at_50%_0%,rgba(77,163,255,0.14),transparent_70%),#0b0d12]">
       <header className="flex h-16 shrink-0 items-center gap-3 px-4 lg:px-8">
         {step !== "making" && step !== "done" && (
-          <button type="button" onClick={back} aria-label="برگشت" className="flex size-10 items-center justify-center rounded-xl text-[#c9d0d9] transition-colors hover:bg-white/6">
-            <ArrowRight className="size-5" aria-hidden="true" />
+          <button type="button" onClick={back} aria-label={tx("برگشت")} className="flex size-10 items-center justify-center rounded-xl text-[#c9d0d9] transition-colors hover:bg-white/6">
+            <ArrowRight className="size-5 ltr:-scale-x-100" aria-hidden="true" />
           </button>
         )}
-        <KhayyamMark size={30} title="خیام" />
-        <strong className="text-[14px] text-white">مسیر سریع</strong>
+        <KhayyamMark size={30} title={tx("خیام")} />
+        <strong className="text-[14px] text-white">{tx("مسیر سریع")}</strong>
         {questionIndex >= 0 && (
-          <span className="ms-3 flex gap-1.5" aria-label={`سوال ${faNumber(questionIndex + 1)} از ۳`}>
+          <span className="ms-3 flex gap-1.5" aria-label={tx("سوال {0} از ۳", [faNumber(questionIndex + 1)])}>
             {questionSteps.map((item, index) => (
               <span key={item} className={`h-1.5 rounded-full transition-all ${index === questionIndex ? "w-6 bg-[#4da3ff]" : index < questionIndex ? "w-1.5 bg-[#4da3ff]/60" : "w-1.5 bg-white/12"}`} />
             ))}
           </span>
         )}
         {step === "results" && (
-          <button type="button" onClick={() => openGuide("quick")} aria-label="راهنما" className="ms-auto flex size-10 items-center justify-center rounded-xl text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white">
+          <button type="button" onClick={() => openGuide("quick")} aria-label={tx("راهنما")} className="ms-auto flex size-10 items-center justify-center rounded-xl text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white">
             <CircleHelp className="size-5" aria-hidden="true" />
           </button>
         )}
-        <Link href="/" aria-label="خروج" className={`${step === "results" ? "" : "ms-auto"} flex size-10 items-center justify-center rounded-xl text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white`}>
+        <Link href="/" aria-label={tx("خروج")} className={`${step === "results" ? "" : "ms-auto"} flex size-10 items-center justify-center rounded-xl text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white`}>
           <X className="size-5" aria-hidden="true" />
         </Link>
       </header>
@@ -118,7 +119,7 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
         <AnimatePresence mode="wait">
           {step === "type" && (
             <motion.div key="type" {...fade}>
-              <Question eyebrow="سوال ۱ از ۳" title={`چه ${kind === "app" ? "اپلیکیشنی" : "چیزی"} می‌خواهید بسازید؟`} hint="یکی را انتخاب کنید؛ بعداً هم قابل تغییر است.">
+              <Question eyebrow={tx("سوال ۱ از ۳")} title={tx("چه {0} می‌خواهید بسازید؟", [kind === "app" ? tx("اپلیکیشنی") : tx("چیزی")])} hint={tx("یکی را انتخاب کنید؛ بعداً هم قابل تغییر است.")}>
                 <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-3">
                   {types.map((type) => (
                     <button
@@ -144,7 +145,7 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
 
           {step === "business" && (
             <motion.div key="business" {...fade}>
-              <Question eyebrow="سوال ۲ از ۳" title="برای چه کسب‌وکاری؟" hint="متن‌ها، تصویرها و بخش‌ها از روی همین ساخته می‌شوند.">
+              <Question eyebrow={tx("سوال ۲ از ۳")} title={tx("برای چه کسب‌وکاری؟")} hint={tx("متن‌ها، تصویرها و بخش‌ها از روی همین ساخته می‌شوند.")}>
                 <div className="grid grid-cols-3 gap-2">
                   {(Object.keys(industries) as IndustryKey[]).map((key) => {
                     const item = industries[key];
@@ -157,17 +158,16 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
                   })}
                 </div>
                 <label className="mt-6 block">
-                  <span className="mb-2.5 block text-[12px] font-bold text-[#8a93a0]">نام برند (اختیاری)</span>
+                  <span className="mb-2.5 block text-[12px] font-bold text-[#8a93a0]">{tx("نام برند (اختیاری)")}</span>
                   <input
                     value={config.brandName}
                     onChange={(event) => update({ brandName: event.target.value })}
-                    placeholder="مثلاً کافه خیام"
+                    placeholder={tx("مثلاً کافه خیام")}
                     maxLength={28}
                     className="h-13 w-full rounded-2xl bg-[#151920] px-4 text-[15px] font-bold text-white outline-none placeholder:font-normal placeholder:text-[#5d6573] focus:ring-2 focus:ring-[#4da3ff]/50"
                   />
                 </label>
-                <button type="button" onClick={() => setStep("color")} className="mt-6 flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-white text-[14px] font-extrabold text-[#0b0d12] transition-colors hover:bg-[#d9ecff]">
-                  ادامه <ArrowLeft className="size-4" aria-hidden="true" />
+                <button type="button" onClick={() => setStep("color")} className="mt-6 flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-white text-[14px] font-extrabold text-[#0b0d12] transition-colors hover:bg-[#d9ecff]">{tx("ادامه")}{" "}<ArrowLeft className="size-4 ltr:-scale-x-100" aria-hidden="true" />
                 </button>
               </Question>
             </motion.div>
@@ -175,7 +175,7 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
 
           {step === "color" && (
             <motion.div key="color" {...fade}>
-              <Question eyebrow="سوال ۳ از ۳" title="یک رنگ که حس برندتان را دارد" hint="بقیه پالت را خودمان هماهنگ می‌کنیم. اگر رنگ سازمانی دارید با قطره‌چکان همان را بزنید.">
+              <Question eyebrow={tx("سوال ۳ از ۳")} title={tx("یک رنگ که حس برندتان را دارد")} hint={tx("بقیه پالت را خودمان هماهنگ می‌کنیم. اگر رنگ سازمانی دارید با قطره‌چکان همان را بزنید.")}>
                 <div className="grid grid-cols-5 gap-3 lg:grid-cols-9">
                   {colors.map((color) => {
                     const selected = config.color === color.value;
@@ -193,9 +193,9 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
                       </button>
                     );
                   })}
-                  <label className="relative flex aspect-square cursor-pointer items-center justify-center rounded-2xl bg-[conic-gradient(from_0deg,#ff5f6d,#ffc371,#47e891,#3fb4ff,#a66cff,#ff5f6d)]" title="رنگ دلخواه">
+                  <label className="relative flex aspect-square cursor-pointer items-center justify-center rounded-2xl bg-[conic-gradient(from_0deg,#ff5f6d,#ffc371,#47e891,#3fb4ff,#a66cff,#ff5f6d)]" title={tx("رنگ دلخواه")}>
                     <span className="flex size-[60%] items-center justify-center rounded-xl bg-[#0b0d12]"><Pipette className="size-4 text-white" aria-hidden="true" /></span>
-                    <input type="color" value={config.color} onChange={(event) => update({ color: event.target.value, accent: suggestAccents(event.target.value)[0].value })} aria-label="رنگ دلخواه" className="absolute inset-0 cursor-pointer opacity-0" />
+                    <input type="color" value={config.color} onChange={(event) => update({ color: event.target.value, accent: suggestAccents(event.target.value)[0].value })} aria-label={tx("رنگ دلخواه")} className="absolute inset-0 cursor-pointer opacity-0" />
                   </label>
                 </div>
                 <button
@@ -205,8 +205,7 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
                     setStep("making");
                   }}
                   className="mt-8 flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#4da3ff,#7c6cff)] text-[14px] font-extrabold text-white shadow-[0_14px_40px_-14px_rgba(77,163,255,0.9)] transition hover:brightness-110"
-                >
-                  طرح‌هایم را بساز <ArrowLeft className="size-4" aria-hidden="true" />
+                >{tx("طرح‌هایم را بساز")}{" "}<ArrowLeft className="size-4 ltr:-scale-x-100" aria-hidden="true" />
                 </button>
               </Question>
             </motion.div>
@@ -215,7 +214,7 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
           {step === "making" && (
             <motion.div key="making" {...fade} className="flex min-h-[60vh] flex-col items-center justify-center text-center" role="status" aria-live="polite">
               <KhayyamMark size={96} state="thinking" />
-              <strong className="mt-8 text-[20px] text-white">در حال طراحی برای {config.brandName.trim() || industries[config.industry].label}</strong>
+              <strong className="mt-8 text-[20px] text-white">{tx("در حال طراحی برای {0}", [config.brandName.trim() || industries[config.industry].label])}</strong>
               <AnimatePresence mode="wait">
                 <motion.p key={makingLine} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="mt-3 text-[13px] text-[#8a93a0]">
                   {making[makingLine]}
@@ -228,16 +227,16 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
             <motion.div key="results" {...fade} className="mx-auto w-full max-w-[1400px]">
               <div className="flex flex-wrap items-end justify-between gap-4">
                 <div>
-                  <span className="text-[12px] font-bold text-[#4da3ff]">آماده شد</span>
-                  <h1 className="mt-1 text-[24px] font-extrabold text-white lg:text-[32px]">سه طرح برای {config.brandName.trim() || industries[config.industry].label}</h1>
-                  <p className="mt-1 text-[13px] text-[#8a93a0]">یکی را انتخاب کنید یا در استودیو تک‌تک جزئیاتش را عوض کنید.</p>
+                  <span className="text-[12px] font-bold text-[#4da3ff]">{tx("آماده شد")}</span>
+                  <h1 className="mt-1 text-[24px] font-extrabold text-white lg:text-[32px]">{tx("سه طرح برای {0}", [config.brandName.trim() || industries[config.industry].label])}</h1>
+                  <p className="mt-1 text-[13px] text-[#8a93a0]">{tx("یکی را انتخاب کنید یا در استودیو تک‌تک جزئیاتش را عوض کنید.")}</p>
                 </div>
                 {kind === "site" && (
-                  <div role="radiogroup" aria-label="دستگاه" data-guide="quick-devices" className="flex gap-0.5 rounded-full bg-white/8 p-1 ring-1 ring-white/8">
+                  <div role="radiogroup" aria-label={tx("دستگاه")} data-guide="quick-devices" className="flex gap-0.5 rounded-full bg-white/8 p-1 ring-1 ring-white/8">
                     {(
                       [
-                        { value: "laptop", label: "لپ‌تاپ", icon: Laptop },
-                        { value: "phone", label: "موبایل", icon: Smartphone },
+                        { value: "laptop", label: tx("لپ‌تاپ"), icon: Laptop },
+                        { value: "phone", label: tx("موبایل"), icon: Smartphone },
                       ] as const
                     ).map((option) => (
                       <button key={option.value} type="button" role="radio" aria-checked={device === option.value} onClick={() => setDevice(option.value)} className={`flex h-8 items-center gap-1.5 rounded-full px-3.5 text-[12px] font-bold transition-colors ${device === option.value ? "bg-white text-[#0b0d12]" : "text-[#c9d0d9]"}`}>
@@ -255,12 +254,12 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
                       <div className="absolute inset-4">
                         <DevicePreview kind={kind} config={proposal.config} device={device} />
                       </div>
-                      <span className="absolute right-4 top-4 rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur">طرح {faNumber(index + 1)}</span>
+                      <span className="absolute start-4 top-4 rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur">{tx("طرح {0}", [faNumber(index + 1)])}</span>
                     </div>
                     <div className="flex flex-1 flex-col gap-3 p-5">
                       <div className="flex items-center gap-2">
                         <strong className="text-[17px] text-white">{proposal.title}</strong>
-                        <span className="ms-auto flex -space-x-1.5 space-x-reverse">
+                        <span className="ms-auto flex -space-x-1.5 rtl:space-x-reverse">
                           {[proposal.config.color, proposal.config.accent].map((swatch) => (
                             <span key={swatch} className="size-5 rounded-full ring-2 ring-[#111419]" style={{ backgroundColor: swatch }} />
                           ))}
@@ -273,9 +272,8 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
                       </div>
                       <div className="mt-auto flex gap-2 pt-2">
                         <button type="button" data-guide={index === 0 ? "quick-pick" : undefined} onClick={() => choose(proposal.key, false)} className="flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-white text-[13px] font-extrabold text-[#0b0d12] transition-colors hover:bg-[#d9ecff]">
-                          <Check className="size-4" aria-hidden="true" /> همین را می‌خواهم
-                        </button>
-                        <button type="button" data-guide={index === 0 ? "quick-customize" : undefined} onClick={() => choose(proposal.key, true)} aria-label="شخصی‌سازی در استودیو" title="شخصی‌سازی در استودیو" className="flex size-11 items-center justify-center rounded-2xl bg-white/8 text-white transition-colors hover:bg-white/14">
+                          <Check className="size-4" aria-hidden="true" />{" "}{tx("همین را می‌خواهم")}</button>
+                        <button type="button" data-guide={index === 0 ? "quick-customize" : undefined} onClick={() => choose(proposal.key, true)} aria-label={tx("شخصی‌سازی در استودیو")} title={tx("شخصی‌سازی در استودیو")} className="flex size-11 items-center justify-center rounded-2xl bg-white/8 text-white transition-colors hover:bg-white/14">
                           <Palette className="size-4" aria-hidden="true" />
                         </button>
                       </div>
@@ -284,36 +282,34 @@ export const QuickWizard = ({ kind }: { kind: OrderKind }) => {
                 ))}
               </div>
               <Guide id="quick" steps={quickGuide} />
-              <p className="mt-4 text-center text-[12px] text-[#5d6573]">با دکمه پالت، همان طرح در استودیو باز می‌شود تا هر جزئیاتش را خودتان تنظیم کنید.</p>
+              <p className="mt-4 text-center text-[12px] text-[#5d6573]">{tx("با دکمه پالت، همان طرح در استودیو باز می‌شود تا هر جزئیاتش را خودتان تنظیم کنید.")}</p>
             </motion.div>
           )}
 
           {step === "order" && (
             <motion.div key="order" {...fade} className="mx-auto w-full max-w-[560px]">
               <span className="text-[12px] font-bold text-[#4da3ff]">{proposals.find((item) => item.key === chosen)?.title}</span>
-              <h1 className="mt-1 text-[24px] font-extrabold text-white lg:text-[30px]">چه چیزی برایتان آماده کنیم؟</h1>
-              <p className="mb-6 mt-1 text-[13px] text-[#8a93a0]">همه این مقادیر طبق خواسته شما قابل تغییر است.</p>
+              <h1 className="mt-1 text-[24px] font-extrabold text-white lg:text-[30px]">{tx("چه چیزی برایتان آماده کنیم؟")}</h1>
+              <p className="mb-6 mt-1 text-[13px] text-[#8a93a0]">{tx("همه این مقادیر طبق خواسته شما قابل تغییر است.")}</p>
               <OutcomeStep />
               <button
                 type="button"
                 onClick={() => void startPayment(amountDue(config.plan, estimate(kind, config).min)).then((ok) => ok && setStep("done"))}
                 className="mt-6 flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#4da3ff,#7c6cff)] text-[14px] font-extrabold text-white transition hover:brightness-110"
               >
-                <Check className="size-4" aria-hidden="true" /> پرداخت {formatToman(amountDue(config.plan, estimate(kind, config).min))} و ثبت
-              </button>
+                <Check className="size-4" aria-hidden="true" />{" "}{tx("پرداخت {0} و ثبت", [formatToman(amountDue(config.plan, estimate(kind, config).min))])}</button>
             </motion.div>
           )}
 
           {step === "done" && (
             <motion.div key="done" {...fade} className="mx-auto flex min-h-[60vh] max-w-[480px] flex-col items-center justify-center text-center">
               <KhayyamMark size={80} state="intro" />
-              <h1 className="mt-6 text-[24px] font-extrabold text-white">درخواست شما ثبت شد</h1>
+              <h1 className="mt-6 text-[24px] font-extrabold text-white">{tx("درخواست شما ثبت شد")}</h1>
               <p className="mt-2 text-[14px] leading-7 text-[#a7b0bc]">
-                {config.plan === "consult" ? "کارشناس ما برای جلسه مشاوره با شما تماس می‌گیرد." : "طراحی فیگما شروع شد؛ طرح را برای تأیید برایتان می‌فرستیم و بعد ساخت را آغاز می‌کنیم."}
+                {config.plan === "consult" ? tx("کارشناس ما برای جلسه مشاوره با شما تماس می‌گیرد.") : tx("طراحی فیگما شروع شد؛ طرح را برای تأیید برایتان می‌فرستیم و بعد ساخت را آغاز می‌کنیم.")}
               </p>
               <button type="button" onClick={() => setMode("studio")} className="mt-8 flex h-11 items-center gap-2 rounded-2xl bg-white/8 px-5 text-[13px] font-bold text-white transition-colors hover:bg-white/14">
-                <Palette className="size-4" aria-hidden="true" /> جزئیات بیشتر در استودیو
-              </button>
+                <Palette className="size-4" aria-hidden="true" />{" "}{tx("جزئیات بیشتر در استودیو")}</button>
             </motion.div>
           )}
         </AnimatePresence>

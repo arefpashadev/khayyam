@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
-import { OrderWizard } from "@/components/sections/order-wizard";
+import { StudioEntry } from "@/components/sections/studio-entry";
 
-export const metadata: Metadata = { title: "ثبت سفارش اپلیکیشن | خیام" };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Studio" });
+  return { title: t("app") };
+}
 
-export default function CreateAppPage() {
-  return <OrderWizard kind="app" />;
+export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  return <StudioEntry studio="app" locale={locale} />;
 }

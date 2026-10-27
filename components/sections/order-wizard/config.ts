@@ -1,3 +1,4 @@
+import { tx, numberTag, ld } from "@/lib/tx";
 import {
   Award,
   Bell,
@@ -105,31 +106,31 @@ export type StepKey = "palette" | "radius" | "type" | "backdrop" | "business" | 
 export type StepDef = { key: StepKey; title: string; question: (kind: OrderKind) => string; hint: string; target: PreviewTarget };
 
 export const siteSteps: StepDef[] = [
-  { key: "palette", title: "پالت رنگ", question: () => "پالت رنگی خودتان را بسازید", hint: "رنگ اصلی، رنگ دوم و فضای کلی. هر رنگی بخواهید می‌توانید انتخاب کنید.", target: "hero" },
-  { key: "radius", title: "گوشه‌ها", question: () => "گوشه‌های رابط کاربری چطور باشد؟", hint: "هر کارت یک رابط کامل با همان گوشه‌هاست؛ نتیجه روی کل طرح هم دیده می‌شود.", target: "showcase" },
-  { key: "type", title: "نوشته‌ها", question: () => "نوشته‌ها چه شخصیتی داشته باشند؟", hint: "وزن و اندازه تیترها حس برند را عوض می‌کند.", target: "hero" },
-  { key: "backdrop", title: "پس‌زمینه و حرکت", question: () => "پس‌زمینه و حرکت صفحه چطور باشد؟", hint: "از ساده تا شفق رنگی و درخشش؛ حرکت را هم همین‌جا تعیین کنید.", target: "hero" },
-  { key: "business", title: "کسب‌وکار", question: () => "چه چیزی می‌سازیم و برای چه کسب‌وکاری؟", hint: "نوع پروژه ساختار را تعیین می‌کند؛ حوزه کاری، متن‌ها و تصویرها را.", target: "top" },
-  { key: "design", title: "چیدمان", question: () => "کدام چیدمان را می‌پسندید؟", hint: "حالا همه انتخاب‌هایتان را در چیدمان‌های کامل ببینید.", target: "top" },
-  { key: "sections", title: "بخش‌ها", question: () => "چه بخش‌ها و ماژول‌هایی لازم دارید؟", hint: "هر گزینه را بزنید تا جایش را در پیش‌نمایش ببینید.", target: "features" },
-  { key: "extras", title: "امکانات فنی", question: () => "چه امکانات فنی لازم دارید؟", hint: "بعضی امکانات پشت صحنه کار می‌کنند و در پیش‌نمایش دیده نمی‌شوند؛ کنارشان علامت زده‌ایم.", target: "top" },
-  { key: "references", title: "الهام", question: () => "از کدام سایت‌ها یا اپ‌ها خوشتان می‌آید؟", hint: "لینک چند نمونه را بگذارید تا طراح دقیق‌تر سلیقه‌تان را بشناسد.", target: "top" },
-  { key: "outcome", title: "سفارش", question: () => "از کجا شروع کنیم؟", hint: "طراحی فیگما همیشه جزو پروژه است. با پیش‌پرداخت شروع کنید یا اول مشاوره بگیرید.", target: "top" },
+  { key: "palette", title: tx("پالت رنگ"), question: () => tx("پالت رنگی خودتان را بسازید"), hint: tx("رنگ اصلی، رنگ دوم و فضای کلی. هر رنگی بخواهید می‌توانید انتخاب کنید."), target: "hero" },
+  { key: "radius", title: tx("گوشه‌ها"), question: () => tx("گوشه‌های رابط کاربری چطور باشد؟"), hint: tx("هر کارت یک رابط کامل با همان گوشه‌هاست؛ نتیجه روی کل طرح هم دیده می‌شود."), target: "showcase" },
+  { key: "type", title: tx("نوشته‌ها"), question: () => tx("نوشته‌ها چه شخصیتی داشته باشند؟"), hint: tx("وزن و اندازه تیترها حس برند را عوض می‌کند."), target: "hero" },
+  { key: "backdrop", title: tx("پس‌زمینه و حرکت"), question: () => tx("پس‌زمینه و حرکت صفحه چطور باشد؟"), hint: tx("از ساده تا شفق رنگی و درخشش؛ حرکت را هم همین‌جا تعیین کنید."), target: "hero" },
+  { key: "business", title: tx("کسب‌وکار"), question: () => tx("چه چیزی می‌سازیم و برای چه کسب‌وکاری؟"), hint: tx("نوع پروژه ساختار را تعیین می‌کند؛ حوزه کاری، متن‌ها و تصویرها را."), target: "top" },
+  { key: "design", title: tx("چیدمان"), question: () => tx("کدام چیدمان را می‌پسندید؟"), hint: tx("حالا همه انتخاب‌هایتان را در چیدمان‌های کامل ببینید."), target: "top" },
+  { key: "sections", title: tx("بخش‌ها"), question: () => tx("چه بخش‌ها و ماژول‌هایی لازم دارید؟"), hint: tx("هر گزینه را بزنید تا جایش را در پیش‌نمایش ببینید."), target: "features" },
+  { key: "extras", title: tx("امکانات فنی"), question: () => tx("چه امکانات فنی لازم دارید؟"), hint: tx("بعضی امکانات پشت صحنه کار می‌کنند و در پیش‌نمایش دیده نمی‌شوند؛ کنارشان علامت زده‌ایم."), target: "top" },
+  { key: "references", title: tx("الهام"), question: () => tx("از کدام سایت‌ها یا اپ‌ها خوشتان می‌آید؟"), hint: tx("لینک چند نمونه را بگذارید تا طراح دقیق‌تر سلیقه‌تان را بشناسد."), target: "top" },
+  { key: "outcome", title: tx("سفارش"), question: () => tx("از کجا شروع کنیم؟"), hint: tx("طراحی فیگما همیشه جزو پروژه است. با پیش‌پرداخت شروع کنید یا اول مشاوره بگیرید."), target: "top" },
 ];
 
 /** The app studio has its own path: platform, navigation, screens and the app icon. */
 export const appSteps: StepDef[] = [
-  { key: "platform", title: "پلتفرم", question: () => "اپلیکیشن روی چه دستگاه‌هایی اجرا شود؟", hint: "آیفون، اندروید، هر دو، یا وب‌اپ که بدون نصب از مرورگر باز می‌شود.", target: "top" },
-  { key: "palette", title: "پالت رنگ", question: () => "پالت رنگی اپ را بسازید", hint: "رنگ اصلی، رنگ دوم و فضای کلی؛ هر رنگی بخواهید.", target: "top" },
-  { key: "radius", title: "گوشه‌ها", question: () => "گوشه‌های رابط کاربری چطور باشد؟", hint: "هر کارت یک رابط کامل با همان گوشه‌هاست.", target: "top" },
-  { key: "type", title: "نوشته‌ها", question: () => "نوشته‌ها چه شخصیتی داشته باشند؟", hint: "وزن و اندازه تیترها حس برند را عوض می‌کند.", target: "top" },
-  { key: "business", title: "کسب‌وکار", question: () => "چه اپی می‌سازیم و برای چه کسب‌وکاری؟", hint: "نوع اپ صفحه‌ها را تعیین می‌کند؛ حوزه کاری، متن‌ها و تصویرها را.", target: "top" },
-  { key: "navigation", title: "ناوبری", question: () => "کاربر چطور بین صفحه‌ها جابه‌جا شود؟", hint: "روی گوشی پیش‌نمایش بزنید و جابه‌جا شوید؛ کاملاً کار می‌کند.", target: "top" },
-  { key: "screens", title: "صفحه‌ها", question: () => "اپ چه صفحه‌هایی داشته باشد؟", hint: "هر صفحه را روشن کنید تا به اپ اضافه شود؛ روی هر کدام بزنید تا همان را ببینید.", target: "top" },
-  { key: "features", title: "قابلیت‌ها", question: () => "چه قابلیت‌هایی برای کاربرانتان فعال شود؟", hint: "هر قابلیت را روشن کنید؛ همان لحظه روی گوشی اجرا می‌شود.", target: "top" },
-  { key: "icon", title: "آیکون", question: () => "آیکون اپ روی صفحه گوشی چطور باشد؟", hint: "روی آیکون در صفحه گوشی بزنید تا اپ مثل واقعی باز شود.", target: "top" },
-  { key: "extras", title: "امکانات", question: () => "چه امکانات فنی لازم دارید؟", hint: "بعضی امکانات پشت صحنه کار می‌کنند و در پیش‌نمایش دیده نمی‌شوند.", target: "top" },
-  { key: "outcome", title: "سفارش", question: () => "از کجا شروع کنیم؟", hint: "طراحی فیگما همیشه جزو پروژه است. با پیش‌پرداخت شروع کنید یا اول مشاوره بگیرید.", target: "top" },
+  { key: "platform", title: tx("پلتفرم"), question: () => tx("اپلیکیشن روی چه دستگاه‌هایی اجرا شود؟"), hint: tx("آیفون، اندروید، هر دو، یا وب‌اپ که بدون نصب از مرورگر باز می‌شود."), target: "top" },
+  { key: "palette", title: tx("پالت رنگ"), question: () => tx("پالت رنگی اپ را بسازید"), hint: tx("رنگ اصلی، رنگ دوم و فضای کلی؛ هر رنگی بخواهید."), target: "top" },
+  { key: "radius", title: tx("گوشه‌ها"), question: () => tx("گوشه‌های رابط کاربری چطور باشد؟"), hint: tx("هر کارت یک رابط کامل با همان گوشه‌هاست."), target: "top" },
+  { key: "type", title: tx("نوشته‌ها"), question: () => tx("نوشته‌ها چه شخصیتی داشته باشند؟"), hint: tx("وزن و اندازه تیترها حس برند را عوض می‌کند."), target: "top" },
+  { key: "business", title: tx("کسب‌وکار"), question: () => tx("چه اپی می‌سازیم و برای چه کسب‌وکاری؟"), hint: tx("نوع اپ صفحه‌ها را تعیین می‌کند؛ حوزه کاری، متن‌ها و تصویرها را."), target: "top" },
+  { key: "navigation", title: tx("ناوبری"), question: () => tx("کاربر چطور بین صفحه‌ها جابه‌جا شود؟"), hint: tx("روی گوشی پیش‌نمایش بزنید و جابه‌جا شوید؛ کاملاً کار می‌کند."), target: "top" },
+  { key: "screens", title: tx("صفحه‌ها"), question: () => tx("اپ چه صفحه‌هایی داشته باشد؟"), hint: tx("هر صفحه را روشن کنید تا به اپ اضافه شود؛ روی هر کدام بزنید تا همان را ببینید."), target: "top" },
+  { key: "features", title: tx("قابلیت‌ها"), question: () => tx("چه قابلیت‌هایی برای کاربرانتان فعال شود؟"), hint: tx("هر قابلیت را روشن کنید؛ همان لحظه روی گوشی اجرا می‌شود."), target: "top" },
+  { key: "icon", title: tx("آیکون"), question: () => tx("آیکون اپ روی صفحه گوشی چطور باشد؟"), hint: tx("روی آیکون در صفحه گوشی بزنید تا اپ مثل واقعی باز شود."), target: "top" },
+  { key: "extras", title: tx("امکانات"), question: () => tx("چه امکانات فنی لازم دارید؟"), hint: tx("بعضی امکانات پشت صحنه کار می‌کنند و در پیش‌نمایش دیده نمی‌شوند."), target: "top" },
+  { key: "outcome", title: tx("سفارش"), question: () => tx("از کجا شروع کنیم؟"), hint: tx("طراحی فیگما همیشه جزو پروژه است. با پیش‌پرداخت شروع کنید یا اول مشاوره بگیرید."), target: "top" },
 ];
 
 export const getSteps = (kind: OrderKind) => (kind === "app" ? appSteps : siteSteps);
@@ -151,93 +152,93 @@ export type IndustryContent = {
 
 export const industries: Record<IndustryKey, IndustryContent> = {
   shop: {
-    label: "فروشگاه",
+    label: tx("فروشگاه"),
     icon: ShoppingBag,
-    headline: "خرید آسان، تحویل همان روز",
-    sub: "محصولات منتخب با ضمانت اصالت و ارسال به سراسر کشور",
-    cta: "مشاهده محصولات",
-    badge: "تخفیف فصل تا ۳۰٪",
-    stats: [["۲۰هزار+", "مشتری راضی"], ["۲۴ ساعته", "ارسال سریع"], ["۷ روز", "ضمانت بازگشت"]],
+    headline: tx("خرید آسان، تحویل همان روز"),
+    sub: tx("محصولات منتخب با ضمانت اصالت و ارسال به سراسر کشور"),
+    cta: tx("مشاهده محصولات"),
+    badge: tx("تخفیف فصل تا ۳۰٪"),
+    stats: [[tx("۲۰هزار+"), tx("مشتری راضی")], [tx("۲۴ ساعته"), tx("ارسال سریع")], [tx("۷ روز"), tx("ضمانت بازگشت")]],
     features: [
-      { label: "ارسال رایگان", icon: Truck },
-      { label: "ضمانت بازگشت", icon: ShieldCheck },
-      { label: "پرداخت امن", icon: Lock },
-      { label: "پشتیبانی همیشگی", icon: Headset },
+      { label: tx("ارسال رایگان"), icon: Truck },
+      { label: tx("ضمانت بازگشت"), icon: ShieldCheck },
+      { label: tx("پرداخت امن"), icon: Lock },
+      { label: tx("پشتیبانی همیشگی"), icon: Headset },
     ],
   },
   company: {
-    label: "شرکتی",
+    label: tx("شرکتی"),
     icon: Building2,
-    headline: "راهکارهایی که کسب‌وکار شما را جلو می‌برد",
-    sub: "از مشاوره تا اجرا، کنار تیم شما هستیم",
-    cta: "درخواست مشاوره",
-    badge: "بیش از ۱۲۰ پروژه موفق",
-    stats: [["۱۲۰+", "پروژه موفق"], ["۹۸٪", "رضایت مشتری"], ["۱۵ سال", "تجربه"]],
+    headline: tx("راهکارهایی که کسب‌وکار شما را جلو می‌برد"),
+    sub: tx("از مشاوره تا اجرا، کنار تیم شما هستیم"),
+    cta: tx("درخواست مشاوره"),
+    badge: tx("بیش از ۱۲۰ پروژه موفق"),
+    stats: [[ld("۱۲۰+"), tx("پروژه موفق")], [ld("۹۸٪"), tx("رضایت مشتری")], [tx("۱۵ سال"), tx("تجربه")]],
     features: [
-      { label: "مشاوره تخصصی", icon: Lightbulb },
-      { label: "اجرای پروژه", icon: Rocket },
-      { label: "پشتیبانی فنی", icon: Briefcase },
-      { label: "گزارش ماهانه", icon: ChartColumn },
+      { label: tx("مشاوره تخصصی"), icon: Lightbulb },
+      { label: tx("اجرای پروژه"), icon: Rocket },
+      { label: tx("پشتیبانی فنی"), icon: Briefcase },
+      { label: tx("گزارش ماهانه"), icon: ChartColumn },
     ],
   },
   restaurant: {
-    label: "رستوران و کافه",
+    label: tx("رستوران و کافه"),
     icon: UtensilsCrossed,
-    headline: "طعمی که دوباره برمی‌گردید",
-    sub: "منوی فصلی، رزرو آنلاین میز و سفارش بیرون‌بر",
-    cta: "رزرو میز",
-    badge: "منوی پاییزی رسید",
-    stats: [["۴۰+", "غذای منو"], ["۱۲", "سرآشپز"], ["۴٫۹", "امتیاز مهمانان"]],
+    headline: tx("طعمی که دوباره برمی‌گردید"),
+    sub: tx("منوی فصلی، رزرو آنلاین میز و سفارش بیرون‌بر"),
+    cta: tx("رزرو میز"),
+    badge: tx("منوی پاییزی رسید"),
+    stats: [[ld("۴۰+"), tx("غذای منو")], [ld("۱۲"), tx("سرآشپز")], [ld("۴٫۹"), tx("امتیاز مهمانان")]],
     features: [
-      { label: "منوی روز", icon: ChefHat },
-      { label: "رزرو آنلاین", icon: CalendarCheck },
-      { label: "بیرون‌بر", icon: Bike },
-      { label: "جشن و مراسم", icon: PartyPopper },
+      { label: tx("منوی روز"), icon: ChefHat },
+      { label: tx("رزرو آنلاین"), icon: CalendarCheck },
+      { label: tx("بیرون‌بر"), icon: Bike },
+      { label: tx("جشن و مراسم"), icon: PartyPopper },
     ],
   },
   education: {
-    label: "آموزشی",
+    label: tx("آموزشی"),
     icon: GraduationCap,
-    headline: "یادگیری در هر زمان و هر مکان",
-    sub: "دوره‌های کاربردی با استادهای باتجربه و مدرک معتبر",
-    cta: "شروع یادگیری",
-    badge: "ثبت‌نام ترم جدید باز است",
-    stats: [["۸۵", "دوره فعال"], ["۳۰هزار", "دانشجو"], ["۹۲٪", "رضایت"]],
+    headline: tx("یادگیری در هر زمان و هر مکان"),
+    sub: tx("دوره‌های کاربردی با استادهای باتجربه و مدرک معتبر"),
+    cta: tx("شروع یادگیری"),
+    badge: tx("ثبت‌نام ترم جدید باز است"),
+    stats: [[ld("۸۵"), tx("دوره فعال")], [tx("۳۰هزار"), tx("دانشجو")], [ld("۹۲٪"), tx("رضایت")]],
     features: [
-      { label: "دوره ویدیویی", icon: CirclePlay },
-      { label: "کلاس زنده", icon: Video },
-      { label: "آزمون آنلاین", icon: ClipboardCheck },
-      { label: "مدرک پایان دوره", icon: Award },
+      { label: tx("دوره ویدیویی"), icon: CirclePlay },
+      { label: tx("کلاس زنده"), icon: Video },
+      { label: tx("آزمون آنلاین"), icon: ClipboardCheck },
+      { label: tx("مدرک پایان دوره"), icon: Award },
     ],
   },
   health: {
-    label: "سلامت و درمان",
+    label: tx("سلامت و درمان"),
     icon: Stethoscope,
-    headline: "مراقبت از شما، بدون صف و انتظار",
-    sub: "نوبت‌دهی آنلاین و مشاوره با پزشکان متخصص",
-    cta: "رزرو نوبت",
-    badge: "مشاوره تصویری فعال شد",
-    stats: [["۶۰+", "پزشک متخصص"], ["۲۴/۷", "پاسخگویی"], ["۱۰۰هزار", "نوبت موفق"]],
+    headline: tx("مراقبت از شما، بدون صف و انتظار"),
+    sub: tx("نوبت‌دهی آنلاین و مشاوره با پزشکان متخصص"),
+    cta: tx("رزرو نوبت"),
+    badge: tx("مشاوره تصویری فعال شد"),
+    stats: [[ld("۶۰+"), tx("پزشک متخصص")], [ld("۲۴/۷"), tx("پاسخگویی")], [tx("۱۰۰هزار"), tx("نوبت موفق")]],
     features: [
-      { label: "نوبت آنلاین", icon: CalendarCheck },
-      { label: "مشاوره تصویری", icon: Video },
-      { label: "پرونده سلامت", icon: HeartPulse },
-      { label: "یادآور دارو", icon: Pill },
+      { label: tx("نوبت آنلاین"), icon: CalendarCheck },
+      { label: tx("مشاوره تصویری"), icon: Video },
+      { label: tx("پرونده سلامت"), icon: HeartPulse },
+      { label: tx("یادآور دارو"), icon: Pill },
     ],
   },
   personal: {
-    label: "شخصی و پورتفولیو",
+    label: tx("شخصی و پورتفولیو"),
     icon: UserRound,
-    headline: "ایده‌ها را به محصول تبدیل می‌کنم",
-    sub: "طراح و توسعه‌دهنده محصولات دیجیتال",
-    cta: "دیدن نمونه‌کارها",
-    badge: "پذیرش پروژه جدید",
-    stats: [["۷ سال", "تجربه"], ["۵۰+", "پروژه"], ["۲۵", "مشتری"]],
+    headline: tx("ایده‌ها را به محصول تبدیل می‌کنم"),
+    sub: tx("طراح و توسعه‌دهنده محصولات دیجیتال"),
+    cta: tx("دیدن نمونه‌کارها"),
+    badge: tx("پذیرش پروژه جدید"),
+    stats: [[tx("۷ سال"), tx("تجربه")], [ld("۵۰+"), tx("پروژه")], [ld("۲۵"), tx("مشتری")]],
     features: [
-      { label: "نمونه‌کارها", icon: Images },
-      { label: "خدمات", icon: Briefcase },
-      { label: "رزومه", icon: FileText },
-      { label: "تماس", icon: Mail },
+      { label: tx("نمونه‌کارها"), icon: Images },
+      { label: tx("خدمات"), icon: Briefcase },
+      { label: tx("رزومه"), icon: FileText },
+      { label: tx("تماس"), icon: Mail },
     ],
   },
 };
@@ -247,62 +248,62 @@ export const industries: Record<IndustryKey, IndustryContent> = {
 /* ------------------------------------------------------------------ */
 
 export const colors = [
-  { value: "#078ef0", label: "آبی" },
-  { value: "#4f46e5", label: "نیلی" },
-  { value: "#7c3aed", label: "بنفش" },
-  { value: "#e5486f", label: "سرخابی" },
-  { value: "#ef7d3c", label: "نارنجی" },
-  { value: "#b08a3e", label: "طلایی" },
-  { value: "#16a37a", label: "سبز" },
-  { value: "#0f172a", label: "سرمه‌ای" },
+  { value: "#078ef0", label: tx("آبی") },
+  { value: "#4f46e5", label: tx("نیلی") },
+  { value: "#7c3aed", label: tx("بنفش") },
+  { value: "#e5486f", label: tx("سرخابی") },
+  { value: "#ef7d3c", label: tx("نارنجی") },
+  { value: "#b08a3e", label: tx("طلایی") },
+  { value: "#16a37a", label: tx("سبز") },
+  { value: "#0f172a", label: tx("سرمه‌ای") },
 ];
 
 export const themes: { value: ThemeKey; label: string }[] = [
-  { value: "light", label: "روشن" },
-  { value: "tinted", label: "رنگی" },
-  { value: "dark", label: "تیره" },
-  { value: "midnight", label: "نیمه‌شب" },
+  { value: "light", label: tx("روشن") },
+  { value: "tinted", label: tx("رنگی") },
+  { value: "dark", label: tx("تیره") },
+  { value: "midnight", label: tx("نیمه‌شب") },
 ];
 
 export const radii: { value: RadiusKey; label: string; description: string }[] = [
-  { value: "sharp", label: "تیز", description: "رسمی و دقیق" },
-  { value: "soft", label: "نرم", description: "متعادل و آشنا" },
-  { value: "round", label: "گرد", description: "صمیمی و مدرن" },
-  { value: "pill", label: "کپسولی", description: "بازیگوش و نرم" },
+  { value: "sharp", label: tx("تیز"), description: tx("رسمی و دقیق") },
+  { value: "soft", label: tx("نرم"), description: tx("متعادل و آشنا") },
+  { value: "round", label: tx("گرد"), description: tx("صمیمی و مدرن") },
+  { value: "pill", label: tx("کپسولی"), description: tx("بازیگوش و نرم") },
 ];
 
 export const typeStyles: { value: TypeKey; label: string; sample: string }[] = [
-  { value: "light", label: "ظریف", sample: "سبک و باوقار" },
-  { value: "balanced", label: "متعادل", sample: "خوانا و آشنا" },
-  { value: "heavy", label: "درشت و پررنگ", sample: "جسور و دیده‌شدنی" },
+  { value: "light", label: tx("ظریف"), sample: tx("سبک و باوقار") },
+  { value: "balanced", label: tx("متعادل"), sample: tx("خوانا و آشنا") },
+  { value: "heavy", label: tx("درشت و پررنگ"), sample: tx("جسور و دیده‌شدنی") },
 ];
 
 export const backdrops: { value: BackdropKey; label: string }[] = [
-  { value: "plain", label: "ساده" },
-  { value: "aurora", label: "شفق رنگی" },
-  { value: "glow", label: "درخشش" },
-  { value: "grid", label: "خطوط شبکه" },
-  { value: "dots", label: "نقطه‌ها" },
+  { value: "plain", label: tx("ساده") },
+  { value: "aurora", label: tx("شفق رنگی") },
+  { value: "glow", label: tx("درخشش") },
+  { value: "grid", label: tx("خطوط شبکه") },
+  { value: "dots", label: tx("نقطه‌ها") },
 ];
 
 export const siteSections: { value: string; label: string; icon: LucideIcon }[] = [
-  { value: "features", label: "خدمات و ویژگی‌ها", icon: Lightbulb },
-  { value: "gallery", label: "گالری و نمونه‌کار", icon: Images },
-  { value: "testimonials", label: "نظر مشتریان", icon: MessageSquareQuote },
-  { value: "pricing", label: "تعرفه‌ها", icon: CreditCard },
-  { value: "faq", label: "سوالات متداول", icon: CircleHelp },
-  { value: "blog", label: "وبلاگ", icon: Newspaper },
-  { value: "contact", label: "فرم تماس", icon: Mail },
+  { value: "features", label: tx("خدمات و ویژگی‌ها"), icon: Lightbulb },
+  { value: "gallery", label: tx("گالری و نمونه‌کار"), icon: Images },
+  { value: "testimonials", label: tx("نظر مشتریان"), icon: MessageSquareQuote },
+  { value: "pricing", label: tx("تعرفه‌ها"), icon: CreditCard },
+  { value: "faq", label: tx("سوالات متداول"), icon: CircleHelp },
+  { value: "blog", label: tx("وبلاگ"), icon: Newspaper },
+  { value: "contact", label: tx("فرم تماس"), icon: Mail },
 ];
 
 export const appFeatures: { value: string; label: string; icon: LucideIcon }[] = [
-  { value: "search", label: "جستجو", icon: Search },
-  { value: "cart", label: "سبد خرید", icon: ShoppingCart },
-  { value: "booking", label: "رزرو و نوبت", icon: CalendarCheck },
-  { value: "chat", label: "گفتگو", icon: MessageCircle },
-  { value: "notifications", label: "اعلان‌ها", icon: Bell },
-  { value: "wallet", label: "کیف پول", icon: Wallet },
-  { value: "map", label: "نقشه و آدرس", icon: MapPin },
+  { value: "search", label: tx("جستجو"), icon: Search },
+  { value: "cart", label: tx("سبد خرید"), icon: ShoppingCart },
+  { value: "booking", label: tx("رزرو و نوبت"), icon: CalendarCheck },
+  { value: "chat", label: tx("گفتگو"), icon: MessageCircle },
+  { value: "notifications", label: tx("اعلان‌ها"), icon: Bell },
+  { value: "wallet", label: tx("کیف پول"), icon: Wallet },
+  { value: "map", label: tx("نقشه و آدرس"), icon: MapPin },
 ];
 
 export const getDefaultConfig = (kind: OrderKind): WizardConfig => ({
@@ -403,44 +404,44 @@ export const buildPreviewVars = (config: Pick<WizardConfig, "color" | "accent" |
   } as CSSProperties;
 };
 
-export const faNumber = (value: number) => new Intl.NumberFormat("fa-IR").format(value);
+export const faNumber = (value: number) => new Intl.NumberFormat(numberTag()).format(value);
 
 /* ------------------------------------------------------------------ */
 /* Technical extras                                                    */
 /* ------------------------------------------------------------------ */
 
 export const motionLevels: { value: MotionKey; label: string; description: string }[] = [
-  { value: "none", label: "بدون حرکت", description: "ساکن و سریع" },
-  { value: "subtle", label: "نرم", description: "ظاهر شدن آرام" },
-  { value: "snappy", label: "سریع و دقیق", description: "پرشی و چابک" },
-  { value: "lively", label: "پرجنب‌وجوش", description: "شناور و زنده" },
+  { value: "none", label: tx("بدون حرکت"), description: tx("ساکن و سریع") },
+  { value: "subtle", label: tx("نرم"), description: tx("ظاهر شدن آرام") },
+  { value: "snappy", label: tx("سریع و دقیق"), description: tx("پرشی و چابک") },
+  { value: "lively", label: tx("پرجنب‌وجوش"), description: tx("شناور و زنده") },
 ];
 
 /** `visible` extras show up in the preview; the rest work behind the scenes. */
 export const siteExtras: { value: string; label: string; description: string; icon: LucideIcon; visible: boolean; ai?: boolean }[] = [
-  { value: "seo", label: "سئو", description: "دیده شدن در نتایج گوگل", icon: Search, visible: false },
-  { value: "admin", label: "پنل مدیریت", description: "ویرایش محتوا بدون برنامه‌نویس", icon: Briefcase, visible: false },
-  { value: "multilang", label: "چندزبانه", description: "نسخه انگلیسی و عربی", icon: Newspaper, visible: true },
-  { value: "chat", label: "چت آنلاین", description: "گفتگو با بازدیدکننده‌ها", icon: MessageCircle, visible: true },
-  { value: "darkmode", label: "حالت شب", description: "دکمه تغییر روشن و تیره", icon: Lightbulb, visible: true },
-  { value: "payment", label: "پرداخت آنلاین", description: "درگاه بانکی امن", icon: CreditCard, visible: false },
-  { value: "analytics", label: "آمار بازدید", description: "گزارش رفتار کاربران", icon: ChartColumn, visible: false },
-  { value: "announce", label: "نوار اطلاع‌رسانی", description: "پیام کوتاه بالای همه صفحه‌ها", icon: Bell, visible: true },
-  { value: "popup", label: "پاپ‌آپ پیشنهاد ویژه", description: "تخفیف یا عضویت در خبرنامه", icon: PartyPopper, visible: true },
-  { value: "floatcall", label: "دکمه شناور تماس", description: "تماس و واتس‌اپ با یک لمس", icon: Headset, visible: true },
-  { value: "aiChat", label: "دستیار هوشمند سایت", description: "به سوال مشتری‌ها ۲۴ ساعته جواب می‌دهد", icon: MessageCircle, visible: true, ai: true },
-  { value: "aiSearch", label: "جستجوی هوشمند", description: "با زبان عادی بپرسند، دقیق پیدا کنند", icon: Search, visible: true, ai: true },
-  { value: "aiRecommend", label: "پیشنهاد هوشمند", description: "محصول و خدمت مناسب هر بازدیدکننده", icon: Lightbulb, visible: true, ai: true },
-  { value: "aiContent", label: "تولید محتوا در پنل", description: "نوشتن متن، توضیح محصول و مقاله با هوش مصنوعی", icon: FileText, visible: false, ai: true },
+  { value: "seo", label: tx("سئو"), description: tx("دیده شدن در نتایج گوگل"), icon: Search, visible: false },
+  { value: "admin", label: tx("پنل مدیریت"), description: tx("ویرایش محتوا بدون برنامه‌نویس"), icon: Briefcase, visible: false },
+  { value: "multilang", label: tx("چندزبانه"), description: tx("نسخه انگلیسی و عربی"), icon: Newspaper, visible: true },
+  { value: "chat", label: tx("چت آنلاین"), description: tx("گفتگو با بازدیدکننده‌ها"), icon: MessageCircle, visible: true },
+  { value: "darkmode", label: tx("حالت شب"), description: tx("دکمه تغییر روشن و تیره"), icon: Lightbulb, visible: true },
+  { value: "payment", label: tx("پرداخت آنلاین"), description: tx("درگاه بانکی امن"), icon: CreditCard, visible: false },
+  { value: "analytics", label: tx("آمار بازدید"), description: tx("گزارش رفتار کاربران"), icon: ChartColumn, visible: false },
+  { value: "announce", label: tx("نوار اطلاع‌رسانی"), description: tx("پیام کوتاه بالای همه صفحه‌ها"), icon: Bell, visible: true },
+  { value: "popup", label: tx("پاپ‌آپ پیشنهاد ویژه"), description: tx("تخفیف یا عضویت در خبرنامه"), icon: PartyPopper, visible: true },
+  { value: "floatcall", label: tx("دکمه شناور تماس"), description: tx("تماس و واتس‌اپ با یک لمس"), icon: Headset, visible: true },
+  { value: "aiChat", label: tx("دستیار هوشمند سایت"), description: tx("به سوال مشتری‌ها ۲۴ ساعته جواب می‌دهد"), icon: MessageCircle, visible: true, ai: true },
+  { value: "aiSearch", label: tx("جستجوی هوشمند"), description: tx("با زبان عادی بپرسند، دقیق پیدا کنند"), icon: Search, visible: true, ai: true },
+  { value: "aiRecommend", label: tx("پیشنهاد هوشمند"), description: tx("محصول و خدمت مناسب هر بازدیدکننده"), icon: Lightbulb, visible: true, ai: true },
+  { value: "aiContent", label: tx("تولید محتوا در پنل"), description: tx("نوشتن متن، توضیح محصول و مقاله با هوش مصنوعی"), icon: FileText, visible: false, ai: true },
 ];
 
 export const appExtras: { value: string; label: string; description: string; icon: LucideIcon; visible: boolean }[] = [
-  { value: "otp", label: "ورود با شماره", description: "کد یک‌بارمصرف پیامکی", icon: Lock, visible: false },
-  { value: "push", label: "نوتیفیکیشن", description: "پیام روی صفحه گوشی", icon: Bell, visible: true },
-  { value: "payment", label: "پرداخت درون‌برنامه", description: "درگاه بانکی امن", icon: CreditCard, visible: false },
-  { value: "offline", label: "حالت آفلاین", description: "کار بدون اینترنت", icon: ShieldCheck, visible: false },
-  { value: "multilang", label: "چندزبانه", description: "نسخه انگلیسی و عربی", icon: Newspaper, visible: false },
-  { value: "admin", label: "پنل مدیریت", description: "مدیریت کاربران و محتوا", icon: Briefcase, visible: false },
+  { value: "otp", label: tx("ورود با شماره"), description: tx("کد یک‌بارمصرف پیامکی"), icon: Lock, visible: false },
+  { value: "push", label: tx("نوتیفیکیشن"), description: tx("پیام روی صفحه گوشی"), icon: Bell, visible: true },
+  { value: "payment", label: tx("پرداخت درون‌برنامه"), description: tx("درگاه بانکی امن"), icon: CreditCard, visible: false },
+  { value: "offline", label: tx("حالت آفلاین"), description: tx("کار بدون اینترنت"), icon: ShieldCheck, visible: false },
+  { value: "multilang", label: tx("چندزبانه"), description: tx("نسخه انگلیسی و عربی"), icon: Newspaper, visible: false },
+  { value: "admin", label: tx("پنل مدیریت"), description: tx("مدیریت کاربران و محتوا"), icon: Briefcase, visible: false },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -472,10 +473,10 @@ export const suggestAccents = (primary: string) => {
   const sat = Math.max(saturation, 0.55);
   const light = Math.min(Math.max(lightness, 0.45), 0.6);
   return [
-    { value: fromHsl((hue + 40) % 360, sat, light), label: "هم‌خانواده" },
-    { value: fromHsl((hue + 120) % 360, sat, light), label: "سه‌گانه" },
-    { value: fromHsl((hue + 180) % 360, sat, light), label: "مکمل" },
-    { value: fromHsl((hue + 320) % 360, sat, light), label: "گرم" },
+    { value: fromHsl((hue + 40) % 360, sat, light), label: tx("هم‌خانواده") },
+    { value: fromHsl((hue + 120) % 360, sat, light), label: tx("سه‌گانه") },
+    { value: fromHsl((hue + 180) % 360, sat, light), label: tx("مکمل") },
+    { value: fromHsl((hue + 320) % 360, sat, light), label: tx("گرم") },
   ];
 };
 
@@ -486,34 +487,34 @@ export const isDark = (theme: ThemeKey) => theme === "dark" || theme === "midnig
 /* ------------------------------------------------------------------ */
 
 export const projectTypes: { value: ProjectType; label: string; description: string; icon: LucideIcon; forApp: boolean }[] = [
-  { value: "site", label: "سایت معرفی", description: "معرفی کسب‌وکار و خدمات", icon: Building2, forApp: false },
-  { value: "landing", label: "صفحه کمپین", description: "یک صفحه برای فروش یا ثبت‌نام", icon: Rocket, forApp: false },
-  { value: "store", label: "فروشگاه آنلاین", description: "محصول، سبد خرید، پرداخت", icon: ShoppingBag, forApp: true },
-  { value: "booking", label: "رزرو و نوبت‌دهی", description: "تقویم، زمان خالی، یادآور", icon: CalendarCheck, forApp: true },
-  { value: "community", label: "پلتفرم جامعه", description: "پروفایل، پست، گفتگو، گروه", icon: MessageCircle, forApp: true },
-  { value: "dashboard", label: "پنل و اتوماسیون داخلی", description: "گزارش، فرم، گردش کار، نقش‌ها", icon: ChartColumn, forApp: true },
+  { value: "site", label: tx("سایت معرفی"), description: tx("معرفی کسب‌وکار و خدمات"), icon: Building2, forApp: false },
+  { value: "landing", label: tx("صفحه کمپین"), description: tx("یک صفحه برای فروش یا ثبت‌نام"), icon: Rocket, forApp: false },
+  { value: "store", label: tx("فروشگاه آنلاین"), description: tx("محصول، سبد خرید، پرداخت"), icon: ShoppingBag, forApp: true },
+  { value: "booking", label: tx("رزرو و نوبت‌دهی"), description: tx("تقویم، زمان خالی، یادآور"), icon: CalendarCheck, forApp: true },
+  { value: "community", label: tx("پلتفرم جامعه"), description: tx("پروفایل، پست، گفتگو، گروه"), icon: MessageCircle, forApp: true },
+  { value: "dashboard", label: tx("پنل و اتوماسیون داخلی"), description: tx("گزارش، فرم، گردش کار، نقش‌ها"), icon: ChartColumn, forApp: true },
 ];
 
 /** Modules offered in the sections step, per project type (site/landing/store/booking reuse page sections). */
 export const dashboardModules: { value: string; label: string; icon: LucideIcon }[] = [
-  { value: "reports", label: "گزارش و نمودار", icon: ChartColumn },
-  { value: "users", label: "کاربران و نقش‌ها", icon: UserRound },
-  { value: "forms", label: "فرم‌ساز", icon: ClipboardCheck },
-  { value: "workflow", label: "گردش کار و تأیید", icon: Rocket },
-  { value: "tickets", label: "تیکت و پشتیبانی", icon: Headset },
-  { value: "inventory", label: "انبار و موجودی", icon: Briefcase },
-  { value: "crm", label: "مدیریت مشتری", icon: Award },
-  { value: "invoices", label: "فاکتور و مالی", icon: FileText },
+  { value: "reports", label: tx("گزارش و نمودار"), icon: ChartColumn },
+  { value: "users", label: tx("کاربران و نقش‌ها"), icon: UserRound },
+  { value: "forms", label: tx("فرم‌ساز"), icon: ClipboardCheck },
+  { value: "workflow", label: tx("گردش کار و تأیید"), icon: Rocket },
+  { value: "tickets", label: tx("تیکت و پشتیبانی"), icon: Headset },
+  { value: "inventory", label: tx("انبار و موجودی"), icon: Briefcase },
+  { value: "crm", label: tx("مدیریت مشتری"), icon: Award },
+  { value: "invoices", label: tx("فاکتور و مالی"), icon: FileText },
 ];
 
 export const communityModules: { value: string; label: string; icon: LucideIcon }[] = [
-  { value: "feed", label: "فید و پست", icon: Newspaper },
-  { value: "profiles", label: "پروفایل اعضا", icon: UserRound },
-  { value: "groups", label: "گروه‌ها", icon: PartyPopper },
-  { value: "messages", label: "گفتگوی خصوصی", icon: MessageCircle },
-  { value: "events", label: "رویدادها", icon: CalendarCheck },
-  { value: "badges", label: "امتیاز و نشان", icon: Award },
-  { value: "moderation", label: "مدیریت محتوا", icon: ShieldCheck },
+  { value: "feed", label: tx("فید و پست"), icon: Newspaper },
+  { value: "profiles", label: tx("پروفایل اعضا"), icon: UserRound },
+  { value: "groups", label: tx("گروه‌ها"), icon: PartyPopper },
+  { value: "messages", label: tx("گفتگوی خصوصی"), icon: MessageCircle },
+  { value: "events", label: tx("رویدادها"), icon: CalendarCheck },
+  { value: "badges", label: tx("امتیاز و نشان"), icon: Award },
+  { value: "moderation", label: tx("مدیریت محتوا"), icon: ShieldCheck },
 ];
 
 export const defaultSections = (kind: OrderKind, type: ProjectType): string[] => {
@@ -559,28 +560,28 @@ export const estimate = (kind: OrderKind, config: WizardConfig) => {
 /* ------------------------------------------------------------------ */
 
 export const platforms: { value: Platform; label: string; description: string }[] = [
-  { value: "ios", label: "آیفون", description: "App Store" },
-  { value: "android", label: "اندروید", description: "Google Play، کافه‌بازار، مایکت" },
-  { value: "both", label: "هر دو", description: "یک کد، دو فروشگاه" },
-  { value: "pwa", label: "وب‌اپ", description: "بدون نصب، از مرورگر" },
+  { value: "ios", label: tx("آیفون"), description: "App Store" },
+  { value: "android", label: tx("اندروید"), description: tx("Google Play، کافه‌بازار، مایکت") },
+  { value: "both", label: tx("هر دو"), description: tx("یک کد، دو فروشگاه") },
+  { value: "pwa", label: tx("وب‌اپ"), description: tx("بدون نصب، از مرورگر") },
 ];
 
 export const appNavs: { value: AppNav; label: string; description: string }[] = [
-  { value: "tabs", label: "نوار پایین", description: "رایج و آشنا" },
-  { value: "floating", label: "نوار شناور", description: "مدرن و سبک" },
-  { value: "drawer", label: "منوی کشویی", description: "برای صفحه‌های زیاد" },
-  { value: "top", label: "تب بالا", description: "برای محتوای دسته‌بندی‌شده" },
+  { value: "tabs", label: tx("نوار پایین"), description: tx("رایج و آشنا") },
+  { value: "floating", label: tx("نوار شناور"), description: tx("مدرن و سبک") },
+  { value: "drawer", label: tx("منوی کشویی"), description: tx("برای صفحه‌های زیاد") },
+  { value: "top", label: tx("تب بالا"), description: tx("برای محتوای دسته‌بندی‌شده") },
 ];
 
 export const appScreens: { value: string; label: string; icon: LucideIcon }[] = [
-  { value: "home", label: "خانه", icon: Lightbulb },
-  { value: "catalog", label: "فهرست و جستجو", icon: Search },
-  { value: "detail", label: "صفحه جزئیات", icon: FileText },
-  { value: "cart", label: "سبد و پرداخت", icon: ShoppingCart },
-  { value: "booking", label: "رزرو و نوبت", icon: CalendarCheck },
-  { value: "chat", label: "گفتگو", icon: MessageCircle },
-  { value: "notifications", label: "اعلان‌ها", icon: Bell },
-  { value: "profile", label: "پروفایل", icon: UserRound },
+  { value: "home", label: tx("خانه"), icon: Lightbulb },
+  { value: "catalog", label: tx("فهرست و جستجو"), icon: Search },
+  { value: "detail", label: tx("صفحه جزئیات"), icon: FileText },
+  { value: "cart", label: tx("سبد و پرداخت"), icon: ShoppingCart },
+  { value: "booking", label: tx("رزرو و نوبت"), icon: CalendarCheck },
+  { value: "chat", label: tx("گفتگو"), icon: MessageCircle },
+  { value: "notifications", label: tx("اعلان‌ها"), icon: Bell },
+  { value: "profile", label: tx("پروفایل"), icon: UserRound },
 ];
 
 export function defaultScreens(type: ProjectType): string[] {
@@ -591,24 +592,24 @@ export function defaultScreens(type: ProjectType): string[] {
 }
 
 export const iconStyles: { value: IconStyle; label: string }[] = [
-  { value: "gradient", label: "گرادیان" },
-  { value: "solid", label: "تک‌رنگ" },
-  { value: "glyph", label: "روشن" },
-  { value: "duo", label: "دو رنگ" },
+  { value: "gradient", label: tx("گرادیان") },
+  { value: "solid", label: tx("تک‌رنگ") },
+  { value: "glyph", label: tx("روشن") },
+  { value: "duo", label: tx("دو رنگ") },
 ];
 
 /** Personal touches the customer can switch on and immediately see in the phone. */
 export const appFeatureList: { value: string; label: string; description: string; icon: LucideIcon; ai?: boolean }[] = [
-  { value: "onboarding", label: "معرفی اول کار", description: "چند صفحه خوش‌آمد هنگام اولین ورود", icon: Rocket },
-  { value: "biometric", label: "ورود با چهره یا اثر انگشت", description: "بدون رمز، امن و سریع", icon: Lock },
-  { value: "darkmode", label: "حالت تیره", description: "کاربر خودش روشن و تیره می‌کند", icon: Lightbulb },
-  { value: "stories", label: "استوری", description: "نوار استوری بالای صفحه خانه", icon: CirclePlay },
-  { value: "loyalty", label: "باشگاه مشتریان", description: "امتیاز، سطح و جایزه", icon: Award },
-  { value: "forYou", label: "پیشنهاد هوشمند", description: "«مخصوص شما» با هوش مصنوعی", icon: Lightbulb, ai: true },
-  { value: "aiAssistant", label: "دستیار هوشمند درون اپ", description: "کاربر می‌پرسد، اپ جواب می‌دهد", icon: MessageCircle, ai: true },
-  { value: "visualSearch", label: "جستجو با عکس", description: "عکس بگیرد، مشابهش را پیدا کند", icon: Search, ai: true },
-  { value: "voice", label: "جستجوی صوتی", description: "بگویید، پیدا کنید", icon: Headset },
-  { value: "push", label: "اعلان هوشمند", description: "پیام به‌موقع روی صفحه گوشی", icon: Bell },
-  { value: "widget", label: "ویجت صفحه گوشی", description: "اطلاعات مهم بدون باز کردن اپ", icon: ChartColumn },
-  { value: "language", label: "تغییر زبان", description: "فارسی، انگلیسی، عربی", icon: Newspaper },
+  { value: "onboarding", label: tx("معرفی اول کار"), description: tx("چند صفحه خوش‌آمد هنگام اولین ورود"), icon: Rocket },
+  { value: "biometric", label: tx("ورود با چهره یا اثر انگشت"), description: tx("بدون رمز، امن و سریع"), icon: Lock },
+  { value: "darkmode", label: tx("حالت تیره"), description: tx("کاربر خودش روشن و تیره می‌کند"), icon: Lightbulb },
+  { value: "stories", label: tx("استوری"), description: tx("نوار استوری بالای صفحه خانه"), icon: CirclePlay },
+  { value: "loyalty", label: tx("باشگاه مشتریان"), description: tx("امتیاز، سطح و جایزه"), icon: Award },
+  { value: "forYou", label: tx("پیشنهاد هوشمند"), description: tx("«مخصوص شما» با هوش مصنوعی"), icon: Lightbulb, ai: true },
+  { value: "aiAssistant", label: tx("دستیار هوشمند درون اپ"), description: tx("کاربر می‌پرسد، اپ جواب می‌دهد"), icon: MessageCircle, ai: true },
+  { value: "visualSearch", label: tx("جستجو با عکس"), description: tx("عکس بگیرد، مشابهش را پیدا کند"), icon: Search, ai: true },
+  { value: "voice", label: tx("جستجوی صوتی"), description: tx("بگویید، پیدا کنید"), icon: Headset },
+  { value: "push", label: tx("اعلان هوشمند"), description: tx("پیام به‌موقع روی صفحه گوشی"), icon: Bell },
+  { value: "widget", label: tx("ویجت صفحه گوشی"), description: tx("اطلاعات مهم بدون باز کردن اپ"), icon: ChartColumn },
+  { value: "language", label: tx("تغییر زبان"), description: tx("فارسی، انگلیسی، عربی"), icon: Newspaper },
 ];

@@ -1,5 +1,6 @@
 "use client";
 
+import { tx } from "@/lib/tx";
 import { CircleHelp, Sparkles, X } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
@@ -20,9 +21,7 @@ const pill = "flex h-9 items-center gap-2 rounded-full bg-white/8 px-3.5 text-[1
 /** Tells the customer this is a starting point, not a limit. */
 export const CustomNote = ({ className = "" }: { className?: string }) => (
   <p className={`flex items-center gap-2 rounded-full bg-white/6 px-4 py-2 text-[11.5px] text-[#a7b0bc] ring-1 ring-white/8 backdrop-blur ${className}`}>
-    <Sparkles className="size-3.5 shrink-0 text-[#ffd88a]" aria-hidden="true" />
-    این فقط نقطه شروع است؛ هر صفحه، رفتار و امکانی را طبق خواسته شما می‌سازیم.
-  </p>
+    <Sparkles className="size-3.5 shrink-0 text-[#ffd88a]" aria-hidden="true" />{tx("این فقط نقطه شروع است؛ هر صفحه، رفتار و امکانی را طبق خواسته شما می‌سازیم.")}</p>
 );
 
 export const AppStage = ({ studio = false }: { studio?: boolean }) => {
@@ -52,18 +51,18 @@ export const AppStage = ({ studio = false }: { studio?: boolean }) => {
   return (
     <div className="relative size-full overflow-hidden bg-[#0b0d12]" style={buildPreviewVars(config)}>
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <span className="absolute left-[15%] top-[10%] h-[55%] w-[40%] rounded-full opacity-35 blur-[120px] transition-colors duration-700" style={{ backgroundColor: config.color }} />
-        <span className="absolute bottom-0 right-[12%] h-[50%] w-[38%] rounded-full opacity-25 blur-[120px] transition-colors duration-700" style={{ backgroundColor: config.accent }} />
+        <span className="absolute end-[15%] top-[10%] h-[55%] w-[40%] rounded-full opacity-35 blur-[120px] transition-colors duration-700" style={{ backgroundColor: config.color }} />
+        <span className="absolute bottom-0 start-[12%] h-[50%] w-[38%] rounded-full opacity-25 blur-[120px] transition-colors duration-700" style={{ backgroundColor: config.accent }} />
         <span className="absolute inset-0 opacity-50" style={{ backgroundImage: "radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px)", backgroundSize: "26px 26px", maskImage: "radial-gradient(ellipse at center, #000 40%, transparent 80%)", WebkitMaskImage: "radial-gradient(ellipse at center, #000 40%, transparent 80%)" }} />
       </div>
 
-      <div className={`absolute z-10 flex items-center gap-2 ${studio ? "right-5 top-5" : "right-3 top-4"}`}>
+      <div className={`absolute z-10 flex items-center gap-2 ${studio ? "start-5 top-5" : "start-3 top-4"}`}>
         {!studio && (
           <>
-            <Link href="/" aria-label="خروج" className={`${pill} size-9 justify-center px-0`}>
+            <Link href="/" aria-label={tx("خروج")} className={`${pill} size-9 justify-center px-0`}>
               <X className="size-4" aria-hidden="true" />
             </Link>
-            <button type="button" onClick={() => openGuide(`studio-${kind}`)} aria-label="راهنما" className={`${pill} size-9 justify-center px-0`}>
+            <button type="button" onClick={() => openGuide(`studio-${kind}`)} aria-label={tx("راهنما")} className={`${pill} size-9 justify-center px-0`}>
               <CircleHelp className="size-4" aria-hidden="true" />
             </button>
           </>
@@ -71,16 +70,16 @@ export const AppStage = ({ studio = false }: { studio?: boolean }) => {
         <span className={pill}>
           <span className="size-1.5 rounded-full bg-[#2fd08a]" />
           {/* phones: the toolbar is tight, keep just the live dot plus a short word */}
-          <span className={studio ? "" : "hidden"}>{springboard ? "روی آیکون بزنید" : "روی گوشی بزنید؛ کار می‌کند"}</span>
-          {!studio && <span>زنده</span>}
+          <span className={studio ? "" : "hidden"}>{springboard ? tx("روی آیکون بزنید") : tx("روی گوشی بزنید؛ کار می‌کند")}</span>
+          {!studio && <span>{tx("زنده")}</span>}
         </span>
       </div>
 
       {config.platform === "both" && isSmall && (
-        <div role="radiogroup" aria-label="دستگاه" data-tour="devices" className="absolute left-3 top-4 z-10 flex gap-0.5 rounded-full bg-white/8 p-1 ring-1 ring-white/8 backdrop-blur">
+        <div role="radiogroup" aria-label={tx("دستگاه")} data-tour="devices" className="absolute end-3 top-4 z-10 flex gap-0.5 rounded-full bg-white/8 p-1 ring-1 ring-white/8 backdrop-blur">
           {(["ios", "android"] as const).map((device) => (
             <button key={device} type="button" role="radio" aria-checked={mobileDevice === device} onClick={() => setMobileDevice(device)} className={`h-7 rounded-full px-3 text-[11.5px] font-bold transition-colors ${mobileDevice === device ? "bg-white text-[#0b0d12]" : "text-[#c9d0d9]"}`}>
-              {device === "ios" ? "آیفون" : "اندروید"}
+              {device === "ios" ? tx("آیفون") : tx("اندروید")}
             </button>
           ))}
         </div>
@@ -88,7 +87,7 @@ export const AppStage = ({ studio = false }: { studio?: boolean }) => {
 
       {/* screens rail: jump the phone to any screen */}
       {studio && !springboard && (
-        <nav aria-label="صفحه‌های اپ" data-tour="devices" className="absolute left-5 top-1/2 z-10 flex -translate-y-1/2 flex-col gap-1 rounded-2xl bg-white/6 p-1.5 ring-1 ring-white/8 backdrop-blur">
+        <nav aria-label={tx("صفحه‌های اپ")} data-tour="devices" className="absolute end-5 top-1/2 z-10 flex -translate-y-1/2 flex-col gap-1 rounded-2xl bg-white/6 p-1.5 ring-1 ring-white/8 backdrop-blur">
           {enabled.map((screen) => (
             <button key={screen.value} type="button" onClick={() => open(screen.value)} className="group flex items-center gap-2 rounded-xl px-3 py-2 text-[12px] font-bold text-[#c9d0d9] transition-colors hover:bg-white/8 hover:text-white">
               <screen.icon className="size-4 opacity-70 group-hover:opacity-100" aria-hidden="true" />
@@ -111,7 +110,7 @@ export const AppStage = ({ studio = false }: { studio?: boolean }) => {
         </FitScene>
       </div>
 
-      {studio && <CustomNote className="absolute bottom-5 right-5 z-10 max-w-[min(420px,calc(100%-360px))]" />}
+      {studio && <CustomNote className="absolute bottom-5 start-5 z-10 max-w-[min(420px,calc(100%-360px))]" />}
       <AssistantDock studio={studio} />
     </div>
   );

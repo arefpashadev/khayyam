@@ -1,5 +1,6 @@
 "use client";
 
+import { tx, studioDir } from "@/lib/tx";
 import { ArrowRight, CircleHelp, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState, type ReactNode } from "react";
@@ -36,7 +37,7 @@ export const AiWizard = () => {
   }, []);
 
   return (
-    <div dir="rtl" className="fixed inset-0 z-[100] overflow-hidden bg-[#0b0d12] font-sans text-[#eef1f5] [color-scheme:dark]">
+    <div dir={studioDir()} className="fixed inset-0 z-[100] overflow-hidden bg-[#0b0d12] font-sans text-[#eef1f5] [color-scheme:dark]">
       <PaymentOverlay />
       {mode === "chat" ? <ChatLayout /> : <CustomLayout />}
     </div>
@@ -49,17 +50,17 @@ const TopBar = ({ title, guide, back, children }: { title: string; guide: string
   return (
     <header className="flex h-14 shrink-0 items-center gap-3 border-b border-white/6 px-3 lg:px-5">
       {back && (
-        <button type="button" onClick={back} aria-label="برگشت به گفتگو" className={icon}>
-          <ArrowRight className="size-5" aria-hidden="true" />
+        <button type="button" onClick={back} aria-label={tx("برگشت به گفتگو")} className={icon}>
+          <ArrowRight className="size-5 ltr:-scale-x-100" aria-hidden="true" />
         </button>
       )}
-      <KhayyamMark size={30} title="خیام" />
+      <KhayyamMark size={30} title={tx("خیام")} />
       <strong className="truncate text-[13.5px]">{title}</strong>
       <div className="ms-auto flex items-center gap-2">{children}</div>
-      <button type="button" onClick={() => openGuide(guide)} aria-label="راهنما" className={icon}>
+      <button type="button" onClick={() => openGuide(guide)} aria-label={tx("راهنما")} className={icon}>
         <CircleHelp className="size-[18px]" aria-hidden="true" />
       </button>
-      <Link href="/" aria-label="خروج" className={icon}>
+      <Link href="/" aria-label={tx("خروج")} className={icon}>
         <X className="size-[18px]" aria-hidden="true" />
       </Link>
     </header>
@@ -72,9 +73,7 @@ const Progress = () => {
   const done = submitted ? interviewLength - 1 : Math.min(stage, interviewLength - 1);
   const share = done / (interviewLength - 1);
   return (
-    <span data-guide="progress" className="hidden items-center gap-2 text-[11.5px] text-[#8a93a0] sm:flex">
-      {fa(Math.round(share * 100))}٪ کامل
-      <span className="h-1 w-24 overflow-hidden rounded-full bg-white/8">
+    <span data-guide="progress" className="hidden items-center gap-2 text-[11.5px] text-[#8a93a0] sm:flex">{tx("{0}٪ کامل", [fa(Math.round(share * 100))])}<span className="h-1 w-24 overflow-hidden rounded-full bg-white/8">
         <span className="block h-full rounded-full bg-[#f0b44a] transition-all duration-500" style={{ width: `${share * 100}%` }} />
       </span>
     </span>
@@ -91,7 +90,7 @@ const ChatLayout = () => {
   return (
     <div className="relative flex size-full flex-col">
       <Guide id="ai-chat" steps={aiChatGuide} delay={1800} />
-      <TopBar title="هوش مصنوعی برای کسب‌وکار شما" guide="ai-chat">
+      <TopBar title={tx("هوش مصنوعی برای کسب‌وکار شما")} guide="ai-chat">
         <Progress />
       </TopBar>
 
@@ -102,7 +101,7 @@ const ChatLayout = () => {
           </motion.div>
         ) : (
           <motion.div key="chat" className="flex min-h-0 flex-1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <section className={`relative flex min-h-0 flex-col ${isSmall ? "w-full" : "w-[min(580px,48%)] border-l border-white/6"}`}>
+            <section className={`relative flex min-h-0 flex-col ${isSmall ? "w-full" : "w-[min(580px,48%)] border-e border-white/6"}`}>
               {isSmall && <DossierStrip config={config} onOpen={() => setDossierOpen(true)} />}
               <div className="relative min-h-0 flex-1">
                 <Interview />
@@ -125,8 +124,8 @@ const ChatLayout = () => {
         {isSmall && dossierOpen && (
           <motion.div className="fixed inset-0 z-[150] flex flex-col bg-[#0e1117]" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", bounce: 0, duration: 0.4 }}>
             <div className="flex h-12 shrink-0 items-center justify-between px-4">
-              <strong className="text-[14px]">پرونده تیم</strong>
-              <button type="button" onClick={() => setDossierOpen(false)} aria-label="بستن" className="flex size-9 items-center justify-center rounded-full bg-white/8">
+              <strong className="text-[14px]">{tx("پرونده تیم")}</strong>
+              <button type="button" onClick={() => setDossierOpen(false)} aria-label={tx("بستن")} className="flex size-9 items-center justify-center rounded-full bg-white/8">
                 <X className="size-4" aria-hidden="true" />
               </button>
             </div>
@@ -144,7 +143,7 @@ const CustomLayout = () => {
   const setMode = useAi((state) => state.setMode);
   return (
     <div className="flex size-full flex-col">
-      <TopBar title="هوش مصنوعی اختصاصی" guide="ai-custom" back={() => setMode("chat")} />
+      <TopBar title={tx("هوش مصنوعی اختصاصی")} guide="ai-custom" back={() => setMode("chat")} />
       <div className="relative min-h-0 flex-1 bg-[radial-gradient(60%_40%_at_50%_0%,rgba(240,180,74,0.08),transparent_70%)]">
         <CustomAi />
       </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { tx } from "@/lib/tx";
 import { ArrowLeft, BrainCircuit, Check, Pencil, Sparkles, UserRoundCheck } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
@@ -19,7 +20,7 @@ type Question = {
   input: () => ReactNode;
 };
 
-const chip = "rounded-2xl text-right transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#4da3ff]";
+const chip = "rounded-2xl text-start transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#4da3ff]";
 const chipOff = "bg-[#151920] text-[#c9d0d9] ring-1 ring-white/6 hover:bg-[#1b2029]";
 const chipOn = "bg-[#4da3ff]/16 text-white ring-1 ring-[#4da3ff]/60";
 
@@ -27,7 +28,7 @@ const chipOn = "bg-[#4da3ff]/16 text-white ring-1 ring-[#4da3ff]/60";
  * The main action of a question. On phones it moves into the bottom action bar
  * (next to «نقشه زنده») so both buttons share one row, size and style.
  */
-const Confirm = ({ count, onClick, label = "ادامه" }: { count?: number; onClick: () => void; label?: string }) => {
+const Confirm = ({ count, onClick, label = tx("ادامه") }: { count?: number; onClick: () => void; label?: string }) => {
   const [bar, setBar] = useState<HTMLElement | null>(null);
   useEffect(() => {
     const timeout = window.setTimeout(() => setBar(document.getElementById("ai-actions")), 0);
@@ -41,7 +42,7 @@ const Confirm = ({ count, onClick, label = "ادامه" }: { count?: number; onC
       className={`flex h-12 items-center justify-center gap-2 rounded-2xl bg-white px-5 text-[13.5px] font-extrabold text-[#0b0d12] transition-colors hover:bg-[#d9ecff] disabled:opacity-30 ${bar ? "w-full" : "mt-1 w-fit"}`}
     >
       {label} {count !== undefined && count > 0 && <span className="opacity-50">({fa(count)})</span>}
-      <ArrowLeft className="size-4" aria-hidden="true" />
+      <ArrowLeft className="size-4 ltr:-scale-x-100" aria-hidden="true" />
     </button>
   );
   return bar ? createPortal(button, bar) : button;
@@ -82,9 +83,7 @@ const PainPick = () => {
         })}
       </div>
       <button type="button" onClick={() => setMode("custom")} className={`${chip} ${chipOff} flex items-center gap-2.5 border border-dashed border-white/15 px-3.5 py-3 text-[13px] font-bold ring-0`}>
-        <BrainCircuit className="size-4 shrink-0 text-[#f3d9a4]" aria-hidden="true" />
-        نیاز ما خاص است؛ مثلاً خط تولید، پزشکی یا مالی
-      </button>
+        <BrainCircuit className="size-4 shrink-0 text-[#f3d9a4]" aria-hidden="true" />{tx("نیاز ما خاص است؛ مثلاً خط تولید، پزشکی یا مالی")}</button>
       <Confirm
         count={picked.length}
         onClick={() => {
@@ -117,9 +116,7 @@ const TeamPick = () => {
               <span className="text-[11px] leading-[1.6] opacity-60">{goal.description}</span>
               {suggested.has(goal.value) && (
                 <span className="mt-auto flex items-start gap-1 border-t border-white/8 pt-2 text-[10.5px] leading-[1.6] text-[#9ccbff]">
-                  <Sparkles className="mt-0.5 size-3 shrink-0" aria-hidden="true" />
-                  برای «{reasonFor(goal.value, config.pains)}»
-                </span>
+                  <Sparkles className="mt-0.5 size-3 shrink-0" aria-hidden="true" />{tx("برای «{0}»", [reasonFor(goal.value, config.pains)])}</span>
               )}
             </button>
           );
@@ -174,11 +171,11 @@ const ShowProposal = () => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap gap-2">
-        <span className="rounded-full bg-white/6 px-3 py-1.5 text-[12px] font-bold text-white">{fa(config.goals.length)} هم‌تیمی هوش مصنوعی</span>
-        <span className="rounded-full bg-white/6 px-3 py-1.5 text-[12px] font-bold text-white">{`${fa(result.hoursSaved)} ساعت در ماه صرفه‌جویی`}</span>
-        <span className="rounded-full bg-white/6 px-3 py-1.5 text-[12px] font-bold text-white">۲۴ ساعته</span>
+        <span className="rounded-full bg-white/6 px-3 py-1.5 text-[12px] font-bold text-white">{tx("{0} هم‌تیمی هوش مصنوعی", [fa(config.goals.length)])}</span>
+        <span className="rounded-full bg-white/6 px-3 py-1.5 text-[12px] font-bold text-white">{tx("{0} ساعت در ماه صرفه‌جویی", [fa(result.hoursSaved)])}</span>
+        <span className="rounded-full bg-white/6 px-3 py-1.5 text-[12px] font-bold text-white">{tx("۲۴ ساعته")}</span>
       </div>
-      <Confirm label="دیدن پیشنهاد کامل" onClick={() => setProposal(true)} />
+      <Confirm label={tx("دیدن پیشنهاد کامل")} onClick={() => setProposal(true)} />
     </div>
   );
 };
@@ -190,46 +187,46 @@ const ShowProposal = () => {
 const questions: Question[] = [
   {
     key: "pains",
-    ask: () => "سلام، من خیام هستم 👋 بیایید با هم یک تیم هوش مصنوعی برای کسب‌وکارتان بچینیم. اول بگویید الان چه چیزی بیشتر اذیتتان می‌کند؟",
-    said: (config) => pains.filter((pain) => config.pains.includes(pain.value)).map((pain) => pain.label).join("، "),
+    ask: () => tx("سلام، من خیام هستم 👋 بیایید با هم یک تیم هوش مصنوعی برای کسب‌وکارتان بچینیم. اول بگویید الان چه چیزی بیشتر اذیتتان می‌کند؟"),
+    said: (config) => pains.filter((pain) => config.pains.includes(pain.value)).map((pain) => pain.label).join(tx("، ")),
     input: () => <PainPick />,
   },
   {
     key: "team",
-    ask: () => "متوجه شدم. بر اساس همین‌ها، مهم‌ترین هم‌تیمی‌هایی که لازم دارید را انتخاب کرده‌ام و نوشته‌ام هر کدام برای کدام مشکل است. هر کدام را خواستید اضافه یا کم کنید.",
-    said: (config) => goals.filter((goal) => config.goals.includes(goal.value)).map((goal) => goal.label).join("، "),
+    ask: () => tx("متوجه شدم. بر اساس همین‌ها، مهم‌ترین هم‌تیمی‌هایی که لازم دارید را انتخاب کرده‌ام و نوشته‌ام هر کدام برای کدام مشکل است. هر کدام را خواستید اضافه یا کم کنید."),
+    said: (config) => goals.filter((goal) => config.goals.includes(goal.value)).map((goal) => goal.label).join(tx("، ")),
     input: () => <TeamPick />,
   },
   {
     key: "tools",
-    ask: () => "این هم‌تیمی‌ها کجا کار کنند؟ ابزارهایی را که الان دارید انتخاب کنید؛ به همین‌ها وصلشان می‌کنیم و لازم نیست چیزی را عوض کنید.",
-    said: (config) => tools.filter((tool) => config.tools.includes(tool.value)).map((tool) => tool.label).join("، "),
+    ask: () => tx("این هم‌تیمی‌ها کجا کار کنند؟ ابزارهایی را که الان دارید انتخاب کنید؛ به همین‌ها وصلشان می‌کنیم و لازم نیست چیزی را عوض کنید."),
+    said: (config) => tools.filter((tool) => config.tools.includes(tool.value)).map((tool) => tool.label).join(tx("، ")),
     input: () => <ToolPick />,
   },
   {
     key: "staff",
-    ask: () => "الان چند نفر این کارها را انجام می‌دهند؟",
-    said: (config) => `${fa(config.staff)} نفر`,
-    input: () => <Answer>{(answer) => <Choices options={staffChoices.map((staff) => ({ value: staff, label: staff === 25 ? "۲۵ نفر یا بیشتر" : `${fa(staff)} نفر` }))} onPick={(staff) => answer({ staff })} />}</Answer>,
+    ask: () => tx("الان چند نفر این کارها را انجام می‌دهند؟"),
+    said: (config) => tx("{0} نفر", [fa(config.staff)]),
+    input: () => <Answer>{(answer) => <Choices options={staffChoices.map((staff) => ({ value: staff, label: staff === 25 ? tx("۲۵ نفر یا بیشتر") : tx("{0} نفر", [fa(staff)]) }))} onPick={(staff) => answer({ staff })} />}</Answer>,
   },
   {
     key: "share",
-    ask: (config) => `این ${fa(config.staff)} نفر چه بخشی از روزشان صرف همین کارها می‌شود؟`,
+    ask: (config) => tx("این {0} نفر چه بخشی از روزشان صرف همین کارها می‌شود؟", [fa(config.staff)]),
     said: (config) => shareChoices.find((choice) => choice.value === config.share)?.label ?? "",
     input: () => <Answer>{(answer) => <Choices options={shareChoices} onPick={(share) => answer({ share, hoursPerWeek: Math.round(useAi.getState().config.staff * 44 * share) })} />}</Answer>,
   },
   {
     key: "autonomy",
-    ask: () => "تصمیم آخر با چه کسی باشد؟",
+    ask: () => tx("تصمیم آخر با چه کسی باشد؟"),
     said: (config) => autonomyLevels.find((level) => level.value === config.autonomy)?.label ?? "",
     input: () => (
       <Answer>
         {(answer) => (
           <Choices
             options={[
-              { value: "suggest" as const, label: "هوش مصنوعی پیشنهاد بدهد، ما تأیید کنیم" },
-              { value: "assisted" as const, label: "کارهای روزمره خودکار، موارد حساس با ما" },
-              { value: "auto" as const, label: "همه‌چیز خودکار؛ ما فقط گزارش ببینیم" },
+              { value: "suggest" as const, label: tx("هوش مصنوعی پیشنهاد بدهد، ما تأیید کنیم") },
+              { value: "assisted" as const, label: tx("کارهای روزمره خودکار، موارد حساس با ما") },
+              { value: "auto" as const, label: tx("همه‌چیز خودکار؛ ما فقط گزارش ببینیم") },
             ]}
             onPick={(autonomy) => answer({ autonomy })}
           />
@@ -239,15 +236,15 @@ const questions: Question[] = [
   },
   {
     key: "hosting",
-    ask: () => "اطلاعات شرکت کجا بماند؟",
-    said: (config) => (config.hosting === "onprem" ? "روی سرور خودمان" : "ابری امن"),
+    ask: () => tx("اطلاعات شرکت کجا بماند؟"),
+    said: (config) => (config.hosting === "onprem" ? tx("روی سرور خودمان") : tx("ابری امن")),
     input: () => (
       <Answer>
         {(answer) => (
           <Choices
             options={[
-              { value: "cloud" as const, label: "ابری امن", hint: "راه‌اندازی سریع‌تر و کم‌هزینه‌تر" },
-              { value: "onprem" as const, label: "روی سرور خودمان", hint: "هیچ داده‌ای از سازمان بیرون نمی‌رود" },
+              { value: "cloud" as const, label: tx("ابری امن"), hint: tx("راه‌اندازی سریع‌تر و کم‌هزینه‌تر") },
+              { value: "onprem" as const, label: tx("روی سرور خودمان"), hint: tx("هیچ داده‌ای از سازمان بیرون نمی‌رود") },
             ]}
             onPick={(hosting) => answer({ hosting })}
           />
@@ -257,16 +254,16 @@ const questions: Question[] = [
   },
   {
     key: "persona",
-    ask: () => "و آخرین سوال: اگر این هم‌تیمی جدید یک آدم بود، با مشتری‌ها چطور حرف می‌زد؟",
+    ask: () => tx("و آخرین سوال: اگر این هم‌تیمی جدید یک آدم بود، با مشتری‌ها چطور حرف می‌زد؟"),
     said: (config) => personas.find((persona) => persona.value === config.persona)?.label ?? "",
     input: () => (
       <Answer>
         {(answer) => (
           <Choices
             options={[
-              { value: "friendly" as const, label: "صمیمی", hint: "«سلام! 😊 الان برایتان پیدا می‌کنم»" },
-              { value: "formal" as const, label: "رسمی", hint: "«سلام. درخواست شما ثبت شد.»" },
-              { value: "expert" as const, label: "متخصص و دقیق", hint: "«سفارش ۱۰۴۲، تحویل ۱۷:۳۰»" },
+              { value: "friendly" as const, label: tx("صمیمی"), hint: tx("«سلام! 😊 الان برایتان پیدا می‌کنم»") },
+              { value: "formal" as const, label: tx("رسمی"), hint: tx("«سلام. درخواست شما ثبت شد.»") },
+              { value: "expert" as const, label: tx("متخصص و دقیق"), hint: tx("«سفارش ۱۰۴۲، تحویل ۱۷:۳۰»") },
             ]}
             onPick={(persona) => answer({ persona })}
           />
@@ -276,7 +273,7 @@ const questions: Question[] = [
   },
   {
     key: "final",
-    ask: () => "پیشنهادم آماده است ✨ تیم، اثرش بر کار شما و راه شروع را در یک صفحه برایتان چیده‌ام.",
+    ask: () => tx("پیشنهادم آماده است ✨ تیم، اثرش بر کار شما و راه شروع را در یک صفحه برایتان چیده‌ام."),
     said: () => "",
     input: () => <ShowProposal />,
   },
@@ -293,7 +290,7 @@ const Bot = ({ children }: { children: ReactNode }) => (
     <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-[#111419] ring-1 ring-white/10">
       <KhayyamMark size={20} />
     </span>
-    <div className="max-w-[88%] rounded-[20px] rounded-tr-md bg-[#151920] px-4 py-3 text-[13.5px] leading-7 text-[#e1e6ec] ring-1 ring-white/6">{children}</div>
+    <div className="max-w-[88%] rounded-[20px] rounded-ss-md bg-[#151920] px-4 py-3 text-[13.5px] leading-7 text-[#e1e6ec] ring-1 ring-white/6">{children}</div>
   </div>
 );
 
@@ -338,7 +335,7 @@ export const Interview = () => {
         {questions.slice(0, stage).map((question, index) => (
           <div key={question.key} className="flex flex-col gap-3">
             <Bot>{question.ask(config)}</Bot>
-            <motion.button {...rise} type="button" onClick={() => rewind(index)} className="group flex max-w-[85%] items-center gap-2 self-end rounded-[20px] rounded-tl-md bg-[#1d2431] px-4 py-3 text-right text-[13.5px] leading-7 text-white ring-1 ring-white/[0.06]" title="تغییر پاسخ">
+            <motion.button {...rise} type="button" onClick={() => rewind(index)} className="group flex max-w-[85%] items-center gap-2 self-end rounded-[20px] rounded-se-md bg-[#1d2431] px-4 py-3 text-start text-[13.5px] leading-7 text-white ring-1 ring-white/[0.06]" title={tx("تغییر پاسخ")}>
               <span>{question.said(config)}</span>
               <Pencil className="size-3.5 shrink-0 opacity-50 transition-opacity group-hover:opacity-100" aria-hidden="true" />
             </motion.button>
@@ -350,9 +347,7 @@ export const Interview = () => {
             <motion.div key="typing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-2.5 text-[12px] text-[#8a93a0]">
               <span className="flex size-8 items-center justify-center rounded-full bg-[#111419] ring-1 ring-white/10">
                 <KhayyamMark size={20} state="thinking" />
-              </span>
-              در حال فکر کردن…
-            </motion.div>
+              </span>{tx("در حال فکر کردن…")}</motion.div>
           ) : (
             <motion.div key={current.key} {...rise} data-chat-anchor className="flex flex-col gap-3">
               <Bot>{current.ask(config)}</Bot>
@@ -364,15 +359,12 @@ export const Interview = () => {
               {submitted && (
                 <Bot>
                   <span className="flex items-center gap-2">
-                    <UserRoundCheck className="size-4 text-[#2fd08a]" aria-hidden="true" /> درخواست شما ثبت شد.
-                  </span>
-                  کارشناس ما با همین نقشه با شما تماس می‌گیرد تا جزئیات را دقیق کنیم. همه این مقادیر طبق نیاز شما قابل تغییر است.
-                </Bot>
+                    <UserRoundCheck className="size-4 text-[#2fd08a]" aria-hidden="true" />{" "}{tx("درخواست شما ثبت شد.")}</span>{tx("کارشناس ما با همین نقشه با شما تماس می‌گیرد تا جزئیات را دقیق کنیم. همه این مقادیر طبق نیاز شما قابل تغییر است.")}</Bot>
               )}
             </motion.div>
           )}
         </AnimatePresence>
-        {stage > 0 && !submitted && <p className="text-center text-[11px] text-[#5d6573]">برای تغییر هر پاسخ، رویش بزنید.</p>}
+        {stage > 0 && !submitted && <p className="text-center text-[11px] text-[#5d6573]">{tx("برای تغییر هر پاسخ، رویش بزنید.")}</p>}
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import { tx, numberTag } from "@/lib/tx";
 import {
   BarChart3,
   Bot,
@@ -96,13 +97,13 @@ export const defaultAiConfig: AiConfig = {
 /* ------------------------------------------------------------------ */
 
 export const goals: { value: GoalKey; label: string; description: string; icon: LucideIcon; actions: string[]; role?: string }[] = [
-  { value: "support", label: "پاسخ‌گوی ۲۴ ساعته", description: "چت‌بات ۲۴ ساعته در سایت و پیام‌رسان‌ها", icon: Headset, actions: ["پاسخ فوری به مشتری", "ارجاع به کارشناس", "ثبت درخواست در CRM"] },
-  { value: "process", label: "کارمند اداری خودکار", description: "تأییدها، ثبت اسناد، گردش کار", icon: Workflow, actions: ["ثبت خودکار سند", "گرفتن تأیید مدیر", "به‌روزرسانی موجودی"] },
-  { value: "reports", label: "تحلیل‌گر گزارش", description: "داشبورد و گزارش بدون اکسل‌بازی", icon: BarChart3, actions: ["گزارش روزانه", "داشبورد زنده", "هشدار تغییرات مهم"] },
-  { value: "documents", label: "کارشناس اسناد", description: "فاکتور، قرارداد و فرم را خودش می‌خواند", icon: FileSearch, actions: ["استخراج اطلاعات فاکتور", "بایگانی هوشمند", "ورود به حسابداری"] },
-  { value: "marketing", label: "تولیدکننده محتوا", description: "تولید پست، کپشن و پاسخ کامنت", icon: Megaphone, actions: ["تولید پست و کپشن", "زمان‌بندی انتشار", "پاسخ به کامنت‌ها"] },
-  { value: "forecast", label: "پیش‌بین فروش و انبار", description: "فروش، موجودی و رفتار مشتری", icon: LineChart, actions: ["پیش‌بینی فروش", "پیشنهاد سفارش خرید", "شناسایی مشتری در خطر"] },
-  { value: "knowledge", label: "مشاور دانش سازمان", description: "از اسناد خود شرکت جواب می‌دهد", icon: BrainCircuit, actions: ["جواب از اسناد شرکت", "خلاصه جلسات", "جستجوی هوشمند"] },
+  { value: "support", label: tx("پاسخ‌گوی ۲۴ ساعته"), description: tx("چت‌بات ۲۴ ساعته در سایت و پیام‌رسان‌ها"), icon: Headset, actions: [tx("پاسخ فوری به مشتری"), tx("ارجاع به کارشناس"), tx("ثبت درخواست در CRM")] },
+  { value: "process", label: tx("کارمند اداری خودکار"), description: tx("تأییدها، ثبت اسناد، گردش کار"), icon: Workflow, actions: [tx("ثبت خودکار سند"), tx("گرفتن تأیید مدیر"), tx("به‌روزرسانی موجودی")] },
+  { value: "reports", label: tx("تحلیل‌گر گزارش"), description: tx("داشبورد و گزارش بدون اکسل‌بازی"), icon: BarChart3, actions: [tx("گزارش روزانه"), tx("داشبورد زنده"), tx("هشدار تغییرات مهم")] },
+  { value: "documents", label: tx("کارشناس اسناد"), description: tx("فاکتور، قرارداد و فرم را خودش می‌خواند"), icon: FileSearch, actions: [tx("استخراج اطلاعات فاکتور"), tx("بایگانی هوشمند"), tx("ورود به حسابداری")] },
+  { value: "marketing", label: tx("تولیدکننده محتوا"), description: tx("تولید پست، کپشن و پاسخ کامنت"), icon: Megaphone, actions: [tx("تولید پست و کپشن"), tx("زمان‌بندی انتشار"), tx("پاسخ به کامنت‌ها")] },
+  { value: "forecast", label: tx("پیش‌بین فروش و انبار"), description: tx("فروش، موجودی و رفتار مشتری"), icon: LineChart, actions: [tx("پیش‌بینی فروش"), tx("پیشنهاد سفارش خرید"), tx("شناسایی مشتری در خطر")] },
+  { value: "knowledge", label: tx("مشاور دانش سازمان"), description: tx("از اسناد خود شرکت جواب می‌دهد"), icon: BrainCircuit, actions: [tx("جواب از اسناد شرکت"), tx("خلاصه جلسات"), tx("جستجوی هوشمند")] },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -110,42 +111,42 @@ export const goals: { value: GoalKey; label: string; description: string; icon: 
 /* ------------------------------------------------------------------ */
 
 export const tools: { value: ToolKey; label: string; icon: LucideIcon; color: string; side: "in" | "out" }[] = [
-  { value: "website", label: "سایت", icon: Globe, color: "#4da3ff", side: "in" },
-  { value: "telegram", label: "تلگرام", icon: Send, color: "#2aabee", side: "in" },
-  { value: "bale", label: "بله / ایتا", icon: MessagesSquare, color: "#2fd08a", side: "in" },
-  { value: "whatsapp", label: "واتس‌اپ", icon: MessageCircle, color: "#25d366", side: "in" },
-  { value: "instagram", label: "اینستاگرام", icon: Smartphone, color: "#e1306c", side: "in" },
-  { value: "email", label: "ایمیل", icon: Mail, color: "#f0b44a", side: "in" },
-  { value: "shop", label: "فروشگاه آنلاین", icon: ShoppingBag, color: "#ef7d3c", side: "in" },
-  { value: "docs", label: "اسناد و فایل‌ها", icon: FileText, color: "#94a3b8", side: "in" },
-  { value: "sheets", label: "اکسل / شیت", icon: Sheet, color: "#21a366", side: "out" },
+  { value: "website", label: tx("سایت"), icon: Globe, color: "#4da3ff", side: "in" },
+  { value: "telegram", label: tx("تلگرام"), icon: Send, color: "#2aabee", side: "in" },
+  { value: "bale", label: tx("بله / ایتا"), icon: MessagesSquare, color: "#2fd08a", side: "in" },
+  { value: "whatsapp", label: tx("واتس‌اپ"), icon: MessageCircle, color: "#25d366", side: "in" },
+  { value: "instagram", label: tx("اینستاگرام"), icon: Smartphone, color: "#e1306c", side: "in" },
+  { value: "email", label: tx("ایمیل"), icon: Mail, color: "#f0b44a", side: "in" },
+  { value: "shop", label: tx("فروشگاه آنلاین"), icon: ShoppingBag, color: "#ef7d3c", side: "in" },
+  { value: "docs", label: tx("اسناد و فایل‌ها"), icon: FileText, color: "#94a3b8", side: "in" },
+  { value: "sheets", label: tx("اکسل / شیت"), icon: Sheet, color: "#21a366", side: "out" },
   { value: "crm", label: "CRM", icon: Users, color: "#7c6cff", side: "out" },
-  { value: "accounting", label: "حسابداری", icon: Calculator, color: "#e5486f", side: "out" },
-  { value: "sms", label: "پیامک", icon: Bot, color: "#64d2ff", side: "out" },
+  { value: "accounting", label: tx("حسابداری"), icon: Calculator, color: "#e5486f", side: "out" },
+  { value: "sms", label: tx("پیامک"), icon: Bot, color: "#64d2ff", side: "out" },
 ];
 
 export const autonomyLevels: { value: Autonomy; label: string; description: string; rate: number }[] = [
-  { value: "suggest", label: "فقط پیشنهاد", description: "همه‌چیز را شما تأیید می‌کنید", rate: 0.4 },
-  { value: "assisted", label: "خودکار با نظارت", description: "موارد حساس با تأیید شما", rate: 0.65 },
-  { value: "auto", label: "کاملاً خودکار", description: "شما فقط گزارش می‌بینید", rate: 0.85 },
+  { value: "suggest", label: tx("فقط پیشنهاد"), description: tx("همه‌چیز را شما تأیید می‌کنید"), rate: 0.4 },
+  { value: "assisted", label: tx("خودکار با نظارت"), description: tx("موارد حساس با تأیید شما"), rate: 0.65 },
+  { value: "auto", label: tx("کاملاً خودکار"), description: tx("شما فقط گزارش می‌بینید"), rate: 0.85 },
 ];
 
 export const personas: { value: Persona; label: string }[] = [
-  { value: "friendly", label: "صمیمی" },
-  { value: "formal", label: "رسمی" },
-  { value: "expert", label: "متخصص و دقیق" },
+  { value: "friendly", label: tx("صمیمی") },
+  { value: "formal", label: tx("رسمی") },
+  { value: "expert", label: tx("متخصص و دقیق") },
 ];
 
 export const languages = [
-  { value: "fa", label: "فارسی" },
-  { value: "en", label: "انگلیسی" },
-  { value: "ar", label: "عربی" },
+  { value: "fa", label: tx("فارسی") },
+  { value: "en", label: tx("انگلیسی") },
+  { value: "ar", label: tx("عربی") },
 ];
 
 export const deliverables: { value: Deliverable; label: string; description: string }[] = [
-  { value: "roadmap", label: "نقشه راه", description: "بررسی فرایندها و برنامه دقیق اجرا؛ حدود یک هفته" },
-  { value: "poc", label: "نمونه اولیه", description: "یک مسیر کامل روی داده واقعی شما؛ حدود دو تا سه هفته" },
-  { value: "full", label: "راه‌اندازی کامل", description: "همه مسیرها، اتصال‌ها، آموزش تیم و پشتیبانی" },
+  { value: "roadmap", label: tx("نقشه راه"), description: tx("بررسی فرایندها و برنامه دقیق اجرا؛ حدود یک هفته") },
+  { value: "poc", label: tx("نمونه اولیه"), description: tx("یک مسیر کامل روی داده واقعی شما؛ حدود دو تا سه هفته") },
+  { value: "full", label: tx("راه‌اندازی کامل"), description: tx("همه مسیرها، اتصال‌ها، آموزش تیم و پشتیبانی") },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -183,19 +184,19 @@ export const aiEstimate = (config: AiConfig) => {
 
 /** What hurts today — asked first, so the result speaks to it. */
 export const pains: { value: PainKey; label: string; fix: string; suggests: GoalKey[] }[] = [
-  { value: "wait", label: "مشتری‌ها منتظر جواب می‌مانند", fix: "هیچ مشتری‌ای دیگر منتظر نمی‌ماند", suggests: ["support"] },
-  { value: "repeat", label: "تیم درگیر کارهای تکراری است", fix: "کارهای تکراری از دوش تیم برداشته می‌شود", suggests: ["process", "documents"] },
-  { value: "errors", label: "خطای انسانی و دوباره‌کاری داریم", fix: "ورود دستی و خطای تایپی تقریباً حذف می‌شود", suggests: ["documents", "process"] },
-  { value: "night", label: "شب‌ها و تعطیلات کسی پاسخ نمی‌دهد", fix: "شب و تعطیل هم کسب‌وکارتان باز است", suggests: ["support"] },
-  { value: "scattered", label: "اطلاعات پراکنده است و گزارش دیر می‌رسد", fix: "هر صبح گزارش آماده روی میزتان است", suggests: ["reports", "knowledge"] },
-  { value: "growth", label: "برای رشد باید نیروی بیشتری بگیریم", fix: "بدون استخدام تازه، چند برابر کار انجام می‌شود", suggests: ["support", "marketing", "forecast"] },
+  { value: "wait", label: tx("مشتری‌ها منتظر جواب می‌مانند"), fix: tx("هیچ مشتری‌ای دیگر منتظر نمی‌ماند"), suggests: ["support"] },
+  { value: "repeat", label: tx("تیم درگیر کارهای تکراری است"), fix: tx("کارهای تکراری از دوش تیم برداشته می‌شود"), suggests: ["process", "documents"] },
+  { value: "errors", label: tx("خطای انسانی و دوباره‌کاری داریم"), fix: tx("ورود دستی و خطای تایپی تقریباً حذف می‌شود"), suggests: ["documents", "process"] },
+  { value: "night", label: tx("شب‌ها و تعطیلات کسی پاسخ نمی‌دهد"), fix: tx("شب و تعطیل هم کسب‌وکارتان باز است"), suggests: ["support"] },
+  { value: "scattered", label: tx("اطلاعات پراکنده است و گزارش دیر می‌رسد"), fix: tx("هر صبح گزارش آماده روی میزتان است"), suggests: ["reports", "knowledge"] },
+  { value: "growth", label: tx("برای رشد باید نیروی بیشتری بگیریم"), fix: tx("بدون استخدام تازه، چند برابر کار انجام می‌شود"), suggests: ["support", "marketing", "forecast"] },
 ];
 
 export const shareChoices = [
-  { value: 0.25, label: "کمی از وقتشان", hint: "حدود یک چهارم" },
-  { value: 0.5, label: "نصف وقتشان", hint: "" },
-  { value: 0.75, label: "بیشتر وقتشان", hint: "" },
-  { value: 1, label: "تمام وقتشان", hint: "کارشان همین است" },
+  { value: 0.25, label: tx("کمی از وقتشان"), hint: tx("حدود یک چهارم") },
+  { value: 0.5, label: tx("نصف وقتشان"), hint: "" },
+  { value: 0.75, label: tx("بیشتر وقتشان"), hint: "" },
+  { value: 1, label: tx("تمام وقتشان"), hint: tx("کارشان همین است") },
 ];
 
 /** A full-time person works about 176 hours a month. */
@@ -214,8 +215,8 @@ export const impact = (config: AiConfig) => {
     hoursAfter: hoursBefore - hoursSaved,
     monthlySaving: Math.round(monthlySaving * 10) / 10,
     paybackMonths: Math.max(1, Math.round(payback)),
-    responseBefore: config.requestsPerDay / Math.max(1, config.staff) > 60 ? "چند ساعت" : "۲۰ تا ۴۵ دقیقه",
-    responseAfter: "زیر ۱۰ ثانیه",
+    responseBefore: config.requestsPerDay / Math.max(1, config.staff) > 60 ? tx("چند ساعت") : tx("۲۰ تا ۴۵ دقیقه"),
+    responseAfter: tx("زیر ۱۰ ثانیه"),
     /** people's worth of work the AI takes on */
     fte: Math.round((hoursSaved / FTE_HOURS) * 2) / 2,
     /** requests handled per month */
@@ -223,37 +224,37 @@ export const impact = (config: AiConfig) => {
   };
 };
 
-export const fa = (value: number) => new Intl.NumberFormat("fa-IR", { maximumFractionDigits: 1 }).format(value);
+export const fa = (value: number) => new Intl.NumberFormat(numberTag(), { maximumFractionDigits: 1 }).format(value);
 
 /* ------------------------------------------------------------------ */
 /* Custom AI: problems that need a conversation before a quote          */
 /* ------------------------------------------------------------------ */
 
 export const customDomains: { value: string; label: string; example: string; icon: LucideIcon }[] = [
-  { value: "factory", label: "خط تولید و کارخانه", example: "تشخیص عیب محصول با دوربین، پیش‌بینی خرابی دستگاه", icon: Factory },
-  { value: "medical", label: "پزشکی و درمان", example: "تحلیل تصاویر پزشکی، خلاصه پرونده بیمار", icon: Stethoscope },
-  { value: "finance", label: "مالی و بانکی", example: "تشخیص تقلب، اعتبارسنجی، تحلیل ریسک", icon: Landmark },
-  { value: "agriculture", label: "کشاورزی", example: "پایش سلامت گیاه، پیش‌بینی برداشت", icon: Sprout },
-  { value: "logistics", label: "لجستیک و حمل‌ونقل", example: "بهینه‌سازی مسیر، پیش‌بینی تقاضا", icon: Truck },
-  { value: "security", label: "امنیت و نظارت تصویری", example: "شناسایی رویداد، شمارش و تحلیل رفت‌وآمد", icon: Cctv },
-  { value: "energy", label: "انرژی و صنایع سنگین", example: "پایش مصرف، نگهداری پیش‌گویانه", icon: Zap },
-  { value: "other", label: "ایده دیگری دارم", example: "هر مسئله‌ای که داده و هدف روشن دارد", icon: Lightbulb },
+  { value: "factory", label: tx("خط تولید و کارخانه"), example: tx("تشخیص عیب محصول با دوربین، پیش‌بینی خرابی دستگاه"), icon: Factory },
+  { value: "medical", label: tx("پزشکی و درمان"), example: tx("تحلیل تصاویر پزشکی، خلاصه پرونده بیمار"), icon: Stethoscope },
+  { value: "finance", label: tx("مالی و بانکی"), example: tx("تشخیص تقلب، اعتبارسنجی، تحلیل ریسک"), icon: Landmark },
+  { value: "agriculture", label: tx("کشاورزی"), example: tx("پایش سلامت گیاه، پیش‌بینی برداشت"), icon: Sprout },
+  { value: "logistics", label: tx("لجستیک و حمل‌ونقل"), example: tx("بهینه‌سازی مسیر، پیش‌بینی تقاضا"), icon: Truck },
+  { value: "security", label: tx("امنیت و نظارت تصویری"), example: tx("شناسایی رویداد، شمارش و تحلیل رفت‌وآمد"), icon: Cctv },
+  { value: "energy", label: tx("انرژی و صنایع سنگین"), example: tx("پایش مصرف، نگهداری پیش‌گویانه"), icon: Zap },
+  { value: "other", label: tx("ایده دیگری دارم"), example: tx("هر مسئله‌ای که داده و هدف روشن دارد"), icon: Lightbulb },
 ];
 
 export const customData = [
-  { value: "images", label: "عکس و ویدیو" },
-  { value: "sensors", label: "سنسور و IoT" },
-  { value: "documents", label: "اسناد و فرم‌ها" },
-  { value: "database", label: "پایگاه داده" },
-  { value: "audio", label: "صدا و تماس" },
-  { value: "none", label: "هنوز داده نداریم" },
+  { value: "images", label: tx("عکس و ویدیو") },
+  { value: "sensors", label: tx("سنسور و IoT") },
+  { value: "documents", label: tx("اسناد و فرم‌ها") },
+  { value: "database", label: tx("پایگاه داده") },
+  { value: "audio", label: tx("صدا و تماس") },
+  { value: "none", label: tx("هنوز داده نداریم") },
 ];
 
 export const customProcess = [
-  { title: "گفتگو و شناخت", text: "مسئله، هدف و معیار موفقیت را با هم دقیق می‌کنیم." },
-  { title: "بررسی داده", text: "داده‌های موجود را می‌سنجیم و کمبودها را مشخص می‌کنیم." },
-  { title: "نمونه اولیه", text: "روی داده واقعی شما یک نسخه آزمایشی می‌سازیم و نتیجه را اندازه می‌گیریم." },
-  { title: "استقرار و آموزش", text: "در سازمان راه‌اندازی، تیم را آموزش و سیستم را پایش می‌کنیم." },
+  { title: tx("گفتگو و شناخت"), text: tx("مسئله، هدف و معیار موفقیت را با هم دقیق می‌کنیم.") },
+  { title: tx("بررسی داده"), text: tx("داده‌های موجود را می‌سنجیم و کمبودها را مشخص می‌کنیم.") },
+  { title: tx("نمونه اولیه"), text: tx("روی داده واقعی شما یک نسخه آزمایشی می‌سازیم و نتیجه را اندازه می‌گیریم.") },
+  { title: tx("استقرار و آموزش"), text: tx("در سازمان راه‌اندازی، تیم را آموزش و سیستم را پایش می‌کنیم.") },
 ];
 
 

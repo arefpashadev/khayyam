@@ -1,5 +1,6 @@
 "use client";
 
+import { tx, ld } from "@/lib/tx";
 import { Clock, Plus, Star, TrendingUp, UserRound } from "lucide-react";
 import type { CSSProperties } from "react";
 
@@ -36,17 +37,17 @@ export const IndustryShowcase = ({ config, compact }: { config: WizardConfig; co
   const body = {
     shop: (
       <>
-        <Title title="پرفروش‌ترین‌ها" action="همه محصولات" compact={compact} />
+        <Title title={tx("پرفروش‌ترین‌ها")} action={tx("همه محصولات")} compact={compact} />
         <div className="mb-5 flex gap-2 overflow-hidden">
-          {["همه", "پوشاک", "کیف و کفش", "اکسسوری", "تخفیف‌دار"].map((item, index) => (
+          {[tx("همه"), tx("پوشاک"), tx("کیف و کفش"), tx("اکسسوری"), tx("تخفیف‌دار")].map((item, index) => (
             <button key={item} type="button" data-live onClick={() => setDemo({ category: index })} className={`shrink-0 transition-colors ${category === index ? chipActive : chipIdle}`}>{item}</button>
           ))}
         </div>
         <div className={`grid gap-4 ${cols}`}>
-          {[["کیف دستی چرم", 890, 1150], ["کتانی سفید", 1240, 0], ["ساعت کلاسیک", 2390, 2800], ["شال پاییزه", 320, 0]].filter((_, index) => category === 0 || category === 4 ? true : index % 4 === (category % 4) || index === category).map(([name, price, old], index) => (
+          {[[tx("کیف دستی چرم"), 890, 1150], [tx("کتانی سفید"), 1240, 0], [tx("ساعت کلاسیک"), 2390, 2800], [tx("شال پاییزه"), 320, 0]].filter((_, index) => category === 0 || category === 4 ? true : index % 4 === (category % 4) || index === category).map(([name, price, old], index) => (
             <div key={name as string} className={tile}>
               <div className="relative aspect-square" style={{ backgroundColor: shade(0.2 + index * 0.14) }}>
-                {old ? <span className="absolute right-3 top-3 rounded-(--pv-r-ctrl) bg-(--pv-primary) px-2 py-0.5 text-[11px] font-bold text-(--pv-on-primary)">تخفیف</span> : null}
+                {old ? <span className="absolute start-3 top-3 rounded-(--pv-r-ctrl) bg-(--pv-primary) px-2 py-0.5 text-[11px] font-bold text-(--pv-on-primary)">{tx("تخفیف")}</span> : null}
               </div>
               <div className="flex items-end justify-between gap-2 p-4">
                 <div>
@@ -56,7 +57,7 @@ export const IndustryShowcase = ({ config, compact }: { config: WizardConfig; co
                     {old ? <span className="text-[11px] text-(--pv-muted) line-through">{faNumber(old as number)}</span> : null}
                   </span>
                 </div>
-                <button type="button" data-live aria-label="افزودن به سبد" onClick={(event) => { event.stopPropagation(); addToCart(); }} className="flex size-9 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-soft) text-(--pv-primary) transition-transform active:scale-75">
+                <button type="button" data-live aria-label={tx("افزودن به سبد")} onClick={(event) => { event.stopPropagation(); addToCart(); }} className="flex size-9 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-soft) text-(--pv-primary) transition-transform active:scale-75">
                   <Plus className="size-4" aria-hidden="true" />
                 </button>
               </div>
@@ -67,14 +68,14 @@ export const IndustryShowcase = ({ config, compact }: { config: WizardConfig; co
     ),
     restaurant: (
       <>
-        <Title title="منوی ما" action="منوی کامل" compact={compact} />
+        <Title title={tx("منوی ما")} action={tx("منوی کامل")} compact={compact} />
         <div className="mb-6 flex gap-2">
-          {["غذای اصلی", "پیش‌غذا", "دسر", "نوشیدنی"].map((item, index) => (
+          {[tx("غذای اصلی"), tx("پیش‌غذا"), tx("دسر"), tx("نوشیدنی")].map((item, index) => (
             <span key={item} className={index === 0 ? chipActive : chipIdle}>{item}</span>
           ))}
         </div>
         <div className={`grid gap-x-12 gap-y-1 ${compact ? "" : "grid-cols-2"}`}>
-          {[["کباب برگ", "با برنج ایرانی و گوجه کبابی", 420], ["جوجه‌کباب زعفرانی", "مرینیت ۲۴ ساعته", 360], ["خورش فسنجان", "گردوی تازه و مرغ", 340], ["ماهی قزل‌آلا", "سبزی‌پلو و لیمو", 390], ["زرشک‌پلو با مرغ", "زرشک و زعفران", 310], ["باقالی‌پلو با ماهیچه", "ماهیچه گوسفندی", 520]]
+          {[[tx("کباب برگ"), tx("با برنج ایرانی و گوجه کبابی"), 420], [tx("جوجه‌کباب زعفرانی"), tx("مرینیت ۲۴ ساعته"), 360], [tx("خورش فسنجان"), tx("گردوی تازه و مرغ"), 340], [tx("ماهی قزل‌آلا"), tx("سبزی‌پلو و لیمو"), 390], [tx("زرشک‌پلو با مرغ"), tx("زرشک و زعفران"), 310], [tx("باقالی‌پلو با ماهیچه"), tx("ماهیچه گوسفندی"), 520]]
             .slice(0, compact ? 4 : 6)
             .map(([dish, note, price]) => (
               <div key={dish as string} className="flex items-center gap-4 border-b border-dashed border-(--pv-border) py-4">
@@ -91,24 +92,24 @@ export const IndustryShowcase = ({ config, compact }: { config: WizardConfig; co
     ),
     education: (
       <>
-        <Title title="دوره‌های محبوب" action="همه دوره‌ها" compact={compact} />
+        <Title title={tx("دوره‌های محبوب")} action={tx("همه دوره‌ها")} compact={compact} />
         <div className={`grid gap-4 ${compact ? "" : "grid-cols-3"}`}>
-          {[["طراحی رابط کاربری از صفر", "مقدماتی", 24, "۱٬۸۰۰"], ["پایتون برای تحلیل داده", "متوسط", 36, "۲٬۴۰۰"], ["مکالمه انگلیسی کاربردی", "همه سطوح", 48, "۱٬۲۰۰"]]
+          {[[tx("طراحی رابط کاربری از صفر"), tx("مقدماتی"), 24, ld("۱٬۸۰۰")], [tx("پایتون برای تحلیل داده"), tx("متوسط"), 36, ld("۲٬۴۰۰")], [tx("مکالمه انگلیسی کاربردی"), tx("همه سطوح"), 48, ld("۱٬۲۰۰")]]
             .slice(0, compact ? 2 : 3)
             .map(([course, level, lessons, price], index) => (
               <div key={course as string} className={tile}>
                 <div className="relative aspect-[16/9]" style={{ backgroundColor: shade(0.25 + index * 0.18) }}>
-                  <span className="absolute right-3 top-3 rounded-(--pv-r-ctrl) bg-(--pv-bg) px-2.5 py-1 text-[11px] font-bold">{level as string}</span>
+                  <span className="absolute start-3 top-3 rounded-(--pv-r-ctrl) bg-(--pv-bg) px-2.5 py-1 text-[11px] font-bold">{level as string}</span>
                 </div>
                 <div className="p-5">
                   <strong className="block text-[15px]">{course as string}</strong>
                   <div className="mt-3 flex items-center gap-4 text-[12px] text-(--pv-muted)">
-                    <span className="flex items-center gap-1"><Clock className="size-3.5" aria-hidden="true" />{faNumber(lessons as number)} جلسه</span>
-                    <span className="flex items-center gap-1"><Star className="size-3.5 fill-(--pv-primary) text-(--pv-primary)" aria-hidden="true" />۴٫۸</span>
+                    <span className="flex items-center gap-1"><Clock className="size-3.5" aria-hidden="true" />{tx("{0} جلسه", [faNumber(lessons as number)])}</span>
+                    <span className="flex items-center gap-1"><Star className="size-3.5 fill-(--pv-primary) text-(--pv-primary)" aria-hidden="true" />{ld("۴٫۸")}</span>
                   </div>
                   <div className="mt-4 flex items-center justify-between border-t border-(--pv-border) pt-4">
-                    <strong className="text-[14px] text-(--pv-primary)">{price as string} <span className="text-[11px] font-normal text-(--pv-muted)">هزار تومان</span></strong>
-                    <span className="rounded-(--pv-r-ctrl) bg-(--pv-soft) px-3 py-1.5 text-[12px] font-bold text-(--pv-primary)">ثبت‌نام</span>
+                    <strong className="text-[14px] text-(--pv-primary)">{price as string} <span className="text-[11px] font-normal text-(--pv-muted)">{tx("هزار تومان")}</span></strong>
+                    <span className="rounded-(--pv-r-ctrl) bg-(--pv-soft) px-3 py-1.5 text-[12px] font-bold text-(--pv-primary)">{tx("ثبت‌نام")}</span>
                   </div>
                 </div>
               </div>
@@ -118,16 +119,16 @@ export const IndustryShowcase = ({ config, compact }: { config: WizardConfig; co
     ),
     health: (
       <>
-        <Title title="پزشکان ما" action="همه پزشکان" compact={compact} />
+        <Title title={tx("پزشکان ما")} action={tx("همه پزشکان")} compact={compact} />
         <div className={`grid gap-4 ${cols}`}>
-          {[["دکتر سارا کریمی", "قلب و عروق"], ["دکتر علی احمدی", "پوست و مو"], ["دکتر مریم رضایی", "کودکان"], ["دکتر حسین نوری", "چشم‌پزشکی"]].map(([doctor, field], index) => (
+          {[[tx("دکتر سارا کریمی"), tx("قلب و عروق")], [tx("دکتر علی احمدی"), tx("پوست و مو")], [tx("دکتر مریم رضایی"), tx("کودکان")], [tx("دکتر حسین نوری"), tx("چشم‌پزشکی")]].map(([doctor, field], index) => (
             <div key={doctor} className={`${tile} p-5 text-center`}>
               <span className="mx-auto flex size-20 items-end justify-center overflow-hidden rounded-full" style={{ backgroundColor: shade(0.2 + index * 0.15) }}>
                 <UserRound className="mb-[-12%] size-[85%] text-white/80" strokeWidth={1.2} aria-hidden="true" />
               </span>
               <strong className="mt-3 block text-[14px]">{doctor}</strong>
-              <span className="text-[12px] text-(--pv-muted)">متخصص {field}</span>
-              <span className="mt-4 flex h-10 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-primary) text-[12px] font-bold text-(--pv-on-primary)">دریافت نوبت</span>
+              <span className="text-[12px] text-(--pv-muted)">{tx("متخصص {0}", [field])}</span>
+              <span className="mt-4 flex h-10 items-center justify-center rounded-(--pv-r-ctrl) bg-(--pv-primary) text-[12px] font-bold text-(--pv-on-primary)">{tx("دریافت نوبت")}</span>
             </div>
           ))}
         </div>
@@ -135,9 +136,9 @@ export const IndustryShowcase = ({ config, compact }: { config: WizardConfig; co
     ),
     company: (
       <>
-        <Title title="پروژه‌های اخیر" action="همه پروژه‌ها" compact={compact} />
+        <Title title={tx("پروژه‌های اخیر")} action={tx("همه پروژه‌ها")} compact={compact} />
         <div className={`grid gap-4 ${compact ? "" : "grid-cols-3"}`}>
-          {[["گروه صنعتی آریا", "سامانه فروش یکپارچه", "+۴۲٪ فروش"], ["بانک نوین", "بازطراحی تجربه مشتری", "+۳۰٪ رضایت"], ["پارس لجستیک", "داشبورد مدیریت ناوگان", "−۱۸٪ هزینه"]]
+          {[[tx("گروه صنعتی آریا"), tx("سامانه فروش یکپارچه"), tx("+۴۲٪ فروش")], [tx("بانک نوین"), tx("بازطراحی تجربه مشتری"), tx("+۳۰٪ رضایت")], [tx("پارس لجستیک"), tx("داشبورد مدیریت ناوگان"), tx("−۱۸٪ هزینه")]]
             .slice(0, compact ? 2 : 3)
             .map(([client, project, result], index) => (
               <div key={client} className={`${tile} p-6`}>
@@ -152,9 +153,9 @@ export const IndustryShowcase = ({ config, compact }: { config: WizardConfig; co
     ),
     personal: (
       <>
-        <Title title="کارهای منتخب" action="همه کارها" compact={compact} />
+        <Title title={tx("کارهای منتخب")} action={tx("همه کارها")} compact={compact} />
         <div className={`grid gap-4 ${compact ? "" : "grid-cols-3"}`}>
-          {[["اپلیکیشن بانکی", "طراحی محصول"], ["هویت بصری کافه", "برندینگ"], ["فروشگاه آنلاین", "طراحی وب"]].slice(0, compact ? 2 : 3).map(([project, tag], index) => (
+          {[[tx("اپلیکیشن بانکی"), tx("طراحی محصول")], [tx("هویت بصری کافه"), tx("برندینگ")], [tx("فروشگاه آنلاین"), tx("طراحی وب")]].slice(0, compact ? 2 : 3).map(([project, tag], index) => (
             <div key={project}>
               <div className="aspect-[4/3] rounded-(--pv-r-card)" style={{ backgroundColor: index === 0 ? "var(--pv-primary)" : shade(0.3 + index * 0.2) }} />
               <div className="mt-3 flex items-center justify-between">
