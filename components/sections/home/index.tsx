@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Bell, Check, Moon, Search, ShoppingBag } from "lucide-react";
+import { ArrowLeft, Bell, Check, Search, ShoppingBag, Sparkles } from "lucide-react";
 import { AnimatePresence, animate, motion, useInView, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
@@ -199,110 +199,213 @@ const Precision = () => {
 /* AI: what it saves                                                    */
 /* ------------------------------------------------------------------ */
 
+/* Scene 1 — understands a messy, colloquial message and acts on it. */
+const understandChips = ["کفش چرم مشکی", "سایز ۴۲", "تحویل تا پنجشنبه"];
+
+const Understands = () => {
+  const { ref, index } = useTicker(6, 1300);
+  return (
+    <div ref={ref} className="flex h-[212px] flex-col gap-2.5">
+      <p className="max-w-[92%] self-end rounded-[18px] rounded-bl-md bg-[#f2ecdf]/[0.07] px-3.5 py-2 text-[12.5px] leading-6 text-[#dcd6c9]">
+        اون مشکیه که هفته پیش تو پیج دیدم، ۴۲ دارین؟ تا پنجشنبه می‌رسه دستم؟
+      </p>
+      <div className="flex min-h-[28px] flex-wrap gap-1.5">
+        {understandChips.map((chip, chipIndex) => (
+          <motion.span
+            key={chip}
+            initial={false}
+            animate={index >= 1 ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 6, scale: 0.9 }}
+            transition={{ duration: 0.35, delay: index >= 1 ? chipIndex * 0.12 : 0, ease }}
+            className="rounded-full bg-[#d9a648]/[0.12] px-2.5 py-1 text-[11.5px] font-bold text-[#f5d79c] ring-1 ring-[#d9a648]/30"
+          >
+            {chip}
+          </motion.span>
+        ))}
+      </div>
+      <motion.span initial={false} animate={{ opacity: index >= 2 ? 1 : 0 }} className="flex items-center gap-1.5 text-[11.5px] text-[#9aa3b8]">
+        <Check className="size-3.5 text-[#7fd6a8]" strokeWidth={3} aria-hidden="true" /> موجودی انبار و زمان ارسال بررسی شد
+      </motion.span>
+      <motion.p
+        initial={false}
+        animate={index >= 3 ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+        transition={{ duration: 0.4, ease }}
+        className="max-w-[92%] self-start rounded-[18px] rounded-br-md bg-[#d9a648]/[0.14] px-3.5 py-2 text-[12.5px] leading-6 text-[#f5e6c6]"
+      >
+        بله، دو جفت ۴۲ داریم. اگر تا ساعت ۱۸ ثبت کنید چهارشنبه می‌رسد. لینک پرداخت را بفرستم؟
+      </motion.p>
+    </div>
+  );
+};
+
+/* Scene 2 — reads a photographed invoice and files it. */
+const invoiceFields = [
+  { label: "فروشنده", value: "پخش البرز" },
+  { label: "مبلغ", value: "۴۸٬۶۰۰٬۰۰۰ ریال" },
+  { label: "تاریخ", value: "۱۲ آبان" },
+];
+
+const ReadsDocuments = () => {
+  const { ref, index } = useTicker(6, 1100);
+  const reduce = useReducedMotion();
+  return (
+    <div ref={ref} className="grid h-[212px] grid-cols-[0.8fr_1fr] items-center gap-4">
+      <div className="relative h-[180px] rotate-[-4deg] overflow-hidden rounded-[10px] bg-[#e9e2d2] p-3 shadow-[0_18px_40px_-18px_rgba(0,0,0,0.9)]">
+        <span className="block h-2 w-3/5 rounded-full bg-[#1c1406]/50" />
+        <span className="mt-2 block h-1.5 w-2/5 rounded-full bg-[#1c1406]/25" />
+        {[0, 1, 2, 3, 4].map((row) => (
+          <span key={row} className="mt-3 flex justify-between">
+            <span className="h-1.5 w-1/2 rounded-full bg-[#1c1406]/20" />
+            <span className="h-1.5 w-1/5 rounded-full bg-[#1c1406]/30" />
+          </span>
+        ))}
+        <span className="mt-4 block h-2.5 w-1/2 rounded-full bg-[#1c1406]/45" />
+        {!reduce && (
+          <motion.span
+            className="absolute inset-x-0 h-8 bg-[linear-gradient(180deg,transparent,rgba(217,166,72,0.55),transparent)]"
+            animate={{ top: ["-15%", "100%"] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut", repeatType: "reverse" }}
+            aria-hidden="true"
+          />
+        )}
+      </div>
+      <div className="flex flex-col gap-2">
+        {invoiceFields.map((field, fieldIndex) => (
+          <motion.div
+            key={field.label}
+            initial={false}
+            animate={index > fieldIndex ? { opacity: 1, x: 0 } : { opacity: 0.15, x: 12 }}
+            transition={{ duration: 0.4, ease }}
+            className="rounded-[12px] bg-[#0c1222] px-3 py-2 ring-1 ring-[#f2ecdf]/[0.07]"
+          >
+            <span className="block text-[10.5px] text-[#7f889c]">{field.label}</span>
+            <span className="text-[12.5px] font-bold text-[#f2ecdf]">{field.value}</span>
+          </motion.div>
+        ))}
+        <motion.span initial={false} animate={{ opacity: index >= 4 ? 1 : 0 }} className="flex items-center gap-1.5 text-[11.5px] font-bold text-[#7fd6a8]">
+          <Check className="size-3.5" strokeWidth={3} aria-hidden="true" /> در حسابداری ثبت شد
+        </motion.span>
+      </div>
+    </div>
+  );
+};
+
+/* Scene 3 — spots a pattern in the numbers and says what to do. */
+const week = [
+  { day: "ش", value: 42 },
+  { day: "ی", value: 38 },
+  { day: "د", value: 45 },
+  { day: "س", value: 40 },
+  { day: "چ", value: 52 },
+  { day: "پ", value: 88, peak: true },
+  { day: "ج", value: 61 },
+];
+
+const FindsInsights = () => {
+  const { ref, index } = useTicker(5, 1400);
+  return (
+    <div ref={ref} className="flex h-[212px] flex-col justify-between">
+      <div className="flex h-[110px] items-end gap-2 border-b border-[#f2ecdf]/10 px-1">
+        {week.map((bar, barIndex) => (
+          <div key={bar.day} className="flex flex-1 flex-col items-center gap-1.5">
+            <motion.span
+              className={`block w-full rounded-t-[6px] ${bar.peak && index >= 1 ? "bg-[#d9a648]" : "bg-[#f2ecdf]/15"}`}
+              initial={false}
+              animate={{ height: index === 0 ? 6 : bar.value }}
+              transition={{ duration: 0.6, delay: index === 0 ? 0 : barIndex * 0.05, ease }}
+            />
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-between px-1 text-[10.5px] text-[#7f889c]">
+        {week.map((bar) => (
+          <span key={bar.day} className="flex-1 text-center">{bar.day}</span>
+        ))}
+      </div>
+      <motion.p
+        initial={false}
+        animate={index >= 2 ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+        transition={{ duration: 0.4, ease }}
+        className="mt-2 flex gap-2 rounded-[16px] bg-[#d9a648]/[0.12] px-3.5 py-2.5 text-[12.5px] leading-6 text-[#f5e6c6] ring-1 ring-[#d9a648]/25"
+      >
+        <Sparkles className="mt-1 size-3.5 shrink-0 text-[#e9c27a]" aria-hidden="true" />
+        پنجشنبه‌ها فروش قهوه نزدیک دو برابر است و موجودی همین هفته تمام می‌شود. سفارش را امروز بدهید.
+      </motion.p>
+    </div>
+  );
+};
+
+const smart: { role: string; title: string; text: string; scene: ReactNode }[] = [
+  { role: "پاسخ‌گوی هوشمند", title: "منظور مشتری را می‌فهمد", text: "پیام محاوره‌ای و نصفه‌نیمه را هم؛ محصول، سایز و زمان را از دلش بیرون می‌کشد، انبار را می‌پرسد و دقیق جواب می‌دهد.", scene: <Understands /> },
+  { role: "کارمند اداری خودکار", title: "سند را می‌خواند و ثبت می‌کند", text: "از عکس فاکتور، رسید یا قرارداد، مبلغ و تاریخ و طرف حساب را درمی‌آورد و خودش در سیستم شما ثبت می‌کند.", scene: <ReadsDocuments /> },
+  { role: "تحلیل‌گر فروش", title: "در عددها نکته پیدا می‌کند", text: "فروش و موجودی را هر روز نگاه می‌کند و پیش از آنکه دیر شود، می‌گوید چه باید کرد.", scene: <FindsInsights /> },
+];
+
 const SavingsCalculator = () => {
   const [staff, setStaff] = useState(3);
   const [share, setShare] = useState(0.5);
   const result = impact({ ...defaultAiConfig, staff, share });
 
   return (
-    <div className={`${card} flex flex-col p-6 lg:p-9`}>
-      <span className="pointer-events-none absolute -top-24 right-0 size-72 rounded-full bg-[#d9a648] opacity-[0.12] blur-[90px]" aria-hidden="true" />
-      <span className="relative text-[13px] font-bold text-[#e9c27a]">حساب کنید</span>
-      <h3 className="relative mt-2 text-[22px] font-extrabold leading-[1.5] lg:text-[26px]">برای کسب‌وکار شما چقدر می‌شود؟</h3>
+    <div className={`${card} grid gap-8 p-6 lg:grid-cols-[1.1fr_1fr] lg:gap-12 lg:p-10`}>
+      <span className="pointer-events-none absolute -top-24 left-0 size-72 rounded-full bg-[#d9a648] opacity-[0.12] blur-[90px]" aria-hidden="true" />
+      <div className="relative">
+        <span className="text-[13px] font-bold text-[#e9c27a]">حساب کنید</span>
+        <h3 className="mt-2 text-[22px] font-extrabold leading-[1.5] lg:text-[28px]">این هوش برای شما چقدر می‌ارزد؟</h3>
 
-      <label className="relative mt-7 block">
-        <span className="flex items-center justify-between text-[13.5px] text-[#dcd6c9]">
-          چند نفر به پیام‌ها، سفارش‌ها و کارهای اداری می‌رسند؟
-          <strong className="text-[16px] text-[#f2ecdf]">{fa(staff)} نفر</strong>
-        </span>
-        <input
-          type="range"
-          min={1}
-          max={20}
-          value={staff}
-          onChange={(event) => setStaff(Number(event.target.value))}
-          className="mt-3 h-2 w-full cursor-pointer appearance-none rounded-full bg-[#f2ecdf]/10 accent-[#d9a648]"
-          style={{ background: `linear-gradient(to left, #d9a648 ${((staff - 1) / 19) * 100}%, rgba(242,236,223,0.1) 0)` }}
-        />
-      </label>
-
-      <div className="relative mt-6">
-        <span className="text-[13.5px] text-[#dcd6c9]">چقدر از وقتشان صرف کار تکراری می‌شود؟</span>
-        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {shareChoices.map((choice) => (
-            <button
-              key={choice.value}
-              type="button"
-              onClick={() => setShare(choice.value)}
-              aria-pressed={share === choice.value}
-              className={`h-10 rounded-full text-[12.5px] font-bold transition-colors ${share === choice.value ? "bg-[#d9a648] text-[#1c1406]" : "bg-[#f2ecdf]/[0.06] text-[#dcd6c9] hover:bg-[#f2ecdf]/10"}`}
-            >
-              {choice.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="relative mt-8 grid grid-cols-2 gap-3">
-        <div className="rounded-[22px] bg-[#0c1222] p-5 ring-1 ring-[#f2ecdf]/[0.07]">
-          <span className="block text-[clamp(34px,5vw,48px)] font-black leading-none text-[#f2ecdf]">
-            <Count to={result.hoursSaved} duration={0.6} />
+        <label className="mt-7 block">
+          <span className="flex items-center justify-between gap-3 text-[13.5px] text-[#dcd6c9]">
+            چند نفر به پیام‌ها، سفارش‌ها و کارهای اداری می‌رسند؟
+            <strong className="shrink-0 text-[16px] text-[#f2ecdf]">{fa(staff)} نفر</strong>
           </span>
-          <span className="mt-2 block text-[12.5px] text-[#9aa3b8]">ساعت در ماه آزاد می‌شود</span>
-        </div>
-        <div className="rounded-[22px] bg-[#d9a648]/[0.1] p-5 ring-1 ring-[#d9a648]/30">
-          <span className="block text-[clamp(34px,5vw,48px)] font-black leading-none text-[#e9c27a]">
-            <Count to={Math.round(result.monthlySaving)} duration={0.6} />
-          </span>
-          <span className="mt-2 block text-[12.5px] text-[#dcd6c9]">میلیون تومان در ماه کمتر هزینه</span>
-        </div>
-      </div>
-      <p className="relative mt-4 text-[12px] leading-6 text-[#7f889c]">برآورد با همان فرمول استودیوی هوش مصنوعی خیام؛ عدد دقیق کسب‌وکارتان را آنجا می‌گیرید.</p>
-      <Link href="/createai" className={`${primary} relative mt-6 self-start`}>
-        تیم هوش مصنوعی من را بساز <ArrowLeft className="size-4" aria-hidden="true" />
-      </Link>
-    </div>
-  );
-};
+          <input
+            type="range"
+            min={1}
+            max={20}
+            value={staff}
+            onChange={(event) => setStaff(Number(event.target.value))}
+            className="mt-3 h-2 w-full cursor-pointer appearance-none rounded-full accent-[#d9a648]"
+            style={{ background: `linear-gradient(to left, #d9a648 ${((staff - 1) / 19) * 100}%, rgba(242,236,223,0.1) 0)` }}
+          />
+        </label>
 
-const nightChat = [
-  { from: "customer", text: "سلام، سفارش من کی می‌رسه؟" },
-  { from: "ai", text: "سلام! سفارش ۱۰۴۲ امروز ارسال شد؛ فردا تا ساعت ۱۷ می‌رسد." },
-  { from: "customer", text: "یه دونه دیگه هم می‌خوام." },
-  { from: "ai", text: "ثبت شد ✓ همراه همین ارسال برایتان می‌آید." },
-] as const;
+        <div className="mt-6">
+          <span className="text-[13.5px] text-[#dcd6c9]">چقدر از وقتشان صرف کار تکراری می‌شود؟</span>
+          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {shareChoices.map((choice) => (
+              <button
+                key={choice.value}
+                type="button"
+                onClick={() => setShare(choice.value)}
+                aria-pressed={share === choice.value}
+                className={`h-10 rounded-full text-[12.5px] font-bold transition-colors ${share === choice.value ? "bg-[#d9a648] text-[#1c1406]" : "bg-[#f2ecdf]/[0.06] text-[#dcd6c9] hover:bg-[#f2ecdf]/10"}`}
+              >
+                {choice.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
-const NightReply = () => {
-  const { ref, index } = useTicker(nightChat.length + 2, 1600);
-  const shown = nightChat.slice(0, Math.min(index + 1, nightChat.length));
-  return (
-    <div ref={ref} className={`${card} flex flex-col p-6 lg:p-7`}>
-      <div className="flex items-center justify-between">
-        <span className="flex items-center gap-2 text-[12.5px] font-bold text-[#9aa3b8]">
-          <Moon className="size-4 text-[#e9c27a]" aria-hidden="true" /> ساعت ۳:۱۲ بامداد
-        </span>
-        <span className="flex items-center gap-1.5 text-[11.5px] text-[#7fd6a8]">
-          <span className="size-1.5 animate-pulse rounded-full bg-[#2fd08a]" /> پاسخ‌گو بیدار است
-        </span>
+      <div className="relative flex flex-col justify-center">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="rounded-[22px] bg-[#0c1222] p-5 ring-1 ring-[#f2ecdf]/[0.07]">
+            <span className="block text-[clamp(34px,5vw,52px)] font-black leading-none text-[#f2ecdf]">
+              <Count to={result.hoursSaved} duration={0.6} />
+            </span>
+            <span className="mt-2 block text-[12.5px] text-[#9aa3b8]">ساعت در ماه آزاد می‌شود</span>
+          </div>
+          <div className="rounded-[22px] bg-[#d9a648]/[0.1] p-5 ring-1 ring-[#d9a648]/30">
+            <span className="block text-[clamp(34px,5vw,52px)] font-black leading-none text-[#e9c27a]">
+              <Count to={Math.round(result.monthlySaving)} duration={0.6} />
+            </span>
+            <span className="mt-2 block text-[12.5px] text-[#dcd6c9]">میلیون تومان در ماه کمتر هزینه</span>
+          </div>
+        </div>
+        <p className="mt-4 text-[12px] leading-6 text-[#7f889c]">برآورد با همان فرمول استودیوی هوش مصنوعی خیام؛ عدد دقیق کسب‌وکارتان را آنجا می‌گیرید.</p>
+        <Link href="/createai" className={`${primary} mt-6 self-start`}>
+          تیم هوش مصنوعی من را بساز <ArrowLeft className="size-4" aria-hidden="true" />
+        </Link>
       </div>
-      <div className="mt-5 flex min-h-[200px] flex-col justify-end gap-2">
-        <AnimatePresence initial={false}>
-          {shown.map((line) => (
-            <motion.p
-              key={line.text}
-              layout
-              initial={{ opacity: 0, y: 10, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.35, ease }}
-              className={`max-w-[85%] rounded-[18px] px-3.5 py-2 text-[13px] leading-6 ${line.from === "ai" ? "self-start bg-[#d9a648]/[0.14] text-[#f5e6c6]" : "self-end bg-[#f2ecdf]/[0.07] text-[#dcd6c9]"}`}
-            >
-              {line.text}
-            </motion.p>
-          ))}
-        </AnimatePresence>
-      </div>
-      <h3 className="mt-6 text-[19px] font-extrabold leading-[1.5]">جواب زیر ۱۰ ثانیه؛ حتی وقتی همه خواب‌اند.</h3>
-      <p className="mt-2 text-[13.5px] leading-7 text-[#9aa3b8]">مشتری‌ای که جواب نگیرد از رقیب می‌خرد. پاسخ‌گوی خیام هر پیام را همان لحظه جواب می‌دهد و سفارش را ثبت می‌کند؛ فروشی که شب‌ها از دست می‌رفت، می‌ماند.</p>
     </div>
   );
 };
@@ -312,31 +415,26 @@ const AiSection = () => (
     <div className="mx-auto max-w-[1240px] px-5 py-24 lg:px-10 lg:py-32">
       <Reveal>
         <span className="text-[13px] font-bold text-[#e9c27a]">هوش مصنوعی</span>
-        <h2 id="ai-title" className="mt-3 max-w-[20ch] text-[32px] font-extrabold leading-[1.4] lg:text-[50px]">
-          تیمی که هزینه‌اش را خودش درمی‌آورد.
+        <h2 id="ai-title" className="mt-3 max-w-[22ch] text-[32px] font-extrabold leading-[1.4] lg:text-[50px]">
+          می‌فهمد، می‌خواند، فکر می‌کند.
         </h2>
+        <p className="mt-4 max-w-[52ch] text-[15px] leading-8 text-[#b9bfcc]">نه یک ربات با جواب‌های آماده؛ هم‌تیمی‌ای که کسب‌وکار شما را یاد می‌گیرد و کار را از اول تا آخر انجام می‌دهد.</p>
       </Reveal>
-      <div className="mt-12 grid gap-4 lg:grid-cols-[1.25fr_1fr]">
-        <Reveal>
-          <SavingsCalculator />
-        </Reveal>
-        <div className="grid gap-4">
-          <Reveal delay={0.1}>
-            <NightReply />
+      <div className="mt-12 grid gap-4 lg:grid-cols-3">
+        {smart.map((item, index) => (
+          <Reveal key={item.title} delay={index * 0.1} className="h-full">
+            <article className={`${card} flex h-full flex-col p-6 lg:p-7`}>
+              {item.scene}
+              <span className="mt-6 text-[12px] font-bold text-[#e9c27a]">{item.role}</span>
+              <h3 className="mt-1 text-[20px] font-extrabold leading-[1.5]">{item.title}</h3>
+              <p className="mt-2 flex-1 text-[13.5px] leading-7 text-[#9aa3b8]">{item.text}</p>
+            </article>
           </Reveal>
-          <Reveal delay={0.2}>
-            <div className={`${card} p-6 lg:p-7`}>
-              <div className="flex flex-wrap gap-2">
-                {["گزارش فروش هر صبح", "ثبت فاکتورها", "پیگیری سفارش", "پست شبکه‌های اجتماعی"].map((item) => (
-                  <span key={item} className="rounded-full bg-[#f2ecdf]/[0.06] px-3 py-1.5 text-[12px] text-[#dcd6c9]">{item}</span>
-                ))}
-              </div>
-              <h3 className="mt-5 text-[19px] font-extrabold leading-[1.5]">تیمتان به کار اصلی برمی‌گردد.</h3>
-              <p className="mt-2 text-[13.5px] leading-7 text-[#9aa3b8]">کارهای تکراری را تیم هوش مصنوعی انجام می‌دهد؛ تصمیم‌های مهم همچنان با شماست.</p>
-            </div>
-          </Reveal>
-        </div>
+        ))}
       </div>
+      <Reveal className="mt-4">
+        <SavingsCalculator />
+      </Reveal>
     </div>
   </section>
 );
