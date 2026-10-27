@@ -204,9 +204,9 @@ const AiSection = () => (
 /* ------------------------------------------------------------------ */
 
 const orders = [
-  { time: "۰۲:۱۴", text: "سفارش تازه · ۲ قلم", amount: "۱٫۸ میلیون" },
-  { time: "۰۲:۴۱", text: "رزرو نوبت · فردا ۱۰ صبح", amount: "پرداخت شد" },
-  { time: "۰۳:۰۵", text: "سفارش تازه · ۱ قلم", amount: "۶۴۰ هزار" },
+  { time: "۰۲:۱۴", text: "سفارش تازه، ۲ قلم", amount: "۱٫۸ میلیون" },
+  { time: "۰۲:۴۱", text: "رزرو نوبت، فردا ۱۰ صبح", amount: "پرداخت شد" },
+  { time: "۰۳:۰۵", text: "سفارش تازه، ۱ قلم", amount: "۶۴۰ هزار" },
   { time: "۰۴:۲۷", text: "درخواست مشاوره", amount: "فرم کامل" },
 ];
 
@@ -244,7 +244,7 @@ const queries = ["قنادی نزدیک من", "رزرو کلینیک دندان
 const SearchRise = () => {
   const { ref, index } = useTicker(queries.length, 3200);
   return (
-    <div ref={ref} className="flex h-[176px] flex-col gap-2">
+    <div ref={ref} className="flex h-[176px] flex-col gap-2 overflow-hidden">
       <div className="flex h-11 items-center gap-2 rounded-full bg-[#0c1222] px-4 ring-1 ring-[#f2ecdf]/[0.09]">
         <Search className="size-4 text-[#7f889c]" aria-hidden="true" />
         <AnimatePresence mode="wait">
@@ -254,7 +254,7 @@ const SearchRise = () => {
         </AnimatePresence>
       </div>
       <motion.div key={`you-${index}`} initial={{ y: 50, opacity: 0.4 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, delay: 0.3, ease }} className="rounded-[16px] bg-[#d9a648]/[0.1] px-4 py-3 ring-1 ring-[#d9a648]/35">
-        <span className="block text-[13.5px] font-bold text-[#f5d79c]">سایت شما · اولین نتیجه</span>
+        <span className="block text-[13.5px] font-bold text-[#f5d79c]">سایت شما، اولین نتیجه</span>
         <span className="text-[12px] text-[#9aa3b8]">سریع، درست برای گوشی و آماده برای گوگل</span>
       </motion.div>
       {[0, 1].map((row) => (
@@ -299,37 +299,116 @@ const products: { title: string; text: string; scene: ReactNode; price: { from: 
   { title: "اپی که مشتری را برمی‌گرداند", text: "اعلان به‌موقع، خرید با یک لمس و باشگاه مشتریان؛ مشتری یک‌بار نمی‌آید، می‌ماند.", scene: <ComeBack />, price: startingPrices.app, href: "/createapp", cta: "طراحی اپلیکیشن" },
 ];
 
-const Products = () => (
-  <section id="start" aria-labelledby="products-title" className="scroll-mt-6 bg-[#0e1527]">
-    <div className="mx-auto max-w-[1240px] px-5 py-24 lg:px-10 lg:py-32">
-      <Reveal>
-        <span className="text-[13px] font-bold text-[#e9c27a]">سایت و اپلیکیشن</span>
-        <h2 id="products-title" className="mt-3 max-w-[22ch] text-[32px] font-extrabold leading-[1.4] lg:text-[50px]">
-          قشنگ بودن کافی نیست؛ باید کار کند.
-        </h2>
-      </Reveal>
-      <div className="mt-12 grid gap-4 lg:grid-cols-3">
-        {products.map((item, index) => (
-          <Reveal key={item.title} delay={index * 0.1} className="h-full">
-            <article className={`${card} flex h-full flex-col p-6 lg:p-7`}>
+const SLIDE_MS = 6500;
+
+/**
+ * Phones: one card at a time in a sideways carousel that moves on by itself once the
+ * card's little scene has played; a swipe takes over. Desktop: the three side by side.
+ */
+const Products = () => {
+  const reduce = useReducedMotion();
+  const scroller = useRef<HTMLDivElement>(null);
+  const visible = useInView(scroller, { margin: "-80px" });
+  const [active, setActive] = useState(0);
+  const touched = useRef(0);
+
+  const go = (index: number) => {
+    const box = scroller.current;
+    const child = box?.children[index] as HTMLElement | undefined;
+    if (!box || !child) return;
+    const outer = box.getBoundingClientRect();
+    const inner = child.getBoundingClientRect();
+    box.scrollBy({ left: inner.left - outer.left - (outer.width - inner.width) / 2, behavior: reduce ? "auto" : "smooth" });
+  };
+
+  useEffect(() => {
+    if (!visible || reduce) return;
+    const timer = window.setInterval(() => {
+      if (window.matchMedia("(min-width: 1024px)").matches) return;
+      if (Date.now() - touched.current < SLIDE_MS) return;
+      go((active + 1) % products.length);
+    }, SLIDE_MS);
+    return () => window.clearInterval(timer);
+  });
+
+  const onScroll = () => {
+    const box = scroller.current;
+    if (!box) return;
+    const center = box.getBoundingClientRect().left + box.clientWidth / 2;
+    let best = 0;
+    let distance = Infinity;
+    Array.from(box.children).forEach((child, index) => {
+      const rect = child.getBoundingClientRect();
+      const gap = Math.abs(rect.left + rect.width / 2 - center);
+      if (gap < distance) {
+        distance = gap;
+        best = index;
+      }
+    });
+    if (best !== active) setActive(best);
+  };
+
+  return (
+    <section id="start" aria-labelledby="products-title" className="scroll-mt-6 bg-[#0e1527]">
+      <div className="mx-auto max-w-[1240px] px-5 py-24 lg:px-10 lg:py-32">
+        <Reveal>
+          <span className="text-[13px] font-bold text-[#e9c27a]">سایت و اپلیکیشن</span>
+          <h2 id="products-title" className="mt-3 max-w-[22ch] text-[32px] font-extrabold leading-[1.4] lg:text-[50px]">
+            قشنگ بودن کافی نیست؛ باید کار کند.
+          </h2>
+        </Reveal>
+        <div
+          ref={scroller}
+          onScroll={onScroll}
+          onTouchStart={() => (touched.current = Date.now())}
+          onPointerDown={() => (touched.current = Date.now())}
+          className="-mx-5 mt-12 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] lg:mx-0 lg:grid lg:grid-cols-3 lg:gap-4 lg:overflow-visible lg:px-0 [&::-webkit-scrollbar]:hidden"
+        >
+          {products.map((item) => (
+            <article key={item.title} className={`${card} flex w-[86%] shrink-0 snap-center flex-col p-6 sm:w-[60%] lg:w-auto lg:p-7`}>
               {item.scene}
               <h3 className="mt-7 text-[20px] font-extrabold leading-[1.5]">{item.title}</h3>
               <p className="mt-2 flex-1 text-[13.5px] leading-7 text-[#9aa3b8]">{item.text}</p>
               <div className="mt-6 flex items-center justify-between gap-3 border-t border-[#f2ecdf]/[0.08] pt-5">
                 <span className="text-[12px] text-[#9aa3b8]">
-                  از <strong className="text-[17px] text-[#f2ecdf]">{fa(item.price.from)}</strong> میلیون · {fa(item.price.weeks)} هفته
+                  از <strong className="text-[17px] text-[#f2ecdf]">{fa(item.price.from)}</strong> میلیون، {fa(item.price.weeks)} هفته
                 </span>
                 <Link href={item.href} className="flex items-center gap-1 text-[13px] font-bold text-[#e9c27a] transition-colors hover:text-[#f5d79c]">
                   {item.cta} <ArrowLeft className="size-3.5" aria-hidden="true" />
                 </Link>
               </div>
             </article>
-          </Reveal>
-        ))}
+          ))}
+        </div>
+        <div className="mt-5 flex justify-center gap-2 lg:hidden">
+          {products.map((item, index) => (
+            <button
+              key={item.title}
+              type="button"
+              aria-label={item.title}
+              aria-current={index === active ? "true" : undefined}
+              onClick={() => {
+                touched.current = Date.now();
+                go(index);
+              }}
+              className={`relative h-1.5 overflow-hidden rounded-full bg-[#f2ecdf]/15 transition-all duration-300 ${index === active ? "w-10" : "w-4"}`}
+            >
+              {index === active && (
+                <motion.span
+                  key={`fill-${active}`}
+                  className="absolute inset-y-0 right-0 bg-[#d9a648]"
+                  initial={{ width: reduce ? "100%" : "0%" }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: SLIDE_MS / 1000, ease: "linear" }}
+                />
+              )}
+            </button>
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 /* ------------------------------------------------------------------ */
 /* How it works, clients, closing                                       */
