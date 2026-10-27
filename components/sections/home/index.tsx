@@ -6,6 +6,10 @@ import { useState, type ReactNode } from "react";
 import { KhayyamMark } from "@/components/brand/khayyam-mark";
 import { Link } from "@/i18n/navigation";
 
+import { fa } from "../ai-wizard/config";
+
+import { startingPrices, testimonials } from "./content";
+import { LanguageSwitch } from "./language-switch";
 import { FaceCaption, StudioCube, type Face } from "./studio-cube";
 
 const C = { ivory: "#f2ecdf", gold: "#d9a648" };
@@ -129,7 +133,10 @@ const SiteHeader = () => (
         <Link href="/createai" className="transition-colors hover:text-[#f2ecdf]">هوش مصنوعی</Link>
         <Link href="/blog" className="transition-colors hover:text-[#f2ecdf]">وبلاگ</Link>
       </nav>
-      <a href="#studios" className="ms-auto inline-flex h-10 items-center rounded-full px-5 text-[13px] font-bold text-[#f2ecdf] ring-1 ring-[#f2ecdf]/25 transition-colors hover:bg-[#f2ecdf]/[0.06]">
+      <div className="ms-auto">
+        <LanguageSwitch />
+      </div>
+      <a href="#studios" className="inline-flex h-10 items-center rounded-full px-5 text-[13px] font-bold text-[#f2ecdf] ring-1 ring-[#f2ecdf]/25 transition-colors hover:bg-[#f2ecdf]/[0.06]">
         شروع پروژه
       </a>
     </div>
@@ -138,7 +145,7 @@ const SiteHeader = () => (
 
 export const HomePage = () => {
   const reduce = useReducedMotion();
-  const [face, setFace] = useState<Face>("ai");
+  const [face, setFace] = useState<Face | null>(null);
   const rise = (delay: number) => (reduce ? {} : { initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] as const } });
 
   return (
@@ -165,6 +172,14 @@ export const HomePage = () => {
                 سه سوال، سه طرح آماده
               </Link>
             </motion.div>
+            <motion.ul {...rise(0.55)} className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-[13.5px] text-[#dcd6c9]">
+              {["طراحی رایگان", `تحویل از ${fa(startingPrices.site.weeks)} هفته`, "قیمت شفاف از قبل"].map((item) => (
+                <li key={item} className="flex items-center gap-2">
+                  <span className="size-1.5 rotate-45 bg-[#d9a648]" aria-hidden="true" />
+                  {item}
+                </li>
+              ))}
+            </motion.ul>
           </div>
 
           <div className="mx-auto flex w-full max-w-[460px] flex-col items-center gap-6">
@@ -175,6 +190,24 @@ export const HomePage = () => {
         <p className="mx-auto max-w-[1240px] border-t border-[#f2ecdf]/10 px-5 py-5 text-[13px] text-[#8790a6] lg:px-10">
           خیام طول سال را <span className="text-[#e9c27a]">۳۶۵٫۲۴۲۱۹</span> روز حساب کرد. ما هم کارمان را با همین دقت اندازه می‌گیریم.
         </p>
+      </section>
+
+      {/* proof */}
+      <section aria-label="خیام در چند عدد" className="border-y border-[#f2ecdf]/10 bg-[#0e1527]">
+        <dl className="mx-auto grid max-w-[1240px] grid-cols-2 lg:grid-cols-4">
+          {[
+            { value: "۰ تومان", label: "هزینه طراحی اولیه در استودیو" },
+            { value: `${fa(startingPrices.site.weeks)} هفته`, label: "کوتاه‌ترین زمان تحویل سایت" },
+            { value: `${fa(startingPrices.site.from)} میلیون`, label: "شروع قیمت سایت، به تومان" },
+            { value: "۲۴ ساعته", label: "کار تیم هوش مصنوعی، هر روز هفته" },
+          ].map((item, index) => (
+            <div key={item.label} className={`px-5 py-9 lg:px-10 lg:py-12 ${index % 2 === 1 ? "border-r border-[#f2ecdf]/10" : ""} ${index >= 2 ? "border-t border-[#f2ecdf]/10 lg:border-t-0" : ""} ${index === 2 ? "lg:border-r" : ""}`}>
+              <dt className="sr-only">{item.label}</dt>
+              <dd className="text-[30px] font-extrabold text-[#f2ecdf] lg:text-[42px]">{item.value}</dd>
+              <dd className="mt-2 text-[13px] leading-6 text-[#9aa3b8]">{item.label}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
       {/* studios */}
@@ -212,6 +245,75 @@ export const HomePage = () => {
               </article>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* promises */}
+      <section className="mx-auto max-w-[1240px] px-5 py-20 lg:px-10 lg:py-28">
+        <h2 className="max-w-[20ch] text-[30px] font-extrabold leading-[1.4] lg:text-[44px]">قول ما به شما</h2>
+        <div className="mt-12 grid gap-px overflow-hidden rounded-[28px] bg-[#f2ecdf]/10 sm:grid-cols-2">
+          {[
+            { title: "قیمت را قبل از شروع می‌دانید", text: "در استودیو با هر انتخاب، برآورد زنده عوض می‌شود. هزینه پنهان و قیمت بعدی در کار نیست." },
+            { title: "سریع تحویل می‌گیرید", text: `سایت از ${fa(startingPrices.site.weeks)} هفته و هوش مصنوعی از ${fa(startingPrices.ai.weeks)} هفته. زمان دقیق پروژه‌تان را همان اول می‌گوییم.` },
+            { title: "تا نپسندید، سفارش نمی‌دهید", text: "طراحی در استودیو رایگان است و طرح کامل فیگما جزو پروژه است؛ اول می‌بینید، بعد تصمیم می‌گیرید." },
+            { title: "کیفیتی که دیده می‌شود", text: "کد تمیز، طراحی دقیق برای گوشی و کامپیوتر، و پشتیبانی بعد از تحویل؛ نه یک قالب آماده." },
+          ].map((promise) => (
+            <div key={promise.title} className="bg-[#0c1222] p-8 lg:p-11">
+              <span className="block size-2.5 rotate-45 bg-[#d9a648]" aria-hidden="true" />
+              <h3 className="mt-6 text-[21px] font-extrabold leading-[1.5] lg:text-[24px]">{promise.title}</h3>
+              <p className="mt-3 max-w-[44ch] text-[14.5px] leading-8 text-[#b9bfcc]">{promise.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* prices */}
+      <section className="bg-[#0e1527]">
+        <div className="mx-auto max-w-[1240px] px-5 py-20 lg:px-10 lg:py-24">
+          <h2 className="text-[30px] font-extrabold leading-[1.4] lg:text-[44px]">قیمت‌ها از کجا شروع می‌شود</h2>
+          <p className="mt-3 max-w-[56ch] text-[15px] leading-8 text-[#b9bfcc]">قیمت دقیق پروژه‌تان را خود استودیو با هر انتخاب حساب می‌کند.</p>
+          <div className="mt-12 grid gap-4 lg:grid-cols-3">
+            {[
+              { title: "وب‌سایت", price: startingPrices.site, href: "/createsite", cta: "قیمت سایت من" },
+              { title: "اپلیکیشن", price: startingPrices.app, href: "/createapp", cta: "قیمت اپ من" },
+              { title: "هوش مصنوعی", price: startingPrices.ai, href: "/createai", cta: "قیمت تیم هوش مصنوعی من" },
+            ].map((item) => (
+              <div key={item.title} className="flex flex-col rounded-[28px] bg-[#121a2e] p-8 ring-1 ring-[#f2ecdf]/[0.07]">
+                <h3 className="text-[17px] font-bold text-[#dcd6c9]">{item.title}</h3>
+                <p className="mt-6 text-[14px] text-[#9aa3b8]">
+                  از <span className="text-[40px] font-extrabold text-[#f2ecdf]">{fa(item.price.from)}</span> میلیون تومان
+                </p>
+                <p className="mt-1 text-[13px] text-[#9aa3b8]">تحویل از {fa(item.price.weeks)} هفته</p>
+                <Link href={item.href} className="mt-8 text-[14px] font-bold text-[#e9c27a] underline decoration-[#d9a648]/40 underline-offset-[6px] hover:text-[#f5d79c]">
+                  {item.cta}
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* clients */}
+      <section className="mx-auto max-w-[1240px] px-5 py-20 lg:px-10 lg:py-28">
+        <h2 className="text-[30px] font-extrabold leading-[1.4] lg:text-[44px]">مشتریان ما می‌گویند</h2>
+        <div className="mt-12 grid gap-4 lg:grid-cols-3">
+          {testimonials.map((item, index) =>
+            item.placeholder ? (
+              <figure key={index} className="flex min-h-[240px] flex-col justify-between rounded-[28px] border border-dashed border-[#f2ecdf]/15 p-8">
+                <span className="text-[40px] leading-none text-[#d9a648]/40" aria-hidden="true">«</span>
+                <figcaption className="text-[13px] leading-7 text-[#6f788d]">جای نظر یک مشتری واقعی؛ متنش را در فایل content.ts بگذارید.</figcaption>
+              </figure>
+            ) : (
+              <figure key={index} className="flex flex-col rounded-[28px] bg-[#121a2e] p-8 ring-1 ring-[#f2ecdf]/[0.07]">
+                {item.result && <p className="text-[22px] font-extrabold leading-[1.5] text-[#e9c27a]">{item.result}</p>}
+                <blockquote className="mt-4 flex-1 text-[15px] leading-8 text-[#dcd6c9]">«{item.quote}»</blockquote>
+                <figcaption className="mt-6 border-t border-[#f2ecdf]/10 pt-4 text-[13px]">
+                  <strong className="block text-[#f2ecdf]">{item.name}</strong>
+                  <span className="text-[#9aa3b8]">{item.role}</span>
+                </figcaption>
+              </figure>
+            ),
+          )}
         </div>
       </section>
 

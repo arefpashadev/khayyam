@@ -35,7 +35,7 @@ export const KhayyamMark = ({
 }) => {
   const line = tone === "light" ? "#f4f6fa" : "#14202b";
   const gold = "#f0b44a";
-  const stroke = { fill: "none", stroke: line, strokeWidth: 3.6, strokeLinejoin: "round" as const };
+  const stroke = { fill: "none", stroke: line, strokeWidth: 4.4, strokeLinejoin: "round" as const };
   const draw = (delay: number): CSSProperties | undefined =>
     state === "intro" ? { strokeDasharray: 90, strokeDashoffset: 90, animation: `khayyam-draw 0.7s ${delay}s cubic-bezier(0.65, 0, 0.35, 1) forwards` } : undefined;
   const travel = (delay: number): CSSProperties => ({ opacity: 0, animation: `khayyam-face 1.8s ${delay}s cubic-bezier(0.65, 0, 0.35, 1) infinite` });

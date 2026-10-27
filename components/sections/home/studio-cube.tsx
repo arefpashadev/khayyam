@@ -32,51 +32,70 @@ const IVORY = "#f2ecdf";
 
 /**
  * The home page's signature: Khayyam's cube, one face per studio.
- * Faces take turns lighting up on their own; hovering or focusing one holds it,
- * and choosing it opens that studio.
+ * At rest it is the logo itself — bold lines and a gold top, like a closed book.
+ * Pointing at it opens it up: the faces name the studios, the one under the pointer
+ * lights up, and choosing it opens that studio. Touch screens show the names right away.
  */
-export const StudioCube = ({ onChange }: { onChange?: (face: Face) => void }) => {
+export const StudioCube = ({ onChange }: { onChange?: (face: Face | null) => void }) => {
   const reduce = useReducedMotion();
   const router = useRouter();
-  const [auto, setAuto] = useState<Face>("ai");
+  const [inside, setInside] = useState(false);
   const [held, setHeld] = useState<Face | null>(null);
-  const active = held ?? auto;
+  const [touch, setTouch] = useState(false);
 
   useEffect(() => {
-    if (held || reduce) return;
-    const order: Face[] = ["ai", "site", "app"];
-    const interval = window.setInterval(() => setAuto((face) => order[(order.indexOf(face) + 1) % order.length]), 2800);
-    return () => window.clearInterval(interval);
-  }, [held, reduce]);
+    const timeout = window.setTimeout(() => setTouch(!window.matchMedia("(hover: hover)").matches), 0);
+    return () => window.clearTimeout(timeout);
+  }, []);
 
-  useEffect(() => onChange?.(active), [active, onChange]);
+  const open = inside || touch;
+  // At rest the top face is gold, exactly like the logo.
+  const lit: Face = held ?? "ai";
+
+  useEffect(() => onChange?.(open ? lit : null), [open, lit, onChange]);
 
   const draw = (delay: number) => (reduce ? {} : { initial: { pathLength: 0, opacity: 0 }, animate: { pathLength: 1, opacity: 1 }, transition: { duration: 1.2, delay, ease: [0.65, 0, 0.35, 1] as const } });
 
   return (
-    <svg viewBox="0 0 400 400" className="h-auto w-full overflow-visible" role="group" aria-label="سه استودیوی خیام">
+    <motion.svg
+      viewBox="0 0 400 400"
+      className="h-auto w-full overflow-visible"
+      role="group"
+      aria-label="سه استودیوی خیام"
+      onMouseEnter={() => setInside(true)}
+      onMouseLeave={() => {
+        setInside(false);
+        setHeld(null);
+      }}
+      animate={reduce || open ? { y: 0 } : { y: [0, -8, 0] }}
+      transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+    >
       <defs>
         <radialGradient id="cube-glow">
-          <stop offset="0" stopColor={GOLD} stopOpacity="0.22" />
+          <stop offset="0" stopColor={GOLD} stopOpacity="0.24" />
           <stop offset="1" stopColor={GOLD} stopOpacity="0" />
         </radialGradient>
       </defs>
       <circle cx="200" cy="210" r="190" fill="url(#cube-glow)" />
 
       {faces.map((face, index) => {
-        const on = active === face.key;
-        const title = faces.find((item) => item.key === face.key)?.title ?? "";
+        const on = lit === face.key;
         return (
           <g
             key={face.key}
             role="link"
             tabIndex={0}
-            aria-label={`${title}، ${face.cta}`}
+            aria-label={`${face.title}، ${face.cta}`}
             className="cursor-pointer outline-none"
             onMouseEnter={() => setHeld(face.key)}
-            onMouseLeave={() => setHeld(null)}
-            onFocus={() => setHeld(face.key)}
-            onBlur={() => setHeld(null)}
+            onFocus={() => {
+              setInside(true);
+              setHeld(face.key);
+            }}
+            onBlur={() => {
+              setInside(false);
+              setHeld(null);
+            }}
             onClick={() => router.push(face.href)}
             onKeyDown={(event) => {
               if (event.key === "Enter" || event.key === " ") {
@@ -85,38 +104,40 @@ export const StudioCube = ({ onChange }: { onChange?: (face: Face) => void }) =>
               }
             }}
           >
-            <motion.polygon
-              points={shape[face.key]}
-              initial={false}
-              animate={{ fill: on ? GOLD : "rgba(242,236,223,0.02)" }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            />
-            <motion.polygon points={shape[face.key]} fill="none" stroke={IVORY} strokeOpacity={0.9} strokeWidth="2" strokeLinejoin="round" {...draw(index * 0.18)} />
+            <motion.polygon points={shape[face.key]} initial={false} animate={{ fill: on ? GOLD : "rgba(242,236,223,0.025)" }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }} />
+            <motion.polygon points={shape[face.key]} fill="none" stroke={IVORY} strokeWidth="7" strokeLinejoin="round" {...draw(index * 0.18)} />
             <motion.text
               transform={label[face.key]}
               textAnchor="middle"
               dominantBaseline="middle"
               fontSize={face.key === "ai" ? 23 : 28}
               fontWeight="800"
-              initial={reduce ? false : { opacity: 0 }}
-              animate={{ opacity: 1, fill: on ? "#1c1406" : IVORY }}
-              transition={{ opacity: { delay: 1.1 + index * 0.1, duration: 0.6 }, fill: { duration: 0.4 } }}
-              style={{ fontFamily: "inherit" }}
+              initial={false}
+              animate={{ opacity: open ? 1 : 0, fill: on ? "#1c1406" : IVORY }}
+              transition={{ duration: 0.35 }}
+              style={{ fontFamily: "inherit", pointerEvents: "none" }}
             >
-              {title}
+              {face.title}
             </motion.text>
           </g>
         );
       })}
-    </svg>
+    </motion.svg>
   );
 };
 
-/** The caption under the cube: what the lit face is, and the way in. */
-export const FaceCaption = ({ face }: { face: Face }) => {
-  const item = faces.find((entry) => entry.key === face) ?? faces[0];
+/** The caption under the cube: an invitation at rest, then what the lit face is. */
+export const FaceCaption = ({ face }: { face: Face | null }) => {
+  const item = faces.find((entry) => entry.key === face);
+  if (!item) {
+    return (
+      <motion.p key="rest" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center text-[14px] leading-7 text-[#8790a6]">
+        نشانگر را روی مکعب ببرید؛ هر وجهش یک استودیو است.
+      </motion.p>
+    );
+  }
   return (
-    <motion.div key={face} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="flex flex-col items-center gap-2 text-center">
+    <motion.div key={item.key} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="flex flex-col items-center gap-2 text-center">
       <p className="max-w-[34ch] text-[14px] leading-7 text-[#b9bfcc]">{item.text}</p>
       <Link href={item.href} className="text-[14px] font-bold text-[#e9c27a] underline decoration-[#d9a648]/40 underline-offset-[6px] transition-colors hover:text-[#f5d79c]">
         {item.cta}
