@@ -145,55 +145,18 @@ const Hero = () => {
 /* 365.24219 — the brand statement                                      */
 /* ------------------------------------------------------------------ */
 
-const Precision = () => {
-  const reduce = useReducedMotion();
-  return (
-    <section aria-labelledby="precision" className="relative overflow-hidden border-y border-[#f2ecdf]/10 bg-[#0e1527]">
-      <span className="pointer-events-none absolute left-1/2 top-1/2 h-[60%] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#d9a648] opacity-[0.08] blur-[120px]" aria-hidden="true" />
-      <div className="relative mx-auto flex max-w-[1240px] flex-col items-center px-5 py-24 text-center lg:px-10 lg:py-32">
-        <Reveal>
-          <span className="text-[13px] font-bold tracking-wide text-[#9aa3b8]">نزدیک هزار سال پیش، عمر خیام طول سال را حساب کرد:</span>
-        </Reveal>
-        <h2 id="precision" className="mt-6 flex flex-col items-center">
-          <span dir="ltr" className="block bg-[linear-gradient(180deg,#f8e2b0,#d9a648_55%,#a87a2a)] bg-clip-text text-[clamp(54px,14.5vw,190px)] font-black leading-[1.05] tracking-[-0.02em] text-transparent">
-            <Count to={365.24219} decimals={5} duration={2.2} />
-          </span>
-          <span className="mt-3 text-[clamp(20px,3vw,30px)] font-extrabold text-[#f2ecdf]">روز</span>
-        </h2>
-        <motion.span
-          className="mt-8 block h-px w-[min(520px,80%)] origin-center bg-[linear-gradient(90deg,transparent,#d9a648,transparent)]"
-          initial={reduce ? false : { scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.4, delay: 0.6, ease }}
-          aria-hidden="true"
-        />
-        <Reveal delay={0.3}>
-          <p className="mt-8 max-w-[24ch] text-[clamp(26px,4.2vw,50px)] font-extrabold leading-[1.45] text-[#f2ecdf]">
-            ما پروژه شما را <span className="text-[#e9c27a]">با همین دقت</span> اندازه می‌گیریم.
-          </p>
-        </Reveal>
-        <div className="mt-14 grid w-full max-w-[960px] gap-3 sm:grid-cols-3">
-          {[
-            { title: "قیمت دقیق", text: "قبل از شروع، با هر انتخاب در استودیو" },
-            { title: "تاریخ تحویل", text: `از ${fa(startingPrices.site.weeks)} هفته، از همان روز اول معلوم` },
-            { title: "طرح کامل فیگما", text: "جزو پروژه؛ هیچ‌وقت جدا حساب نمی‌شود" },
-          ].map((item, index) => (
-            <Reveal key={item.title} delay={0.4 + index * 0.1}>
-              <div className="h-full rounded-[22px] bg-[#0c1222]/70 px-5 py-5 text-start ring-1 ring-[#f2ecdf]/[0.08]">
-                <span className="flex items-center gap-2 text-[15px] font-extrabold text-[#f2ecdf]">
-                  <Check className="size-4 text-[#d9a648]" strokeWidth={3} aria-hidden="true" />
-                  {item.title}
-                </span>
-                <span className="mt-1 block text-[13px] leading-6 text-[#9aa3b8]">{item.text}</span>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
+const Precision = () => (
+  <section aria-label="دقت خیام" className="border-y border-[#f2ecdf]/10 bg-[#0e1527]">
+    <figure className="mx-auto flex max-w-[1240px] flex-col items-center px-5 py-24 text-center lg:py-32">
+      <KhayyamMark size={52} />
+      <blockquote className="mt-8 flex flex-col gap-2 text-[clamp(26px,3.6vw,48px)] font-extrabold leading-[1.55] text-[#f2ecdf] [text-wrap:balance]">
+        <span>«خیام طول سال را <span className="whitespace-nowrap text-[#e9c27a]">۳۶۵٫۲۴۲۱۹</span> روز حساب کرد.</span>
+        <span>ما هم کارمان را با همین دقت اندازه می‌گیریم.»</span>
+      </blockquote>
+      <figcaption className="mt-8 text-[14px] text-[#9aa3b8]">قیمت دقیق، تاریخ تحویل مشخص، قبل از شروع.</figcaption>
+    </figure>
+  </section>
+);
 
 /* ------------------------------------------------------------------ */
 /* AI: what it saves                                                    */
