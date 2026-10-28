@@ -136,7 +136,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="relative z-10 flex flex-col-reverse gap-4 border-t border-[#f2ecdf]/[0.08] pb-8 pt-6 text-[12.5px] text-[#7f889c] sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative z-10 flex flex-col-reverse gap-4 pb-8 pt-2 text-[12.5px] text-[#7f889c] sm:flex-row sm:items-center sm:justify-between">
           <span>{t("rights", { year })}</span>
           <div className="flex items-center gap-5">
             <Link href="/#privacy" className="transition-colors hover:text-[#f2ecdf]">

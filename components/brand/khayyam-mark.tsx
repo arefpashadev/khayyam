@@ -68,16 +68,79 @@ const defaultFacts = [
   "دقت، از خیام به ما رسیده؛ در حال آماده‌سازی…",
 ]
 
-/** Full-area loading state with the mark and a rotating Khayyam fact. */
-export const KhayyamLoader = ({ tone = "light", label = "در حال بارگذاری", facts = defaultFacts }: { tone?: "light" | "dark"; label?: string; facts?: string[] }) => (
-  <div role="status" aria-live="polite" className={`flex size-full min-h-[50vh] flex-col items-center justify-center gap-6 px-6 text-center ${tone === "dark" ? "bg-[#0b0d12] text-[#eef1f5]" : "bg-white text-[#14202b]"}`}>
-    <KhayyamMark size={88} state="thinking" tone={tone === "dark" ? "light" : "dark"} />
+// One build step on a cube face: grows in, holds, fades, on a shared 3.6s loop.
+const piece = (delay: number): CSSProperties => ({ transformBox: "fill-box", transformOrigin: "0% 50%", animation: "khayyam-build 3.6s cubic-bezier(0.22,1,0.36,1) infinite", animationDelay: `${delay}s`, opacity: 0 });
+
+/**
+ * The cube at work: a website being laid out on its right face, an app screen on its
+ * left face, and the AI "thinking" on the gold top, piece by piece, while a Khayyam fact
+ * rotates underneath. Drawn in the cube's own isometric planes.
+ */
+export const BuildingCube = ({ size = 210 }: { size?: number }) => {
+  const ivory = "#f2ecdf";
+  const line = { fill: ivory, fillOpacity: 0.85 } as const;
+  return (
+    <svg width={size} height={size} viewBox="0 0 200 200" aria-hidden="true" className="overflow-visible">
+      <defs>
+        <radialGradient id="build-glow">
+          <stop offset="0" stopColor="#d9a648" stopOpacity="0.28" />
+          <stop offset="1" stopColor="#d9a648" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <circle cx="100" cy="104" r="96" fill="url(#build-glow)" />
+      {/* faces */}
+      <polygon points="100,26 164,63 100,100 36,63" fill="#d9a648" />
+      <polygon points="164,63 164,137 100,174 100,100" fill="rgba(242,236,223,0.07)" />
+      <polygon points="36,63 100,100 100,174 36,137" fill="rgba(242,236,223,0.05)" />
+
+      {/* right face: a website, laid out top to bottom */}
+      <g transform="matrix(0.64 -0.37 0 0.74 100 100)">
+        <rect x="8" y="8" width="84" height="9" rx="2" {...line} style={piece(0)} />
+        <rect x="8" y="24" width="56" height="7" rx="2" {...line} style={piece(0.25)} />
+        <rect x="8" y="36" width="40" height="5" rx="2" {...line} fillOpacity={0.6} style={piece(0.4)} />
+        <rect x="8" y="48" width="26" height="22" rx="3" {...line} fillOpacity={0.5} style={piece(0.6)} />
+        <rect x="37" y="48" width="26" height="22" rx="3" {...line} fillOpacity={0.5} style={piece(0.7)} />
+        <rect x="66" y="48" width="26" height="22" rx="3" {...line} fillOpacity={0.5} style={piece(0.8)} />
+        <rect x="8" y="78" width="30" height="8" rx="4" fill="#d9a648" style={piece(1)} />
+      </g>
+
+      {/* left face: an app screen, stacking up */}
+      <g transform="matrix(0.64 0.37 0 0.74 36 63)">
+        <rect x="30" y="6" width="40" height="88" rx="7" fill="none" stroke={ivory} strokeOpacity="0.85" strokeWidth="3" style={piece(0.2)} />
+        <rect x="36" y="16" width="28" height="14" rx="3" fill="#d9a648" fillOpacity={0.85} style={piece(0.5)} />
+        <rect x="36" y="35" width="28" height="7" rx="2" {...line} style={piece(0.7)} />
+        <rect x="36" y="46" width="28" height="7" rx="2" {...line} fillOpacity={0.6} style={piece(0.85)} />
+        <rect x="36" y="57" width="28" height="7" rx="2" {...line} fillOpacity={0.6} style={piece(1)} />
+        <rect x="36" y="80" width="28" height="6" rx="3" {...line} style={piece(1.15)} />
+      </g>
+
+      {/* top face: the AI thinking */}
+      <g transform="matrix(0.64 -0.37 0.64 0.37 36 63)">
+        {[0, 1, 2].map((dot) => (
+          <circle key={dot} cx={34 + dot * 16} cy={50} r="6" fill="#1c1406" style={{ transformBox: "fill-box", transformOrigin: "center", animation: "khayyam-breathe 1.2s ease-in-out infinite", animationDelay: `${dot * 0.18}s` }} />
+        ))}
+      </g>
+
+      {/* edges, drawn last so they sit on top */}
+      <g fill="none" stroke={ivory} strokeWidth="5" strokeLinejoin="round">
+        <polygon points="100,26 164,63 100,100 36,63" />
+        <polygon points="164,63 164,137 100,174 100,100" />
+        <polygon points="36,63 100,100 100,174 36,137" />
+      </g>
+    </svg>
+  );
+};
+
+/** Full-screen loading state: the building cube and a rotating Khayyam fact. Always dark. */
+export const KhayyamLoader = ({ label = "در حال بارگذاری", facts = defaultFacts }: { tone?: "light" | "dark"; label?: string; facts?: string[] }) => (
+  <div role="status" aria-live="polite" className="fixed inset-0 z-[90] flex flex-col items-center justify-center gap-8 bg-[#0c1222] px-6 text-center text-[#f2ecdf]">
+    <BuildingCube />
     <span className="sr-only">{label}</span>
-    <div className="relative h-14 w-full max-w-[340px]" aria-hidden="true">
+    <div className="relative h-14 w-full max-w-[360px]" aria-hidden="true">
       {facts.map((fact, index) => (
         <p
           key={fact}
-          className={`absolute inset-x-0 top-0 text-[13px] leading-7 opacity-0 ${tone === "dark" ? "text-[#8a93a0]" : "text-[#5b6872]"}`}
+          className="absolute inset-x-0 top-0 text-[13.5px] leading-7 text-[#9aa3b8] opacity-0"
           style={{ animation: `khayyam-fact ${facts.length * 3}s ease-in-out infinite`, animationDelay: `${index * 3}s` }}
         >
           {fact}

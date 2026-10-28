@@ -43,19 +43,22 @@
       "label": "Web",
       "title": "Website",
       "text": "Firmenseite, Shop, Buchung oder Plattform – im Look, den Sie selbst zusammenstellen.",
-      "cta": "Website gestalten"
+      "cta": "Website gestalten",
+      "hint": "Firmenseite, Shop oder Online-Buchung"
     },
     "app": {
       "label": "App",
       "title": "App",
       "text": "iPhone, Android oder Web-App – auf dem Handy ansehen und ausprobieren.",
-      "cta": "App gestalten"
+      "cta": "App gestalten",
+      "hint": "iPhone-, Android- oder Web-App"
     },
     "ai": {
       "label": "KI",
       "title": "KI",
       "text": "Ein Team, das Kunden rund um die Uhr antwortet, Dokumente liest und Berichte schreibt.",
-      "cta": "Agent bauen"
+      "cta": "Agent bauen",
+      "hint": "Ein Agent, der Routinearbeit erledigt"
     }
   },
   "Ai": {
@@ -97,7 +100,8 @@
       "r2": "Reel",
       "r3": "Story",
       "r4": "Geplant",
-      "r4t": "Donnerstag, zur besten Zeit"
+      "r4t": "Donnerstag, zur besten Zeit",
+      "reply": "Die Kampagne ist fertig und für Donnerstag eingeplant."
     },
     "accounts": {
       "chip": "Buchhaltung",
@@ -108,7 +112,19 @@
       "r3": "Wochenbericht fertig",
       "r3t": "Einkauf, Verkauf und Salden",
       "r4": "Lieferant informiert",
-      "r4t": "Mit den Details der Abweichung"
+      "r4t": "Mit den Details der Abweichung",
+      "reply": "Rechnungen gelesen und verbucht – eine stimmt nicht.",
+      "a1": "Nova Großhandel · Verpackung",
+      "a1v": "1.240 €",
+      "a2": "Atlas · Rohstoffe",
+      "a2v": "3.180 €",
+      "a3": "Vertex · Versand",
+      "a3v": "560 €",
+      "a4": "Orbit · Software",
+      "a4v": "230 €",
+      "flag": "Doppelt berechnet",
+      "ok": "Verbucht",
+      "note": "Vertex ist informiert, für den Rest sind Zahlungserinnerungen gesetzt."
     },
     "support": {
       "chip": "Kundenantworten",
@@ -121,7 +137,27 @@
       "r3": "Bestellungen werden erfasst",
       "r3t": "Direkt in Ihrem Verkaufssystem",
       "r4": "Heikles geht an Sie",
-      "r4t": "Beschwerden oder Sonderrabatte landen bei Ihnen"
+      "r4t": "Beschwerden oder Sonderrabatte landen bei Ihnen",
+      "reply": "Ab heute Abend antworte ich. Die letzten drei Nachrichten:",
+      "s1c": "Instagram-DM · 23:40",
+      "s1q": "Gibt es die Schuhe in 42?",
+      "s1a": "Ja, noch zwei Paar. Link ist unterwegs.",
+      "s1d": "Bestellung erfasst",
+      "s2c": "WhatsApp · 01:15",
+      "s2q": "Wo ist meine Bestellung? Gestern gekauft.",
+      "s2a": "Ist verschickt und kommt heute bis 18 Uhr.",
+      "s2d": "Sendungsnummer gesendet",
+      "s3c": "Website-Chat · 08:05",
+      "s3q": "Gibt es Mengenrabatt?",
+      "s3a": "Ja – unser Vertrieb ruft Sie innerhalb einer Stunde an.",
+      "s3d": "An den Vertrieb übergeben"
+    },
+    "report": {
+      "ask": "Sieh dir die Verkäufe dieser Woche an und sag mir, was ich nächste Woche tun soll.",
+      "reply": "Der Bericht ist fertig – mit einem wichtigen Punkt.",
+      "chart": "Tagesumsatz diese Woche",
+      "insight": "Donnerstags verdoppelt sich der Kaffeeabsatz fast, und der Bestand reicht nicht bis nächsten Donnerstag. Heute nachbestellen.",
+      "done": "Bestellentwurf ist fertig"
     }
   },
   "Products": {
@@ -290,7 +326,19 @@
       "x6": "Kampagnenseite",
       "x6t": "Eine Seite für Verkauf oder Anmeldung",
       "closing": "Sehen Sie Ihr Website-Design jetzt – kostenlos.",
-      "metaTitle": "Webdesign | Khayyam"
+      "metaTitle": "Webdesign | Khayyam",
+      "titleRich": "Eine Website, die Ihnen <g>Kunden bringt.</g>",
+      "chip1": "Sichere Zahlung",
+      "chip2": "Bereit für Google",
+      "chip3": "Schnell auf dem Handy",
+      "q1": "Wie lange dauert eine Website?",
+      "a1": "Das Studio zeigt die genaue Dauer bei jeder Wahl; einfache Seiten sind in wenigen Wochen fertig, den Liefertermin kennen Sie von Anfang an.",
+      "q2": "Sehe ich das Design vor der Zahlung?",
+      "a2": "Ja. Im Studio sehen Sie den Entwurf sofort, gebaut wird erst, wenn Sie zufrieden sind.",
+      "q3": "Kann ich Inhalte später selbst ändern?",
+      "a3": "Ja – mit einem einfachen Admin-Panel ändern Sie Texte, Bilder, Produkte und Preise selbst.",
+      "q4": "Gibt es Support nach dem Launch?",
+      "a4": "Ja – Launch, Einweisung und Support nach der Übergabe gehören dazu."
     },
     "app": {
       "eyebrow": "App-Design",
@@ -323,7 +371,19 @@
       "x6": "Interne Firmen-App",
       "x6t": "Anträge, Freigaben, Berichte",
       "closing": "Probieren Sie Ihre App jetzt auf dem Handy – kostenlos.",
-      "metaTitle": "App-Design | Khayyam"
+      "metaTitle": "App-Design | Khayyam",
+      "titleRich": "Eine App, die <g>täglich geöffnet wird.</g>",
+      "chip1": "Rechtzeitige Pushs",
+      "chip2": "Fingerabdruck-Login",
+      "chip3": "Kauf mit einem Tipp",
+      "q1": "iPhone oder Android – was bauen wir?",
+      "a1": "Meist beides aus einer Codebasis – günstiger als zwei Apps. Für den schnellen Start ist auch eine Web-App gut.",
+      "q2": "Veröffentlicht ihr die App in den Stores?",
+      "a2": "Ja – Vorbereitung und Veröffentlichung in App Store und Google Play übernehmen wir.",
+      "q3": "Kann ich die App vor dem Bau ausprobieren?",
+      "a3": "Ja – im Studio läuft die App auf einem realistischen Handy, Sie tippen sich durch Screens und Funktionen.",
+      "q4": "Aktualisiert ihr die App nach dem Launch?",
+      "a4": "Ja – Support, Fehlerbehebung und neue Funktionen gehen nach dem Launch weiter."
     },
     "ai": {
       "eyebrow": "KI-Agenten",
@@ -356,7 +416,26 @@
       "x6": "Industrie",
       "x6t": "Individuell: Fehlererkennung, Ausfallprognose",
       "closing": "Überlassen Sie Routine dem Agenten – die Zeit Ihres Teams bleibt fürs Wachstum.",
-      "metaTitle": "KI-Agenten | Khayyam"
+      "metaTitle": "KI-Agenten | Khayyam",
+      "titleRich": "Ein Agent, der <g>die Arbeit erledigt.</g>",
+      "chip1": "Arbeitet rund um die Uhr",
+      "chip2": "Das letzte Wort haben Sie",
+      "chip3": "Mit Ihren Tools verbunden",
+      "demoTitle": "Ein Satz – und sehen, was passiert.",
+      "q1": "Wo bleiben unsere Daten?",
+      "a1": "Wo Sie wollen: in einer sicheren Cloud oder komplett auf Ihren Servern, ohne dass etwas das Unternehmen verlässt.",
+      "q2": "Was, wenn der Agent einen Fehler macht?",
+      "a2": "Sie legen fest, was automatisch läuft und was Ihre Freigabe braucht; heikle Fälle landen immer bei Ihnen.",
+      "q3": "Müssen wir unsere Tools wechseln?",
+      "a3": "Nein – der Agent wird an Ihre bestehenden Messenger, Shop, Buchhaltung und Dateien angebunden.",
+      "q4": "Unser Bedarf ist speziell – geht das trotzdem?",
+      "a4": "Ja – für Produktion, Medizin, Finanzen oder Spezialfälle gibt es den Weg „Individuelle KI“, der mit der Prüfung Ihrer Daten beginnt."
+    },
+    "faq": "Häufige Fragen",
+    "examplesSub": {
+      "site": "Jedes Unternehmen braucht seine eigene Website; hier ein paar Beispiele.",
+      "app": "Von Shopping-Apps bis zu internen Firmen-Apps – jede mit eigenem Look und eigenen Funktionen.",
+      "ai": "Jeder Agent entsteht rund um Arbeit und Daten des Unternehmens; ein paar Einsatzorte."
     }
   }
 }

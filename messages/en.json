@@ -43,19 +43,22 @@
       "label": "Web",
       "title": "Website",
       "text": "Company site, shop, booking or platform — with a look you arrange yourself.",
-      "cta": "Design a website"
+      "cta": "Design a website",
+      "hint": "Company site, shop or online booking"
     },
     "app": {
       "label": "App",
       "title": "App",
       "text": "iPhone, Android or web app — see it and try it on your phone.",
-      "cta": "Design an app"
+      "cta": "Design an app",
+      "hint": "iPhone, Android or web app"
     },
     "ai": {
       "label": "AI",
       "title": "AI",
       "text": "A team that answers customers around the clock, reads documents and writes reports.",
-      "cta": "Build an agent"
+      "cta": "Build an agent",
+      "hint": "An agent that does the repetitive work"
     }
   },
   "Ai": {
@@ -97,7 +100,8 @@
       "r2": "Reel",
       "r3": "Story",
       "r4": "Scheduled",
-      "r4t": "Thursday, at the busiest hour"
+      "r4t": "Thursday, at the busiest hour",
+      "reply": "The campaign content is ready, and I’ve scheduled it for Thursday."
     },
     "accounts": {
       "chip": "Accounting",
@@ -108,7 +112,19 @@
       "r3": "Weekly report ready",
       "r3t": "Purchases, sales and balances",
       "r4": "Supplier notified",
-      "r4t": "With the details of the mismatch"
+      "r4t": "With the details of the mismatch",
+      "reply": "I read and filed the invoices; one doesn’t add up.",
+      "a1": "Nova Supplies · packaging",
+      "a1v": "$1,240",
+      "a2": "Atlas · raw materials",
+      "a2v": "$3,180",
+      "a3": "Vertex · shipping",
+      "a3v": "$560",
+      "a4": "Orbit · software services",
+      "a4v": "$230",
+      "flag": "Charged twice",
+      "ok": "Filed",
+      "note": "I’ve told Vertex and set payment reminders for the rest."
     },
     "support": {
       "chip": "Customer replies",
@@ -121,7 +137,27 @@
       "r3": "Orders get logged",
       "r3t": "Straight into your sales system",
       "r4": "Sensitive cases go to you",
-      "r4t": "Complaints or special discounts are passed to you"
+      "r4t": "Complaints or special discounts are passed to you",
+      "reply": "From tonight the replies are on me. The last three messages:",
+      "s1c": "Instagram DM · 23:40",
+      "s1q": "Do you have these shoes in a 42?",
+      "s1a": "Yes, two pairs left. I’ve sent you the link.",
+      "s1d": "Order logged",
+      "s2c": "WhatsApp · 01:15",
+      "s2q": "Where’s my order? I bought it yesterday.",
+      "s2a": "It’s shipped and arrives today by 6 pm.",
+      "s2d": "Tracking code sent",
+      "s3c": "Website chat · 08:05",
+      "s3q": "Do you give discounts for bulk orders?",
+      "s3a": "Yes — our sales manager will call you within the hour.",
+      "s3d": "Passed to the sales manager"
+    },
+    "report": {
+      "ask": "Look at this week’s sales and tell me what to do next week.",
+      "reply": "The report is ready, with one important point.",
+      "chart": "Daily sales this week",
+      "insight": "Coffee sales nearly double on Thursdays, and stock won’t last until next Thursday. Place a purchase order today.",
+      "done": "A draft purchase order is ready"
     }
   },
   "Products": {
@@ -290,7 +326,19 @@
       "x6": "Campaign page",
       "x6t": "One page to sell or sign people up",
       "closing": "See your website’s design right now — it’s free.",
-      "metaTitle": "Website design | Khayyam"
+      "metaTitle": "Website design | Khayyam",
+      "titleRich": "A website that <g>brings you customers.</g>",
+      "chip1": "Secure payment",
+      "chip2": "Ready for Google",
+      "chip3": "Fast on phones",
+      "q1": "How long does a website take?",
+      "a1": "The studio shows the exact time with every choice; simple sites are ready in a few weeks, and you know the delivery date from the start.",
+      "q2": "Do I see the design before paying?",
+      "a2": "Yes. You see the design instantly in the studio, and building doesn’t start until you’re happy.",
+      "q3": "Can I change the content myself later?",
+      "a3": "Yes — with a simple admin panel you change text, images, products and prices yourself.",
+      "q4": "Do you support the site after launch?",
+      "a4": "Yes — launch, training and support after handover are part of our work."
     },
     "app": {
       "eyebrow": "App design",
@@ -323,7 +371,19 @@
       "x6": "Internal company app",
       "x6t": "Requests, approvals and reports",
       "closing": "Try your app on a phone right now — it’s free.",
-      "metaTitle": "App design | Khayyam"
+      "metaTitle": "App design | Khayyam",
+      "titleRich": "An app people <g>open every day.</g>",
+      "chip1": "Timely notifications",
+      "chip2": "Fingerprint sign-in",
+      "chip3": "One-tap checkout",
+      "q1": "iPhone or Android — which should we build?",
+      "a1": "Usually both, from one shared codebase, which costs less than two separate apps. For a quick start, a web app is a good option too.",
+      "q2": "Do you publish the app to the stores?",
+      "a2": "Yes — preparing and publishing on the App Store and Google Play is on us.",
+      "q3": "Can I try the app before it’s built?",
+      "a3": "Yes — in the studio the app runs on a realistic phone, and you tap through its screens and features.",
+      "q4": "Do you update the app after launch?",
+      "a4": "Yes — support, fixes and new features continue after launch."
     },
     "ai": {
       "eyebrow": "AI agents",
@@ -356,7 +416,26 @@
       "x6": "Industry",
       "x6t": "Custom projects: defect detection, failure prediction",
       "closing": "Hand the repetitive work to an agent; keep your team’s time for growth.",
-      "metaTitle": "AI agents | Khayyam"
+      "metaTitle": "AI agents | Khayyam",
+      "titleRich": "An agent that <g>gets the job done.</g>",
+      "chip1": "Works around the clock",
+      "chip2": "You have the final say",
+      "chip3": "Connected to your tools",
+      "demoTitle": "Write one sentence; see what it does.",
+      "q1": "Where does our data stay?",
+      "a1": "Wherever you want: on a secure cloud or entirely on your own servers, with nothing leaving your organisation.",
+      "q2": "What if the agent gets something wrong?",
+      "a2": "You decide which tasks run automatically and which need your approval; sensitive cases always come to you.",
+      "q3": "Do we need to change our tools?",
+      "a3": "No — the agent connects to the messengers, shop, accounting and files you already use.",
+      "q4": "Our needs are specific — can you still help?",
+      "a4": "Yes — for manufacturing, healthcare, finance or any specific problem we have a custom AI path that starts with a review of your data."
+    },
+    "faq": "Common questions",
+    "examplesSub": {
+      "site": "Every business needs its own site; here are a few of the things we build.",
+      "app": "From shopping apps to internal company apps, each with its own look and features.",
+      "ai": "Each agent is built around that business’s work and data; a few places where it works."
     }
   }
 }

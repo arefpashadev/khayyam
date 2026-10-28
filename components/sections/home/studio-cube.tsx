@@ -1,10 +1,10 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
-import { Link, useRouter } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 
 export type Face = "site" | "app" | "ai";
 
@@ -128,23 +128,24 @@ export const StudioCube = ({ onChange }: { onChange?: (face: Face | null) => voi
   );
 };
 
-/** The caption under the cube: an invitation at rest, then what the lit face is. */
+/** One line under the cube: an invitation at rest, then what the lit face is. */
 export const FaceCaption = ({ face }: { face: Face | null }) => {
   const t = useTranslations("Cube");
-  const item = faces.find((entry) => entry.key === face);
-  if (!item) {
-    return (
-      <motion.p key="rest" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center text-[14px] leading-7 text-[#8790a6]">
-        {t("rest")}
-      </motion.p>
-    );
-  }
+  const line = face ? t(`${face}.hint`) : t("rest");
   return (
-    <motion.div key={item.key} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="flex flex-col items-center gap-2 text-center">
-      <p className="max-w-[34ch] text-[14px] leading-7 text-[#b9bfcc]">{t(`${item.key}.text`)}</p>
-      <Link href={item.href} className="text-[14px] font-bold text-[#e9c27a] underline decoration-[#d9a648]/40 underline-offset-[6px] transition-colors hover:text-[#f5d79c]">
-        {t(`${item.key}.cta`)}
-      </Link>
-    </motion.div>
+    <div className="relative h-7 w-full overflow-hidden text-center" aria-live="polite">
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.p
+          key={line}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.25 }}
+          className={`truncate text-[14px] leading-7 ${face ? "font-bold text-[#e9c27a]" : "text-[#8790a6]"}`}
+        >
+          {line}
+        </motion.p>
+      </AnimatePresence>
+    </div>
   );
 };

@@ -291,3 +291,17 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .pv-section:not([data-inview]) { opacity: 1 !important; transform: none !important; }
 }
+
+@keyframes khayyam-build {
+  0% { opacity: 0; transform: scaleX(0.2); }
+  12%, 78% { opacity: 1; transform: scaleX(1); }
+  92%, 100% { opacity: 0; transform: scaleX(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  [style*="khayyam-build"] { animation: none !important; opacity: 1 !important; }
+}
+
+@keyframes svc-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
