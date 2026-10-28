@@ -91,8 +91,8 @@ const Footer = () => {
 
       {/* brand and links */}
       <div className="relative mx-auto max-w-[1240px] px-5 lg:px-10">
-        <div className="grid gap-10 border-t border-[#f2ecdf]/[0.08] py-12 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
-          <div>
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 border-t border-[#f2ecdf]/[0.08] py-12 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
+          <div className="col-span-2 lg:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2.5" aria-label={nav("home")}>
               <KhayyamMark size={34} />
               <span className="text-[20px] font-extrabold">{nav("brand")}</span>
@@ -115,7 +115,7 @@ const Footer = () => {
             </nav>
           ))}
 
-          <div>
+          <div className="col-span-2 lg:col-span-1">
             <h3 className="text-[13px] font-bold text-[#e9c27a]">{t("follow")}</h3>
             <div className="mt-4 flex gap-2">
               {[

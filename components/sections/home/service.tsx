@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 import { Link } from "@/i18n/navigation";
 import { dirOf } from "@/lib/locale";
@@ -40,6 +40,7 @@ import { dirOf } from "@/lib/locale";
 import { BlogPicks } from "../blog";
 
 import { AgentDemo } from "./ai-agent";
+import { StudioDemo } from "./demos";
 import { AiScene, AppScene, SiteScene } from "./scenes";
 import { ease, Forward, primary, quiet, Reveal, SiteHeader, Steps } from "./shared";
 
@@ -68,16 +69,6 @@ const config: Record<ServiceKind, { studio: string; quick: string; features: Luc
     headerCta: "startAi",
   },
 };
-
-// one accent per business, used by the showcase mockups
-const tones = [
-  ["#c2410c", "#7a1f2b"],
-  ["#b45309", "#78350f"],
-  ["#0e7490", "#164e63"],
-  ["#6d28d9", "#3b0d6b"],
-  ["#1d4ed8", "#1e293b"],
-  ["#be123c", "#4c0519"],
-] as const;
 
 /* ------------------------------------------------------------------ */
 /* Hero visual with floating highlights                                 */
@@ -137,161 +128,10 @@ const HeroVisual = ({ kind }: { kind: ServiceKind }) => {
 };
 
 /* ------------------------------------------------------------------ */
-/* Showcase: designs for different businesses, gliding past             */
-/* ------------------------------------------------------------------ */
-
-const SiteMock = ({ title, line, tone }: { title: string; line: string; tone: readonly [string, string] }) => (
-  <div className="w-[300px] shrink-0 overflow-hidden rounded-[18px] bg-[#f6f3ec] text-[#1c1c1c] shadow-[0_24px_60px_-28px_rgba(0,0,0,0.9)]">
-    <div className="flex items-center gap-1 bg-[#e8e3d8] px-3 py-2" dir="ltr">
-      <span className="size-2 rounded-full bg-black/15" />
-      <span className="size-2 rounded-full bg-black/15" />
-      <span className="size-2 rounded-full bg-black/15" />
-    </div>
-    <div className="relative h-[110px] overflow-hidden p-4 text-white" style={{ background: `linear-gradient(135deg, ${tone[0]}, ${tone[1]})` }}>
-      <span className="absolute -bottom-8 -end-6 size-28 rounded-full bg-white/15" aria-hidden="true" />
-      <strong className="relative block text-[15px] font-extrabold leading-6">{title}</strong>
-      <span className="relative mt-1 block max-w-[24ch] text-[11px] leading-5 text-white/80">{line}</span>
-      <span className="relative mt-2.5 inline-block h-6 w-20 rounded-full bg-white/90" />
-    </div>
-    <div className="grid grid-cols-3 gap-2 p-3">
-      {[0, 1, 2].map((cell) => (
-        <span key={cell} className="h-12 rounded-[8px] bg-black/[0.06]" />
-      ))}
-    </div>
-  </div>
-);
-
-const AppMock = ({ title, line, tone }: { title: string; line: string; tone: readonly [string, string] }) => (
-  <div className="w-[168px] shrink-0 overflow-hidden rounded-[26px] bg-[#f6f3ec] p-1.5 text-[#1c1c1c] shadow-[0_24px_60px_-28px_rgba(0,0,0,0.9)] ring-4 ring-[#1a2238]">
-    <div className="overflow-hidden rounded-[20px] bg-white">
-      <div className="relative h-[96px] p-3 text-white" style={{ background: `linear-gradient(160deg, ${tone[0]}, ${tone[1]})` }}>
-        <span className="mx-auto mb-2 block h-1.5 w-10 rounded-full bg-black/25" aria-hidden="true" />
-        <strong className="block text-[13px] font-extrabold leading-5">{title}</strong>
-        <span className="block text-[10px] leading-4 text-white/80">{line}</span>
-      </div>
-      <div className="flex flex-col gap-1.5 p-2.5">
-        {[0, 1, 2].map((row) => (
-          <span key={row} className="flex items-center gap-2 rounded-[10px] bg-black/[0.05] p-1.5">
-            <span className="size-6 rounded-[7px]" style={{ background: tone[0], opacity: 0.25 + row * 0.2 }} />
-            <span className="h-1.5 flex-1 rounded-full bg-black/15" />
-          </span>
-        ))}
-      </div>
-      <div className="flex justify-around border-t border-black/5 py-2">
-        {[0, 1, 2, 3].map((tab) => (
-          <span key={tab} className="size-2.5 rounded-full" style={{ background: tab === 0 ? tone[0] : "rgba(0,0,0,0.15)" }} />
-        ))}
-      </div>
-    </div>
-  </div>
-);
-
-const AgentMock = ({ title, line, Icon }: { title: string; line: string; Icon: LucideIcon }) => (
-  <div className="flex h-[156px] w-[260px] shrink-0 flex-col gap-3 rounded-[22px] bg-[#121a2e] p-4 ring-1 ring-[#f2ecdf]/[0.08]">
-    <span className="flex items-center gap-2.5">
-      <span className="flex size-10 items-center justify-center rounded-2xl bg-[#d9a648]/15 text-[#e9c27a]">
-        <Icon className="size-5" aria-hidden="true" />
-      </span>
-      <strong className="text-[14.5px] font-extrabold text-[#f2ecdf]">{title}</strong>
-    </span>
-    <span className="text-[12.5px] leading-6 text-[#b9bfcc]">{line}</span>
-    <span className="mt-auto flex items-center gap-1.5 text-[11.5px] font-bold text-[#7fd6a8]">
-      <span className="size-1.5 animate-pulse rounded-full bg-[#2fd08a]" /> 24/7
-    </span>
-  </div>
-);
-
-const KEYS = ["1", "2", "3", "4", "5", "6"] as const;
-const SHOW = ["1", "2", "3", "4"] as const;
-const SHOW_MS = 4800;
-
-/**
- * A few businesses, one at a time: pick a name and its design takes the stage.
- * Moves on by itself while nobody is pointing at it.
- */
-const Showcase = ({ kind }: { kind: ServiceKind }) => {
-  const t = useTranslations(`Service.${kind}`);
-  const s = useTranslations("Service");
-  const reduce = useReducedMotion();
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    if (reduce || paused) return;
-    const timer = window.setTimeout(() => setActive((value) => (value + 1) % SHOW.length), SHOW_MS);
-    return () => window.clearTimeout(timer);
-  }, [active, paused, reduce]);
-
-  const key = SHOW[active];
-  const mock =
-    kind === "site" ? (
-      <SiteMock title={t(`x${key}`)} line={t(`x${key}t`)} tone={tones[active]} />
-    ) : kind === "app" ? (
-      <AppMock title={t(`x${key}`)} line={t(`x${key}t`)} tone={tones[active]} />
-    ) : (
-      <AgentMock title={t(`x${key}`)} line={t(`x${key}t`)} Icon={config.ai.examples[active]} />
-    );
-
-  return (
-    <section className="border-t border-[#f2ecdf]/[0.07] py-20 lg:py-28" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      <div className="mx-auto grid max-w-[1240px] items-center gap-10 px-5 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16 lg:px-10">
-        <div>
-          <Reveal>
-            <h2 className="text-[28px] font-extrabold leading-[1.4] lg:text-[40px]">{s("examples")}</h2>
-            <p className="mt-3 max-w-[44ch] text-[15px] leading-8 text-[#9aa3b8]">{s(`examplesSub.${kind}`)}</p>
-          </Reveal>
-          <div role="tablist" aria-label={s("examples")} className="-mx-5 mt-8 flex gap-2 overflow-x-auto px-5 [scrollbar-width:none] lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0">
-            {SHOW.map((item, index) => {
-              const on = index === active;
-              return (
-                <button
-                  key={item}
-                  type="button"
-                  role="tab"
-                  aria-selected={on}
-                  onClick={() => setActive(index)}
-                  className={`relative shrink-0 overflow-hidden rounded-full px-4 py-2.5 text-start transition-colors lg:rounded-[20px] lg:px-5 lg:py-4 ${on ? "bg-[#121a2e] ring-1 ring-[#d9a648]/45" : "ring-1 ring-[#f2ecdf]/10 hover:bg-[#f2ecdf]/[0.04]"}`}
-                >
-                  <strong className={`block whitespace-nowrap text-[14px] font-extrabold lg:text-[15.5px] ${on ? "text-[#f2ecdf]" : "text-[#b9bfcc]"}`}>{t(`x${item}`)}</strong>
-                  <span className={`hidden text-[13px] leading-6 lg:block ${on ? "text-[#9aa3b8]" : "text-[#6f788d]"}`}>{t(`x${item}t`)}</span>
-                  {on && !reduce && (
-                    <motion.span
-                      key={`bar-${active}-${paused}`}
-                      className="absolute bottom-0 start-0 h-[2px] bg-[#d9a648]"
-                      initial={{ width: "0%" }}
-                      animate={{ width: paused ? "0%" : "100%" }}
-                      transition={{ duration: paused ? 0 : SHOW_MS / 1000, ease: "linear" }}
-                    />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="relative flex h-[340px] items-center justify-center overflow-hidden rounded-[32px] bg-[radial-gradient(90%_80%_at_50%_40%,rgba(217,166,72,0.16),transparent_65%),#0e1527] ring-1 ring-[#f2ecdf]/[0.07] lg:h-[480px]">
-          <span className="absolute inset-0 bg-[linear-gradient(rgba(242,236,223,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(242,236,223,0.035)_1px,transparent_1px)] bg-[size:32px_32px]" aria-hidden="true" />
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={active}
-              initial={reduce ? false : { opacity: 0, y: 24, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={reduce ? undefined : { opacity: 0, y: -16, scale: 0.98 }}
-              transition={{ duration: 0.45, ease }}
-              className={`relative ${kind === "site" ? "scale-[0.95] sm:scale-[1.2] lg:scale-[1.45]" : kind === "app" ? "scale-100 lg:scale-[1.6]" : "scale-100 lg:scale-[1.45]"}`}
-            >
-              {mock}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-/* ------------------------------------------------------------------ */
 /* FAQ                                                                  */
 /* ------------------------------------------------------------------ */
+
+const KEYS = ["1", "2", "3", "4", "5", "6"] as const;
 
 const Faq = ({ kind }: { kind: ServiceKind }) => {
   const t = useTranslations(`Service.${kind}`);
@@ -421,7 +261,7 @@ export const ServiceLanding = ({ kind }: { kind: ServiceKind }) => {
         </div>
       </section>
 
-      <Showcase kind={kind} />
+      <StudioDemo kind={kind} />
 
       <div className="border-t border-[#f2ecdf]/[0.07] bg-[#0e1527]">
         <Steps />
