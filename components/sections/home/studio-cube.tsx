@@ -9,9 +9,9 @@ import { Link, useRouter } from "@/i18n/navigation";
 export type Face = "site" | "app" | "ai";
 
 export const faces: { key: Face; href: string }[] = [
-  { key: "site", href: "/createsite" },
-  { key: "app", href: "/createapp" },
-  { key: "ai", href: "/createai" },
+  { key: "site", href: "/website" },
+  { key: "app", href: "/apps" },
+  { key: "ai", href: "/ai" },
 ]
 
 // Isometric cube on a 400×400 canvas.
@@ -33,7 +33,7 @@ const IVORY = "#f2ecdf";
 
 /**
  * The home page's signature: Khayyam's cube, one face per studio.
- * At rest it is the logo itself — bold lines and a gold top, like a closed book.
+ * Its faces always carry the studio names; the one under the pointer lights up.
  * Pointing at it opens it up: the faces name the studios, the one under the pointer
  * lights up, and choosing it opens that studio. Touch screens show the names right away.
  */
@@ -115,7 +115,7 @@ export const StudioCube = ({ onChange }: { onChange?: (face: Face | null) => voi
               fontSize={face.key === "ai" && t("ai.label").length > 3 ? 23 : 28}
               fontWeight="800"
               initial={false}
-              animate={{ opacity: open ? 1 : 0, fill: on ? "#1c1406" : IVORY }}
+              animate={{ opacity: 1, fill: on ? "#1c1406" : IVORY }}
               transition={{ duration: 0.35 }}
               style={{ fontFamily: "inherit", pointerEvents: "none" }}
             >

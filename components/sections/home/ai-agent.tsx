@@ -1,7 +1,7 @@
 "use client";
 
-import { ArrowUp, Check, Play, RotateCcw } from "lucide-react";
-import { motion, useInView, useReducedMotion } from "motion/react";
+import { ArrowUp, CalendarClock, Check, FileCheck2, MessageCircle, Play, Search, Send, Sparkles } from "lucide-react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
@@ -10,153 +10,176 @@ import { KhayyamMark } from "@/components/brand/khayyam-mark";
 const ease = [0.22, 1, 0.36, 1] as const;
 
 /**
- * The landing's AI moment: a chat with Khayyam's agent. One plain request, and the
- * agent answers with its work attached to the messages: campaign content, an invoice
- * it filed, and the channels it now answers. A sample conversation, labelled as such.
+ * "Your agent": one plain request typed into a command bar, then the finished work
+ * lands as tiles under it. It cycles through three jobs (marketing, accounting,
+ * customer messages); the suggestions under the bar switch between them.
  */
 
-// the conversation unfolds one beat at a time
-const LAST = 4;
+type Job = "marketing" | "accounts" | "support";
+const jobs: Job[] = ["marketing", "accounts", "support"];
 
-const Appear = ({ when, children, className }: { when: boolean; children: ReactNode; className?: string }) => (
-  <motion.div
+const Tile = ({ show, delay, children, label }: { show: boolean; delay: number; children: ReactNode; label: string }) => (
+  <motion.figure
     initial={false}
-    animate={when ? { opacity: 1, y: 0, filter: "blur(0px)" } : { opacity: 0, y: 12, filter: "blur(4px)" }}
-    transition={{ duration: 0.5, ease }}
-    className={className}
+    animate={show ? { opacity: 1, y: 0, filter: "blur(0px)" } : { opacity: 0, y: 14, filter: "blur(6px)" }}
+    transition={{ duration: 0.5, delay: show ? delay : 0, ease }}
+    className="flex flex-col gap-3 rounded-[22px] bg-[#0f1628] p-3 ring-1 ring-[#f2ecdf]/[0.07]"
   >
-    {children}
-  </motion.div>
+    <div className="relative h-[120px] overflow-hidden rounded-[16px] lg:h-[140px]">{children}</div>
+    <figcaption className="flex items-center gap-1.5 px-1 pb-1 text-[12.5px] font-bold text-[#ece7dc]">
+      <Check className="size-3.5 shrink-0 text-[#7fd6a8]" strokeWidth={3} aria-hidden="true" />
+      {label}
+    </figcaption>
+  </motion.figure>
 );
 
-const AgentSays = ({ when, text, children }: { when: boolean; text: string; children?: ReactNode }) => (
-  <Appear when={when} className="flex items-start gap-2.5">
-    <span className="mt-1 flex size-7 shrink-0 items-center justify-center rounded-full bg-[#0c1222] ring-1 ring-[#d9a648]/30">
-      <KhayyamMark size={16} />
+const Gradient = ({ tone, video }: { tone: string; video?: boolean }) => (
+  <span className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br ${tone}`}>
+    <span className="absolute -bottom-4 -start-4 size-14 rounded-full bg-white/15" aria-hidden="true" />
+    <span className="absolute end-3 top-3 h-1.5 w-1/2 rounded-full bg-white/40" aria-hidden="true" />
+    <span className="absolute bottom-4 end-3 h-1.5 w-1/3 rounded-full bg-white/25" aria-hidden="true" />
+    {video && (
+      <span className="flex size-9 items-center justify-center rounded-full bg-black/35 backdrop-blur">
+        <Play className="size-3.5 fill-white text-white" aria-hidden="true" />
+      </span>
+    )}
+  </span>
+);
+
+const Plain = ({ icon: Icon, children }: { icon: typeof Check; children: ReactNode }) => (
+  <span className="absolute inset-0 flex flex-col justify-between bg-[#0c1222] p-3.5">
+    <span className="flex size-9 items-center justify-center rounded-xl bg-[#d9a648]/15 text-[#e9c27a]">
+      <Icon className="size-[18px]" aria-hidden="true" />
     </span>
-    <div className="min-w-0 flex-1">
-      <p className="text-[13.5px] leading-7 text-[#ece7dc]">{text}</p>
-      {children && <div className="mt-2.5">{children}</div>}
-    </div>
-  </Appear>
+    <span className="text-[12px] leading-5 text-[#b9bfcc]">{children}</span>
+  </span>
 );
 
-const formats = [
-  { key: "post", tone: "from-[#7a1f2b] to-[#c2410c]", shape: "aspect-square", video: false },
-  { key: "story", tone: "from-[#b45309] to-[#f59e0b]", shape: "aspect-[9/16]", video: false },
-  { key: "reels", tone: "from-[#831843] to-[#e11d48]", shape: "aspect-[9/16]", video: true },
-  { key: "tiktok", tone: "from-[#3b0d18] to-[#9f1239]", shape: "aspect-[9/16]", video: true },
-] as const;
+const Invoice = ({ scan }: { scan: boolean }) => (
+  <span className="absolute inset-0 flex items-center justify-center bg-[#0c1222]">
+    <span className="relative h-[96px] w-[72px] rotate-[-4deg] overflow-hidden rounded-[8px] bg-[#e9e2d2] p-2.5 shadow-[0_14px_30px_-14px_rgba(0,0,0,0.9)]">
+      <span className="block h-1.5 w-3/5 rounded-full bg-[#1c1406]/50" />
+      {[0, 1, 2, 3].map((row) => (
+        <span key={row} className="mt-2 flex justify-between">
+          <span className="h-1 w-1/2 rounded-full bg-[#1c1406]/20" />
+          <span className="h-1 w-1/5 rounded-full bg-[#1c1406]/30" />
+        </span>
+      ))}
+      <span className="mt-2.5 block h-1.5 w-1/2 rounded-full bg-[#1c1406]/45" />
+      {scan && (
+        <motion.span
+          className="absolute inset-x-0 h-5 bg-[linear-gradient(180deg,transparent,rgba(217,166,72,0.6),transparent)]"
+          animate={{ top: ["-15%", "100%"] }}
+          transition={{ duration: 1.6, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
+          aria-hidden="true"
+        />
+      )}
+    </span>
+  </span>
+);
+
+const Chat = ({ t }: { t: (key: string) => string }) => (
+  <span className="absolute inset-0 flex flex-col justify-center gap-1.5 bg-[#0c1222] p-3 text-[11.5px] leading-5">
+    <span className="max-w-[90%] self-end rounded-[12px] bg-[#f2ecdf]/[0.08] px-2.5 py-1.5 text-[#dcd6c9]">{t("chatQ")}</span>
+    <span className="max-w-[90%] self-start rounded-[12px] bg-[#d9a648]/[0.16] px-2.5 py-1.5 text-[#f5e6c6]">{t("chatA")}</span>
+  </span>
+);
 
 export const AgentDemo = () => {
   const t = useTranslations("Agent");
   const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const visible = useInView(ref, { margin: "-120px" });
-  const [beat, setBeat] = useState(0);
-  const at = reduce ? LAST : beat;
+  const [job, setJob] = useState<Job>("marketing");
+  const [typed, setTyped] = useState(0);
+  const [held, setHeld] = useState(false);
+  const request = t(`${job}.ask`);
+  const shown = reduce ? request.length : typed;
+  const done = shown >= request.length;
 
+  // type the request, then hold the results for a while, then move to the next job
   useEffect(() => {
-    if (!visible || reduce || beat >= LAST) return;
-    const timer = window.setTimeout(() => setBeat(beat + 1), beat === 0 ? 900 : 1700);
+    if (!visible || reduce) return;
+    if (!done) {
+      const timer = window.setTimeout(() => setTyped((value) => value + 1), 32);
+      return () => window.clearTimeout(timer);
+    }
+    if (held) return;
+    const timer = window.setTimeout(() => {
+      setJob((current) => jobs[(jobs.indexOf(current) + 1) % jobs.length]);
+      setTyped(0);
+    }, 6500);
     return () => window.clearTimeout(timer);
-  }, [visible, reduce, beat]);
+  }, [visible, reduce, done, held, typed]);
 
-  const working = at > 0 && at < LAST;
+  const choose = (next: Job) => {
+    setJob(next);
+    setTyped(0);
+    setHeld(true);
+  };
+
+  const tiles: Record<Job, { label: string; visual: ReactNode }[]> = {
+    marketing: [
+      { label: t("marketing.r1"), visual: <Gradient tone="from-[#7a1f2b] to-[#c2410c]" /> },
+      { label: t("marketing.r2"), visual: <Gradient tone="from-[#831843] to-[#e11d48]" video /> },
+      { label: t("marketing.r3"), visual: <Gradient tone="from-[#b45309] to-[#f59e0b]" video /> },
+      { label: t("marketing.r4"), visual: <Plain icon={CalendarClock}>{t("marketing.r4t")}</Plain> },
+    ],
+    accounts: [
+      { label: t("accounts.r1"), visual: <Invoice scan={done} /> },
+      { label: t("accounts.r2"), visual: <Plain icon={Search}>{t("accounts.r2t")}</Plain> },
+      { label: t("accounts.r3"), visual: <Plain icon={FileCheck2}>{t("accounts.r3t")}</Plain> },
+      { label: t("accounts.r4"), visual: <Plain icon={Send}>{t("accounts.r4t")}</Plain> },
+    ],
+    support: [
+      { label: t("support.r1"), visual: <Chat t={(key) => t(`support.${key}`)} /> },
+      { label: t("support.r2"), visual: <Plain icon={MessageCircle}>{t("support.r2t")}</Plain> },
+      { label: t("support.r3"), visual: <Plain icon={FileCheck2}>{t("support.r3t")}</Plain> },
+      { label: t("support.r4"), visual: <Plain icon={Sparkles}>{t("support.r4t")}</Plain> },
+    ],
+  };
 
   return (
-    <div ref={ref} className="relative overflow-hidden rounded-[30px] bg-[#121a2e] shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] ring-1 ring-[#f2ecdf]/[0.08]">
-      <span className="pointer-events-none absolute -top-32 inset-x-[10%] h-64 rounded-full bg-[#d9a648] opacity-[0.09] blur-[100px]" aria-hidden="true" />
-
-      {/* top bar */}
-      <div className="relative flex items-center gap-2.5 border-b border-[#f2ecdf]/[0.07] px-5 py-3.5">
-        <KhayyamMark size={24} state={working ? "thinking" : "still"} />
-        <strong className="text-[13.5px]">{t("name")}</strong>
-        <span className="flex items-center gap-1.5 text-[11.5px] text-[#7fd6a8]">
-          <span className={`size-1.5 rounded-full bg-[#2fd08a] ${working ? "animate-pulse" : ""}`} />
-          {working ? t("working") : t("online")}
-        </span>
-        <span className="ms-auto rounded-full bg-[#f2ecdf]/[0.06] px-2.5 py-0.5 text-[10.5px] text-[#9aa3b8]">{t("sample")}</span>
-        {at >= LAST && !reduce && (
-          <button type="button" onClick={() => setBeat(0)} aria-label={t("replay")} className="flex size-8 items-center justify-center rounded-full text-[#9aa3b8] transition-colors hover:bg-[#f2ecdf]/[0.07] hover:text-[#f2ecdf]">
-            <RotateCcw className="size-4" aria-hidden="true" />
-          </button>
-        )}
+    <div ref={ref} className="relative">
+      {/* the command bar */}
+      <div className="relative mx-auto max-w-[760px]">
+        <span className="pointer-events-none absolute -inset-6 rounded-full bg-[#d9a648] opacity-[0.08] blur-[60px]" aria-hidden="true" />
+        <div className="relative flex min-h-[64px] items-center gap-3 rounded-[28px] bg-[#121a2e] py-3 pe-2.5 ps-4 ring-1 ring-[#d9a648]/30 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.9)] lg:min-h-[72px] lg:ps-5">
+          <KhayyamMark size={26} state={done ? "still" : "thinking"} />
+          <p className="min-w-0 flex-1 text-[14.5px] leading-7 text-[#f2ecdf] lg:text-[16px]" aria-live="polite">
+            {request.slice(0, shown)}
+            {!done && <span className="ms-0.5 inline-block h-[1.1em] w-[2px] translate-y-[3px] animate-pulse bg-[#e9c27a]" aria-hidden="true" />}
+          </p>
+          <span className={`flex size-11 shrink-0 items-center justify-center rounded-full transition-colors ${done ? "bg-[#d9a648] text-[#1c1406]" : "bg-[#f2ecdf]/[0.08] text-[#9aa3b8]"}`} aria-hidden="true">
+            <ArrowUp className="size-[18px]" strokeWidth={2.6} />
+          </span>
+        </div>
+        <div className="relative mt-4 flex flex-wrap justify-center gap-2">
+          {jobs.map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => choose(item)}
+              aria-pressed={job === item}
+              className={`rounded-full px-3.5 py-1.5 text-[12.5px] font-bold transition-colors ${job === item ? "bg-[#f2ecdf] text-[#0c1222]" : "bg-[#f2ecdf]/[0.06] text-[#b9bfcc] hover:bg-[#f2ecdf]/10"}`}
+            >
+              {t(`${item}.chip`)}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* conversation */}
-      <div className="relative flex flex-col gap-5 px-5 pb-4 pt-5">
-        <p className="max-w-[88%] self-end rounded-[20px] rounded-ee-md bg-[#f2ecdf] px-4 py-2.5 text-[13.5px] font-medium leading-7 text-[#0c1222]">{t("ask")}</p>
-
-        <AgentSays when={at >= 1} text={t("content")}>
-          <div className="grid grid-cols-4 items-end gap-2">
-            {formats.map((item, index) => (
-              <motion.figure
-                key={item.key}
-                initial={false}
-                animate={at >= 1 ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-                transition={{ duration: 0.45, delay: at >= 1 ? 0.15 + index * 0.1 : 0, ease }}
-                className="flex flex-col gap-1.5"
-              >
-                <span className={`relative flex items-center justify-center overflow-hidden rounded-[12px] bg-gradient-to-br ${item.tone} ${item.shape}`}>
-                  <span className="absolute -bottom-3 -start-3 size-9 rounded-full bg-white/15" aria-hidden="true" />
-                  <span className="absolute end-2 top-2 h-1 w-1/2 rounded-full bg-white/40" aria-hidden="true" />
-                  {item.video && (
-                    <span className="flex size-6 items-center justify-center rounded-full bg-black/35 backdrop-blur">
-                      <Play className="size-2.5 fill-white text-white" aria-hidden="true" />
-                    </span>
-                  )}
-                </span>
-                <figcaption className="truncate text-center text-[10.5px] text-[#9aa3b8]">{t(item.key)}</figcaption>
-              </motion.figure>
-            ))}
-          </div>
-        </AgentSays>
-
-        <AgentSays when={at >= 2} text={t("invoices")}>
-          <div className="flex items-center gap-3 rounded-[16px] bg-[#0c1222] p-2.5 ring-1 ring-[#f2ecdf]/[0.07]">
-            <div className="relative h-[52px] w-[40px] shrink-0 overflow-hidden rounded-[6px] bg-[#e9e2d2] p-1.5">
-              <span className="block h-1 w-3/5 rounded-full bg-[#1c1406]/50" />
-              {[0, 1, 2].map((row) => (
-                <span key={row} className="mt-1.5 block h-[3px] w-full rounded-full bg-[#1c1406]/20" />
-              ))}
-              {!reduce && at >= 2 && (
-                <motion.span
-                  className="absolute inset-x-0 h-4 bg-[linear-gradient(180deg,transparent,rgba(217,166,72,0.65),transparent)]"
-                  animate={{ top: ["-20%", "100%"] }}
-                  transition={{ duration: 1.4, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
-                  aria-hidden="true"
-                />
-              )}
-            </div>
-            <span className="min-w-0 flex-1 leading-tight">
-              <strong className="block truncate text-[12.5px] text-[#f2ecdf]">{t("vendor")}</strong>
-              <span className="text-[11px] text-[#7f889c]">{t("accounting")}</span>
-            </span>
-            <span className="flex items-center gap-1 rounded-full bg-[#2fd08a]/12 px-2.5 py-1 text-[11px] font-bold text-[#7fd6a8]">
-              <Check className="size-3" strokeWidth={3} aria-hidden="true" /> {t("filed")}
-            </span>
-          </div>
-        </AgentSays>
-
-        <AgentSays when={at >= 3} text={t("replies")}>
-          <div className="flex flex-wrap gap-1.5">
-            {(["dm", "whatsapp", "website"] as const).map((channel) => (
-              <span key={channel} className="rounded-full bg-[#f2ecdf]/[0.06] px-2.5 py-1 text-[11px] text-[#dcd6c9] ring-1 ring-[#f2ecdf]/[0.06]">
-                {t(channel)}
-              </span>
-            ))}
-          </div>
-        </AgentSays>
-      </div>
-
-      {/* composer (decorative) */}
-      <div className="relative mx-4 mb-4 flex h-12 items-center gap-2 rounded-full bg-[#0c1222] pe-1.5 ps-4 ring-1 ring-[#f2ecdf]/[0.08]" aria-hidden="true">
-        <span className="flex-1 truncate text-[13px] text-[#6f788d]">{t("placeholder")}</span>
-        <span className="flex size-9 items-center justify-center rounded-full bg-[#d9a648] text-[#1c1406]">
-          <ArrowUp className="size-4" strokeWidth={2.6} />
-        </span>
-      </div>
+      {/* the finished work */}
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div key={job} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="mt-10 grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+          {tiles[job].map((tile, index) => (
+            <Tile key={tile.label} show={done} delay={0.1 + index * 0.12} label={tile.label}>
+              {tile.visual}
+            </Tile>
+          ))}
+        </motion.div>
+      </AnimatePresence>
+      <p className="mt-5 text-center text-[11.5px] text-[#6f788d]">{t("sample")}</p>
     </div>
   );
 };

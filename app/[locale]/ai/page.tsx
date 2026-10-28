@@ -1,23 +1,20 @@
-import Footer from "@/components/layouts/footer";
-import { AiBenefits } from "@/components/sections/ai-benefits";
-import { AiHero } from "@/components/sections/ai-hero";
-import { AiPortfolio } from "@/components/sections/ai-portfolio";
-import { AiProcess } from "@/components/sections/ai-process";
-import { AiProjectEstimator } from "@/components/sections/ai-project-estimator";
-import { AiRelatedBlogs } from "@/components/sections/ai-related-blogs";
-import { AiSolutions } from "@/components/sections/ai-solutions";
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
-export default function AiPage() {
+import Footer from "@/components/layouts/footer";
+import { ServiceLanding } from "@/components/sections/home/service";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Service.ai" });
+  return { title: t("metaTitle"), description: t("sub") };
+}
+
+export default function Page() {
   return (
     <>
-      <main>
-        <AiHero />
-        <AiSolutions />
-        <AiPortfolio />
-        <AiBenefits />
-        <AiProcess />
-        <AiProjectEstimator />
-        <AiRelatedBlogs />
+      <main className="bg-[#0c1222]">
+        <ServiceLanding kind="ai" />
       </main>
       <Footer />
     </>

@@ -61,7 +61,7 @@ const Header = () => {
   }, [isLanguageMenuOpen]);
 
   // The home page and the studios bring their own header.
-  if (pathname === "/" || /\/(createapp|createsite|createai)\/?$/.test(pathname)) {
+  if (pathname === "/" || /\/(createapp|createsite|createai|website|apps|ai)\/?$/.test(pathname)) {
     return null;
   }
 

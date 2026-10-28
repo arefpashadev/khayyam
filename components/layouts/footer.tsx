@@ -38,9 +38,9 @@ const Footer = () => {
     {
       title: t("studios"),
       links: [
-        { label: nav("site"), href: "/createsite" },
-        { label: nav("app"), href: "/createapp" },
-        { label: nav("ai"), href: "/createai" },
+        { label: nav("site"), href: "/website" },
+        { label: nav("app"), href: "/apps" },
+        { label: nav("ai"), href: "/ai" },
       ],
     },
     {
@@ -136,7 +136,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="flex flex-col-reverse gap-4 border-t border-[#f2ecdf]/[0.08] py-6 text-[12.5px] text-[#7f889c] sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative z-10 flex flex-col-reverse gap-4 border-t border-[#f2ecdf]/[0.08] pb-8 pt-6 text-[12.5px] text-[#7f889c] sm:flex-row sm:items-center sm:justify-between">
           <span>{t("rights", { year })}</span>
           <div className="flex items-center gap-5">
             <Link href="/#privacy" className="transition-colors hover:text-[#f2ecdf]">
@@ -150,8 +150,12 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* wordmark */}
-      <div aria-hidden="true" className="pointer-events-none relative -mb-[0.28em] select-none overflow-hidden text-center text-[clamp(90px,22vw,320px)] font-black leading-none tracking-[-0.04em] text-transparent [-webkit-text-stroke:1px_rgba(242,236,223,0.09)]">
+      {/* wordmark: tucked behind the last row, cut by the page edge, takes no space */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 select-none overflow-hidden text-center text-[clamp(110px,24vw,340px)] font-black leading-[0.72] tracking-[-0.04em] text-transparent [-webkit-text-stroke:1px_rgba(242,236,223,0.08)] [mask-image:linear-gradient(180deg,#000_30%,transparent_85%)]"
+        style={{ height: "0.62em" }}
+      >
         {t("wordmark")}
       </div>
     </footer>
