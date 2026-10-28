@@ -37,15 +37,15 @@ export const PathChooser = ({ kind }: { kind: OrderKind }) => {
   ];
 
   return (
-    <div className="relative flex size-full flex-col overflow-y-auto bg-[radial-gradient(70%_55%_at_50%_10%,rgba(124,108,255,0.18),transparent_70%),radial-gradient(50%_40%_at_80%_90%,rgba(77,163,255,0.12),transparent_70%),#0b0d12]">
-      <Link href="/" aria-label={tx("خروج")} className="absolute end-4 top-4 flex size-10 items-center justify-center rounded-xl text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white">
+    <div className="relative flex size-full flex-col overflow-y-auto bg-[radial-gradient(70%_55%_at_50%_10%,rgba(217,166,72,0.18),transparent_70%),radial-gradient(50%_40%_at_80%_90%,rgba(217,166,72,0.12),transparent_70%),#0c1222]">
+      <Link href="/" aria-label={tx("خروج")} className="absolute end-4 top-4 flex size-10 items-center justify-center rounded-xl text-[#9aa3b8] transition-colors hover:bg-white/6 hover:text-white">
         <X className="size-5" aria-hidden="true" />
       </Link>
 
       <div className="mx-auto flex w-full max-w-[880px] flex-1 flex-col items-center justify-center px-5 py-14 text-center">
         <KhayyamMark size={76} state="intro" />
         <motion.h1 {...rise(0.4)} className="mt-6 text-[28px] font-extrabold leading-[1.45] text-white lg:text-[44px]">{tx("{0} خودتان را بسازید", [subject])}</motion.h1>
-        <motion.p {...rise(0.5)} className="mt-3 max-w-[46ch] text-[14px] leading-7 text-[#a7b0bc] lg:text-[16px]">{tx("طرح را همین‌جا می‌بینید؛ بعد یا طرح فیگما برایتان می‌فرستیم یا کاملش را می‌سازیم.")}</motion.p>
+        <motion.p {...rise(0.5)} className="mt-3 max-w-[46ch] text-[14px] leading-7 text-[#b9bfcc] lg:text-[16px]">{tx("طرح را همین‌جا می‌بینید؛ بعد یا طرح فیگما برایتان می‌فرستیم یا کاملش را می‌سازیم.")}</motion.p>
 
         <div className="mt-10 grid w-full gap-3 text-start lg:grid-cols-2 lg:gap-4">
           {paths.map((path, index) => (
@@ -54,19 +54,19 @@ export const PathChooser = ({ kind }: { kind: OrderKind }) => {
               type="button"
               {...rise(0.6 + index * 0.08)}
               onClick={() => setMode(path.mode)}
-              className={`group flex flex-col gap-4 rounded-[26px] p-6 text-start outline-none ring-1 transition focus-visible:ring-2 focus-visible:ring-[#4da3ff] lg:p-7 ${
-                index === 0 ? "bg-[linear-gradient(160deg,rgba(77,163,255,0.18),rgba(124,108,255,0.1))] ring-[#4da3ff]/35 hover:ring-[#4da3ff]/70" : "bg-[#111419] ring-white/8 hover:ring-white/20"
+              className={`group flex flex-col gap-4 rounded-[26px] p-6 text-start outline-none ring-1 transition focus-visible:ring-2 focus-visible:ring-[#d9a648] lg:p-7 ${
+                index === 0 ? "bg-[linear-gradient(160deg,rgba(217,166,72,0.18),rgba(217,166,72,0.1))] ring-[#d9a648]/35 hover:ring-[#d9a648]/70" : "bg-[#121a2e] ring-white/8 hover:ring-white/20"
               }`}
             >
               <div className="flex items-center gap-3">
-                <span className={`flex size-12 items-center justify-center rounded-2xl ${index === 0 ? "bg-[linear-gradient(135deg,#4da3ff,#7c6cff)] text-white" : "bg-white/8 text-white"}`}>
+                <span className={`flex size-12 items-center justify-center rounded-2xl ${index === 0 ? "bg-[linear-gradient(135deg,#f5d79c,#d9a648)] text-[#1c1406]" : "bg-white/8 text-[#1c1406]"}`}>
                   <path.icon className="size-5" aria-hidden="true" />
                 </span>
-                <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${index === 0 ? "bg-[#4da3ff]/20 text-[#9ccbff]" : "bg-white/6 text-[#a7b0bc]"}`}>{path.badge}</span>
+                <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${index === 0 ? "bg-[#d9a648]/20 text-[#e9c27a]" : "bg-white/6 text-[#b9bfcc]"}`}>{path.badge}</span>
               </div>
               <div>
                 <strong className="block text-[20px] text-white">{path.title}</strong>
-                <span className="mt-2 block text-[13.5px] leading-7 text-[#a7b0bc]">{path.text}</span>
+                <span className="mt-2 block text-[13.5px] leading-7 text-[#b9bfcc]">{path.text}</span>
               </div>
               <ul className="flex flex-col gap-1.5 text-[12.5px] text-[#c9d0d9]">
                 {path.points.map((point) => (
@@ -80,7 +80,7 @@ export const PathChooser = ({ kind }: { kind: OrderKind }) => {
             </motion.button>
           ))}
         </div>
-        <p className="mt-6 text-[12px] text-[#5d6573]">{tx("در هر دو مسیر، همه‌چیز بعداً هم طبق خواسته شما قابل تغییر است.")}</p>
+        <p className="mt-6 text-[12px] text-[#6f788d]">{tx("در هر دو مسیر، همه‌چیز بعداً هم طبق خواسته شما قابل تغییر است.")}</p>
       </div>
     </div>
   );

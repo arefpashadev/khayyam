@@ -20,7 +20,7 @@ const pill = "flex h-9 items-center gap-2 rounded-full bg-white/8 px-3.5 text-[1
 
 /** Tells the customer this is a starting point, not a limit. */
 export const CustomNote = ({ className = "" }: { className?: string }) => (
-  <p className={`flex items-center gap-2 rounded-full bg-white/6 px-4 py-2 text-[11.5px] text-[#a7b0bc] ring-1 ring-white/8 backdrop-blur ${className}`}>
+  <p className={`flex items-center gap-2 rounded-full bg-white/6 px-4 py-2 text-[11.5px] text-[#b9bfcc] ring-1 ring-white/8 backdrop-blur ${className}`}>
     <Sparkles className="size-3.5 shrink-0 text-[#ffd88a]" aria-hidden="true" />{tx("این فقط نقطه شروع است؛ هر صفحه، رفتار و امکانی را طبق خواسته شما می‌سازیم.")}</p>
 );
 
@@ -49,7 +49,7 @@ export const AppStage = ({ studio = false }: { studio?: boolean }) => {
   const sceneWidth = devices.length * APP_PHONE.width + (devices.length - 1) * gap;
 
   return (
-    <div className="relative size-full overflow-hidden bg-[#0b0d12]" style={buildPreviewVars(config)}>
+    <div className="relative size-full overflow-hidden bg-[#0c1222]" style={buildPreviewVars(config)}>
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <span className="absolute end-[15%] top-[10%] h-[55%] w-[40%] rounded-full opacity-35 blur-[120px] transition-colors duration-700" style={{ backgroundColor: config.color }} />
         <span className="absolute bottom-0 start-[12%] h-[50%] w-[38%] rounded-full opacity-25 blur-[120px] transition-colors duration-700" style={{ backgroundColor: config.accent }} />
@@ -78,7 +78,7 @@ export const AppStage = ({ studio = false }: { studio?: boolean }) => {
       {config.platform === "both" && isSmall && (
         <div role="radiogroup" aria-label={tx("دستگاه")} data-tour="devices" className="absolute end-3 top-4 z-10 flex gap-0.5 rounded-full bg-white/8 p-1 ring-1 ring-white/8 backdrop-blur">
           {(["ios", "android"] as const).map((device) => (
-            <button key={device} type="button" role="radio" aria-checked={mobileDevice === device} onClick={() => setMobileDevice(device)} className={`h-7 rounded-full px-3 text-[11.5px] font-bold transition-colors ${mobileDevice === device ? "bg-white text-[#0b0d12]" : "text-[#c9d0d9]"}`}>
+            <button key={device} type="button" role="radio" aria-checked={mobileDevice === device} onClick={() => setMobileDevice(device)} className={`h-7 rounded-full px-3 text-[11.5px] font-bold transition-colors ${mobileDevice === device ? "bg-white text-[#0c1222]" : "text-[#c9d0d9]"}`}>
               {device === "ios" ? tx("آیفون") : tx("اندروید")}
             </button>
           ))}

@@ -174,7 +174,7 @@ export const Guide = ({ id, steps, autoStart = true, delay = 900 }: { id: string
   const move = reduce ? { duration: 0 } : { type: "spring" as const, bounce: 0, duration: 0.45 };
 
   return (
-    <div className="fixed inset-0 z-[400] text-[#eef1f5]" dir={studioDir()} role="dialog" aria-modal="true" aria-label={tx("راهنما")}>
+    <div className="fixed inset-0 z-[400] text-[#f2ecdf]" dir={studioDir()} role="dialog" aria-modal="true" aria-label={tx("راهنما")}>
       {hole ? (
         <>
           {/* the dim is four plain panels around the target (no giant shadows, which some pages don't paint) */}
@@ -204,7 +204,7 @@ export const Guide = ({ id, steps, autoStart = true, delay = 900 }: { id: string
           <motion.div
             ref={cardRef}
             key={step}
-            className="absolute overflow-hidden rounded-[26px] bg-[#151920] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.9)] ring-1 ring-white/10"
+            className="absolute overflow-hidden rounded-[26px] bg-[#16203a] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.9)] ring-1 ring-white/10"
             style={{ ...style, marginBottom: atTop ? undefined : "env(safe-area-inset-bottom)" }}
             initial={reduce ? false : { opacity: 0, y: atTop ? -14 : 14 }}
             animate={{ opacity: 1, y: 0 }}
@@ -221,7 +221,7 @@ export const Guide = ({ id, steps, autoStart = true, delay = 900 }: { id: string
               <div className="flex items-center gap-3">
                 {!current.target && <KhayyamMark size={30} />}
                 <strong className="flex-1 text-[17px] font-extrabold leading-7 text-white">{current.title}</strong>
-                <button type="button" onClick={finish} className="text-[12.5px] font-bold text-[#8a93a0]">{tx("رد کردن")}</button>
+                <button type="button" onClick={finish} className="text-[12.5px] font-bold text-[#9aa3b8]">{tx("رد کردن")}</button>
               </div>
               <p className="mt-2 text-[14px] leading-7 text-[#b4bcc8]">{current.text}</p>
               <div className="mt-4 flex items-center gap-2">
@@ -241,7 +241,7 @@ export const Guide = ({ id, steps, autoStart = true, delay = 900 }: { id: string
         <motion.div
           ref={cardRef}
           key={step}
-          className="absolute rounded-[20px] bg-[#151920] p-4 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.8)] ring-1 ring-white/10"
+          className="absolute rounded-[20px] bg-[#16203a] p-4 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.8)] ring-1 ring-white/10"
           style={style}
           initial={reduce ? false : { opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
@@ -251,7 +251,7 @@ export const Guide = ({ id, steps, autoStart = true, delay = 900 }: { id: string
           {pointer && (
             <span
               aria-hidden="true"
-              className="absolute size-3.5 rotate-45 bg-[#151920] ring-1 ring-white/10"
+              className="absolute size-3.5 rotate-45 bg-[#16203a] ring-1 ring-white/10"
               style={
                 pointer.side === "top"
                   ? { top: -7, left: pointer.offset - 7, clipPath: "polygon(0 0, 100% 0, 0 100%)" }
@@ -266,19 +266,19 @@ export const Guide = ({ id, steps, autoStart = true, delay = 900 }: { id: string
           <div className="flex items-center gap-2">
             {!current.target && <KhayyamMark size={26} />}
             <strong className="flex-1 text-[14.5px] font-extrabold">{current.title}</strong>
-            <span className="text-[11px] text-[#5d6573]">{tx("{0} از {1}", [faNumber(step + 1), faNumber(items.length)])}</span>
-            <button type="button" onClick={finish} aria-label={tx("بستن راهنما")} className="-me-1 flex size-7 items-center justify-center rounded-lg text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white">
+            <span className="text-[11px] text-[#6f788d]">{tx("{0} از {1}", [faNumber(step + 1), faNumber(items.length)])}</span>
+            <button type="button" onClick={finish} aria-label={tx("بستن راهنما")} className="-me-1 flex size-7 items-center justify-center rounded-lg text-[#9aa3b8] transition-colors hover:bg-white/6 hover:text-white">
               <X className="size-4" aria-hidden="true" />
             </button>
           </div>
-          <p className="mt-2 text-[13px] leading-7 text-[#a7b0bc]">{current.text}</p>
+          <p className="mt-2 text-[13px] leading-7 text-[#b9bfcc]">{current.text}</p>
           <div className="mt-3 flex items-center gap-2">
             {step > 0 && (
               <button type="button" onClick={() => go(step - 1)} aria-label={tx("قبلی")} className="flex size-9 items-center justify-center rounded-xl text-[#c9d0d9] transition-colors hover:bg-white/6">
                 <ArrowRight className="size-4 ltr:-scale-x-100" aria-hidden="true" />
               </button>
             )}
-            <button type="button" autoFocus onClick={() => (isLast ? finish() : go(step + 1))} className="ms-auto flex h-9 items-center gap-1.5 rounded-xl bg-white px-4 text-[12.5px] font-extrabold text-[#0b0d12] transition-colors hover:bg-[#d9ecff]">
+            <button type="button" autoFocus onClick={() => (isLast ? finish() : go(step + 1))} className="ms-auto flex h-9 items-center gap-1.5 rounded-xl bg-white px-4 text-[12.5px] font-extrabold text-[#0c1222] transition-colors hover:bg-[#f5e6c6]">
               {isLast ? tx("متوجه شدم") : tx("بعدی")}
               {!isLast && <ArrowLeft className="size-3.5 ltr:-scale-x-100" aria-hidden="true" />}
             </button>

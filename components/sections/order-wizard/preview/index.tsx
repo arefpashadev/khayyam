@@ -81,7 +81,7 @@ export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
   );
 
   return (
-    <div className="relative size-full overflow-hidden bg-[#0b0d12]" style={buildPreviewVars(config)}>
+    <div className="relative size-full overflow-hidden bg-[#0c1222]" style={buildPreviewVars(config)}>
       {/* stage lighting from the brand colours */}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <span className="absolute end-[10%] top-[8%] h-[55%] w-[45%] rounded-full opacity-35 blur-[120px] transition-colors duration-700" style={{ backgroundColor: config.color }} />
@@ -124,11 +124,11 @@ export const PreviewStage = ({ studio = false }: { studio?: boolean }) => {
                 aria-checked={selected}
                 aria-label={option.label}
                 onClick={() => setDeskView(option.value)}
-                className={`relative flex items-center gap-1.5 rounded-full text-[12px] font-bold outline-none focus-visible:ring-2 focus-visible:ring-[#4da3ff] ${studio ? "h-7 px-3.5" : "size-7 justify-center"}`}
+                className={`relative flex items-center gap-1.5 rounded-full text-[12px] font-bold outline-none focus-visible:ring-2 focus-visible:ring-[#d9a648] ${studio ? "h-7 px-3.5" : "size-7 justify-center"}`}
               >
                 {selected && <motion.span layoutId={studio ? "pv-desk-view" : "pv-mobile-view"} className="absolute inset-0 rounded-full bg-white" transition={{ type: "spring", bounce: 0.15, duration: 0.35 }} />}
-                <option.icon className={`relative size-4 ${selected ? "text-[#0b0d12]" : "text-[#8a93a0]"}`} aria-hidden="true" />
-                {studio && <span className={`relative ${selected ? "text-[#0b0d12]" : "text-[#c9d0d9]"}`}>{option.label}</span>}
+                <option.icon className={`relative size-4 ${selected ? "text-[#0c1222]" : "text-[#9aa3b8]"}`} aria-hidden="true" />
+                {studio && <span className={`relative ${selected ? "text-[#0c1222]" : "text-[#c9d0d9]"}`}>{option.label}</span>}
               </button>
             );
           })}

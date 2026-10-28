@@ -25,9 +25,9 @@ export const PlanChoice = ({ plan, estimateMin, onChange }: { plan: Plan; estima
             type="button"
             aria-pressed={selected}
             onClick={() => onChange(option.value)}
-            className={`relative flex items-start gap-3 rounded-2xl p-4 text-start transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#4da3ff] ${selected ? "bg-[#4da3ff]/14 text-[#9ccbff]" : "bg-[#171b22] text-[#c9d0d9] hover:bg-[#1d222b]"}`}
+            className={`relative flex items-start gap-3 rounded-2xl p-4 text-start transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#d9a648] ${selected ? "bg-[#d9a648]/14 text-[#e9c27a]" : "bg-[#172036] text-[#c9d0d9] hover:bg-[#1d2842]"}`}
           >
-            <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${selected ? "bg-[#4da3ff] text-white" : "bg-white/6"}`}>
+            <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${selected ? "bg-[#d9a648] text-[#1c1406]" : "bg-white/6"}`}>
               <option.icon className="size-5" aria-hidden="true" />
             </span>
             <span className="min-w-0 flex-1">
@@ -39,14 +39,14 @@ export const PlanChoice = ({ plan, estimateMin, onChange }: { plan: Plan; estima
               </span>
             </span>
             {selected && (
-              <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#4da3ff] text-white">
+              <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#d9a648] text-[#1c1406]">
                 <Check className="size-3" strokeWidth={3} aria-hidden="true" />
               </span>
             )}
           </button>
         );
       })}
-      <p className="flex items-center gap-2 px-1 text-[11px] text-[#8a93a0]">
+      <p className="flex items-center gap-2 px-1 text-[11px] text-[#9aa3b8]">
         <ShieldCheck className="size-3.5 shrink-0 text-[#2fd08a]" aria-hidden="true" />{tx("پرداخت از درگاه امن بانکی؛ طراحی فیگما هیچ‌وقت جدا حساب نمی‌شود.")}</p>
     </div>
   );
@@ -65,11 +65,11 @@ export const PaymentOverlay = () => {
             <>
               <KhayyamMark size={72} state="thinking" />
               <strong className="text-[18px] text-white">{tx("در حال انتقال به درگاه امن…")}</strong>
-              <span className="text-[13px] text-[#a7b0bc]">{tx("مبلغ: {0}", [formatToman(amount)])}</span>
+              <span className="text-[13px] text-[#b9bfcc]">{tx("مبلغ: {0}", [formatToman(amount)])}</span>
             </>
           ) : (
             <>
-              <motion.span initial={{ scale: 0.5 }} animate={{ scale: 1 }} transition={{ type: "spring", bounce: 0.5 }} className="flex size-16 items-center justify-center rounded-full bg-[#2fd08a] text-[#0b0d12]">
+              <motion.span initial={{ scale: 0.5 }} animate={{ scale: 1 }} transition={{ type: "spring", bounce: 0.5 }} className="flex size-16 items-center justify-center rounded-full bg-[#2fd08a] text-[#0c1222]">
                 <Check className="size-8" strokeWidth={3} aria-hidden="true" />
               </motion.span>
               <strong className="text-[18px] text-white">{tx("پرداخت انجام شد")}</strong>

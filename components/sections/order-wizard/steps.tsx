@@ -34,9 +34,9 @@ import { useWizard } from "./store";
 /* Primitives — dark studio controls, selection by soft tint only      */
 /* ------------------------------------------------------------------ */
 
-export const ring = "outline-none focus-visible:ring-2 focus-visible:ring-[#4da3ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#111419]";
-export const idle = "bg-[#171b22] text-[#c9d0d9] hover:bg-[#1d222b]";
-export const active = "bg-[#4da3ff]/14 text-[#9ccbff]";
+export const ring = "outline-none focus-visible:ring-2 focus-visible:ring-[#d9a648] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121a2e]";
+export const idle = "bg-[#172036] text-[#c9d0d9] hover:bg-[#1d2842]";
+export const active = "bg-[#d9a648]/14 text-[#e9c27a]";
 
 export const Tile = ({ selected, onClick, children, className = "", label }: { selected: boolean; onClick: () => void; children: ReactNode; className?: string; label?: string }) => (
   <button type="button" aria-pressed={selected} aria-label={label} onClick={onClick} className={`relative rounded-2xl text-start transition-colors duration-150 ${ring} ${selected ? active : idle} ${className}`}>
@@ -46,12 +46,12 @@ export const Tile = ({ selected, onClick, children, className = "", label }: { s
 
 export const Label = ({ children, hint }: { children: ReactNode; hint?: string }) => (
   <span className="mb-2.5 flex items-baseline justify-between gap-2">
-    <span className="text-[12px] font-bold text-[#8a93a0]">{children}</span>
-    {hint && <span className="text-[11px] text-[#5d6573]">{hint}</span>}
+    <span className="text-[12px] font-bold text-[#9aa3b8]">{children}</span>
+    {hint && <span className="text-[11px] text-[#6f788d]">{hint}</span>}
   </span>
 );
 
-const field = "w-full rounded-2xl bg-[#171b22] px-4 text-[13px] text-white outline-none transition-colors placeholder:text-[#5d6573] hover:bg-[#1d222b] focus:bg-[#1d222b] focus:ring-2 focus:ring-[#4da3ff]/50";
+const field = "w-full rounded-2xl bg-[#172036] px-4 text-[13px] text-white outline-none transition-colors placeholder:text-[#6f788d] hover:bg-[#1d2842] focus:bg-[#1d2842] focus:ring-2 focus:ring-[#d9a648]/50";
 
 /** Colour dot; the last one in a row opens the system colour picker for any colour. */
 const Swatch = ({ value, selected, label, onPick }: { value: string; selected: boolean; label: string; onPick: () => void }) => (
@@ -62,7 +62,7 @@ const Swatch = ({ value, selected, label, onPick }: { value: string; selected: b
     aria-label={label}
     title={label}
     onClick={onPick}
-    className={`relative flex aspect-square items-center justify-center rounded-full transition-transform active:scale-90 ${ring} ${selected ? "scale-110 shadow-[0_0_0_2px_#111419,0_0_0_4px_rgba(255,255,255,0.85)]" : "hover:scale-105"}`}
+    className={`relative flex aspect-square items-center justify-center rounded-full transition-transform active:scale-90 ${ring} ${selected ? "scale-110 shadow-[0_0_0_2px_#121a2e,0_0_0_4px_rgba(255,255,255,0.85)]" : "hover:scale-105"}`}
     style={{ backgroundColor: value }}
   >
     {selected && <Check className="size-3.5 text-white mix-blend-difference" strokeWidth={3} aria-hidden="true" />}
@@ -70,8 +70,8 @@ const Swatch = ({ value, selected, label, onPick }: { value: string; selected: b
 );
 
 const CustomColor = ({ value, onChange, label }: { value: string; onChange: (value: string) => void; label: string }) => (
-  <label className={`relative flex aspect-square cursor-pointer items-center justify-center rounded-full bg-[conic-gradient(from_0deg,#ff5f6d,#ffc371,#47e891,#3fb4ff,#a66cff,#ff5f6d)] ${ring}`} title={label}>
-    <span className="flex size-[62%] items-center justify-center rounded-full bg-[#111419]">
+  <label className={`relative flex aspect-square cursor-pointer items-center justify-center rounded-full bg-[conic-gradient(from_0deg,#ff5f6d,#ffc371,#47e891,#e9c27a,#b8862f,#ff5f6d)] ${ring}`} title={label}>
+    <span className="flex size-[62%] items-center justify-center rounded-full bg-[#121a2e]">
       <Pipette className="size-3.5 text-white" aria-hidden="true" />
     </span>
     <input type="color" value={value} onChange={(event) => onChange(event.target.value)} aria-label={label} className="absolute inset-0 cursor-pointer opacity-0" />
@@ -105,10 +105,10 @@ const PaletteStep = () => {
             <span key={item.label} className="flex-1 transition-colors duration-300" style={{ backgroundColor: item.value }} />
           ))}
         </div>
-        <div className="flex bg-[#171b22]">
+        <div className="flex bg-[#172036]">
           {strip.map((item) => (
             <span key={item.label} className="flex-1 px-1 py-2 text-center">
-              <span className="block text-[10px] text-[#8a93a0]">{item.label}</span>
+              <span className="block text-[10px] text-[#9aa3b8]">{item.label}</span>
               <span className="block font-mono text-[10px] uppercase text-[#c9d0d9]" dir="ltr">{item.value}</span>
             </span>
           ))}
@@ -140,7 +140,7 @@ const PaletteStep = () => {
               </button>
             );
           })}
-          <div className="flex flex-col items-center gap-1.5 rounded-2xl bg-[#171b22] p-2">
+          <div className="flex flex-col items-center gap-1.5 rounded-2xl bg-[#172036] p-2">
             <span className="w-8"><CustomColor value={config.accent} label={tx("رنگ دوم دلخواه")} onChange={(value) => update({ accent: value })} /></span>
             <span className="text-[10.5px] font-bold text-[#c9d0d9]">{tx("دلخواه")}</span>
           </div>
@@ -215,7 +215,7 @@ const RadiusStep = () => {
                 <strong className="block text-[13px]">{radius.label}</strong>
                 <span className="text-[11px] opacity-60">{radius.description}</span>
               </span>
-              {selected && <span className="flex size-5 items-center justify-center rounded-full bg-[#4da3ff] text-white"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>}
+              {selected && <span className="flex size-5 items-center justify-center rounded-full bg-[#d9a648] text-[#1c1406]"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>}
             </span>
           </Tile>
         );
@@ -248,7 +248,7 @@ const TypeStep = () => {
               <span className="block leading-tight text-white" style={sample[type.value]}>{type.sample}</span>
               <span className="mt-1.5 block text-[11px] opacity-60">{type.label}</span>
             </span>
-            {selected && <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#4da3ff] text-white"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>}
+            {selected && <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#d9a648] text-[#1c1406]"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>}
           </Tile>
         );
       })}
@@ -315,7 +315,7 @@ const BackdropStep = () => {
                     <strong className="flex items-center gap-1.5 text-[12.5px]">{motionIcons[level.value]}{level.label}</strong>
                     <span className="text-[10.5px] opacity-60">{level.description}</span>
                   </span>
-                  {selected && <span className="flex size-5 items-center justify-center rounded-full bg-[#4da3ff] text-white"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>}
+                  {selected && <span className="flex size-5 items-center justify-center rounded-full bg-[#d9a648] text-[#1c1406]"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>}
                 </span>
               </Tile>
             );
@@ -364,7 +364,7 @@ const BusinessStep = () => {
             <strong className="block text-[13px] text-white">{tx("نسخه وب‌اپ هم داشته باشد")}</strong>
             <span className="text-[11px] opacity-60">{tx("روی گوشی نصب می‌شود و مثل اپ کار می‌کند؛ بدون فروشگاه")}</span>
           </span>
-          <span className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${config.webApp ? "bg-[#4da3ff]" : "bg-[#2a303b]"}`} aria-hidden="true">
+          <span className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${config.webApp ? "bg-[#d9a648]" : "bg-[#2a3550]"}`} aria-hidden="true">
             <span className="absolute top-0.5 size-4 rounded-full bg-white shadow transition-[left]" style={{ left: config.webApp ? 2 : 18 }} />
           </span>
         </Tile>
@@ -409,8 +409,8 @@ const DesignStep = () => {
 
   if (kind === "site" && (config.projectType === "dashboard" || config.projectType === "community")) {
     return (
-      <p className="flex gap-2 rounded-2xl bg-[#171b22] px-4 py-4 text-[12.5px] leading-7 text-[#a7b0bc]">
-        <Info className="mt-1.5 size-4 shrink-0 text-[#4da3ff]" aria-hidden="true" />
+      <p className="flex gap-2 rounded-2xl bg-[#172036] px-4 py-4 text-[12.5px] leading-7 text-[#b9bfcc]">
+        <Info className="mt-1.5 size-4 shrink-0 text-[#d9a648]" aria-hidden="true" />
         {config.projectType === "dashboard" ? tx("پنل‌های داخلی چیدمان استاندارد و کاربردی دارند") : tx("پلتفرم‌های جامعه چیدمان فید و گروه دارند")}{tx("؛ ظاهرش با پالت، گوشه‌ها و نوشته‌هایی که انتخاب کردید ساخته می‌شود. ماژول‌ها را در مرحله بعد انتخاب کنید.")}</p>
     );
   }
@@ -436,7 +436,7 @@ const DesignStep = () => {
                 </div>
                 <span className="flex items-center justify-between px-1 pb-0.5 pt-2 text-[12px] font-bold">
                   {kind === "app" ? tx("طرح {0}", [faNumber(design + 1)]) : siteLayouts[design].label}
-                  {selected && <span className="flex size-5 items-center justify-center rounded-full bg-[#4da3ff] text-white"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>}
+                  {selected && <span className="flex size-5 items-center justify-center rounded-full bg-[#d9a648] text-[#1c1406]"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>}
                 </span>
               </button>
             );
@@ -453,8 +453,8 @@ const DesignStep = () => {
           ))}
         </div>
       </div>
-      <p className="flex gap-2 rounded-2xl bg-[#171b22] px-3.5 py-3 text-[11.5px] leading-6 text-[#8a93a0]">
-        <Info className="mt-1 size-3.5 shrink-0 text-[#4da3ff]" aria-hidden="true" />{tx("این‌ها همه کارهایی نیست که می‌توانیم انجام دهیم. نزدیک‌ترین را انتخاب کنید؛ بعد از ثبت درخواست هر تغییری بخواهید اعمال می‌کنیم.")}</p>
+      <p className="flex gap-2 rounded-2xl bg-[#172036] px-3.5 py-3 text-[11.5px] leading-6 text-[#9aa3b8]">
+        <Info className="mt-1 size-3.5 shrink-0 text-[#d9a648]" aria-hidden="true" />{tx("این‌ها همه کارهایی نیست که می‌توانیم انجام دهیم. نزدیک‌ترین را انتخاب کنید؛ بعد از ثبت درخواست هر تغییری بخواهید اعمال می‌کنیم.")}</p>
     </div>
   );
 };
@@ -483,7 +483,7 @@ const SectionsStep = () => {
           );
         })}
       </div>
-      <p className="mt-3 text-[11px] text-[#5d6573]">{tx("{0} مورد انتخاب شده", [faNumber(sections.length)])}</p>
+      <p className="mt-3 text-[11px] text-[#6f788d]">{tx("{0} مورد انتخاب شده", [faNumber(sections.length)])}</p>
     </div>
   );
 };
@@ -509,13 +509,13 @@ const ExtrasStep = () => {
             {option.label}
             {"ai" in option && option.ai && <span className="rounded-full bg-white/8 px-1.5 text-[10px] font-bold text-[#c9d0d9]">AI</span>}
             {!option.visible && (
-              <span className="hidden items-center gap-0.5 rounded-full bg-white/6 px-1.5 text-[10px] font-normal text-[#8a93a0] lg:inline-flex" title={tx("در پیش‌نمایش دیده نمی‌شود")}>
+              <span className="hidden items-center gap-0.5 rounded-full bg-white/6 px-1.5 text-[10px] font-normal text-[#9aa3b8] lg:inline-flex" title={tx("در پیش‌نمایش دیده نمی‌شود")}>
                 <EyeOff className="size-2.5" aria-hidden="true" />{" "}{tx("پشت صحنه")}</span>
             )}
           </strong>
-          <span className="hidden text-[11px] text-[#8a93a0] lg:block">{option.description}</span>
+          <span className="hidden text-[11px] text-[#9aa3b8] lg:block">{option.description}</span>
         </span>
-        <span className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${selected ? "bg-[#4da3ff]" : "bg-[#2a303b]"}`} aria-hidden="true">
+        <span className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${selected ? "bg-[#d9a648]" : "bg-[#2a3550]"}`} aria-hidden="true">
           {/* RTL switch: off sits on the right, on slides to the left */}
           <span className="absolute top-0.5 size-4 rounded-full bg-white shadow transition-[left]" style={{ left: selected ? 2 : 18 }} />
         </span>
@@ -538,7 +538,7 @@ const ReferencesStep = () => {
         {references.map((value, index) => (
           <label key={index} className="relative block">
             <span className="sr-only">{tx("لینک نمونه {0}", [faNumber(index + 1)])}</span>
-            <Link2 className="pointer-events-none absolute end-4 top-1/2 size-4 -translate-y-1/2 text-[#5d6573]" aria-hidden="true" />
+            <Link2 className="pointer-events-none absolute end-4 top-1/2 size-4 -translate-y-1/2 text-[#6f788d]" aria-hidden="true" />
             <input
               dir="ltr"
               type="url"
@@ -570,14 +570,14 @@ export const OutcomeStep = () => {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="rounded-2xl bg-[linear-gradient(135deg,rgba(77,163,255,0.16),rgba(124,108,255,0.12))] p-4 ring-1 ring-[#4da3ff]/25">
-        <span className="text-[11.5px] font-bold text-[#9ccbff]">{tx("برآورد اولیه")}</span>
+      <div className="rounded-2xl bg-[linear-gradient(135deg,rgba(217,166,72,0.16),rgba(217,166,72,0.12))] p-4 ring-1 ring-[#d9a648]/25">
+        <span className="text-[11.5px] font-bold text-[#e9c27a]">{tx("برآورد اولیه")}</span>
         <div className="mt-1 flex items-baseline gap-2">
           <strong className="text-[24px] font-black text-white">{tx("{0} تا {1}", [faNumber(cost.min), faNumber(cost.max)])}</strong>
-          <span className="text-[12px] text-[#a7b0bc]">{tx("میلیون تومان")}</span>
+          <span className="text-[12px] text-[#b9bfcc]">{tx("میلیون تومان")}</span>
         </div>
-        <span className="mt-1 block text-[12px] text-[#a7b0bc]">{tx("زمان تقریبی: {0} هفته", [faNumber(Math.max(1, cost.weeks))])}</span>
-        <span className="mt-2 block text-[11px] leading-5 text-[#8a93a0]">{tx("شامل طراحی فیگما؛ با هر انتخاب به‌روز می‌شود و قیمت نهایی را مشاور بعد از بررسی اعلام می‌کند.")}</span>
+        <span className="mt-1 block text-[12px] text-[#b9bfcc]">{tx("زمان تقریبی: {0} هفته", [faNumber(Math.max(1, cost.weeks))])}</span>
+        <span className="mt-2 block text-[11px] leading-5 text-[#9aa3b8]">{tx("شامل طراحی فیگما؛ با هر انتخاب به‌روز می‌شود و قیمت نهایی را مشاور بعد از بررسی اعلام می‌کند.")}</span>
       </div>
 
       <PlanChoice plan={config.plan} estimateMin={cost.min} onChange={(plan) => update({ plan })} />

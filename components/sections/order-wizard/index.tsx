@@ -129,7 +129,7 @@ export const OrderWizard = ({ kind }: { kind: OrderKind }) => {
   const mode = useWizard((state) => state.mode);
 
   return (
-    <div dir={studioDir()} className="fixed inset-0 z-[100] overflow-hidden bg-[#0b0d12] font-sans text-[#eef1f5] [color-scheme:dark]">
+    <div dir={studioDir()} className="fixed inset-0 z-[100] overflow-hidden bg-[#0c1222] font-sans text-[#f2ecdf] [color-scheme:dark]">
       <PaymentOverlay />
       {mode === "choose" ? (
         <PathChooser kind={kind} />
@@ -154,7 +154,7 @@ const StudioEditor = ({ kind }: { kind: OrderKind }) => {
   const goTo = useWizard((state) => state.goTo);
   const openGuide = useGuide((state) => state.open);
   const brandName = useWizard((state) => state.config.brandName);
-  const iconButton = "flex size-9 items-center justify-center rounded-xl text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white";
+  const iconButton = "flex size-9 items-center justify-center rounded-xl text-[#9aa3b8] transition-colors hover:bg-white/6 hover:text-white";
 
   return (
     <div className="flex size-full flex-col">
@@ -162,7 +162,7 @@ const StudioEditor = ({ kind }: { kind: OrderKind }) => {
         <KhayyamMark size={36} title={tx("خیام")} />
         <div className="leading-tight">
           <strong className="block text-[13px]">{brandName.trim() || tx("پروژه جدید")}</strong>
-          <span className="text-[11px] text-[#8a93a0]">{kind === "app" ? tx("استودیو اپلیکیشن") : tx("استودیو وب‌سایت")}{" "}{tx("· خیام")}</span>
+          <span className="text-[11px] text-[#9aa3b8]">{kind === "app" ? tx("استودیو اپلیکیشن") : tx("استودیو وب‌سایت")}{" "}{tx("· خیام")}</span>
         </div>
         <div className="ms-auto flex items-center gap-1">
           <button type="button" onClick={() => openGuide(`studio-${kind}`)} aria-label={tx("راهنما")} className={iconButton}>
@@ -175,7 +175,7 @@ const StudioEditor = ({ kind }: { kind: OrderKind }) => {
             type="button"
             data-tour="submit"
             onClick={() => goTo(getSteps(kind).length - 1)}
-            className="ms-2 flex h-9 items-center gap-2 rounded-xl bg-white px-4 text-[12.5px] font-extrabold text-[#0b0d12] transition-colors hover:bg-[#d9ecff]"
+            className="ms-2 flex h-9 items-center gap-2 rounded-xl bg-white px-4 text-[12.5px] font-extrabold text-[#0c1222] transition-colors hover:bg-[#f5e6c6]"
           >
             <Check className="size-4" aria-hidden="true" />{" "}{tx("ثبت درخواست")}</button>
         </div>
@@ -183,7 +183,7 @@ const StudioEditor = ({ kind }: { kind: OrderKind }) => {
 
       <div className="flex min-h-0 flex-1">
         <StepRail />
-        <aside data-tour="panel" className="flex w-[380px] shrink-0 flex-col border-e border-white/6 bg-[#111419] xl:w-[400px]">
+        <aside data-tour="panel" className="flex w-[380px] shrink-0 flex-col border-e border-white/6 bg-[#121a2e] xl:w-[400px]">
           {submitted ? <SubmittedPanel kind={kind} /> : <StepPanel kind={kind} />}
         </aside>
         <main className="relative min-w-0 flex-1">
@@ -213,12 +213,12 @@ const StepRail = () => {
             type="button"
             onClick={() => goTo(index)}
             aria-current={current ? "step" : undefined}
-            className={`relative flex w-[64px] flex-col items-center gap-1 rounded-2xl py-2.5 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[#4da3ff] ${current ? "bg-[#4da3ff]/14 text-[#9ccbff]" : done ? "text-[#c9d0d9] hover:bg-white/5" : "text-[#5d6573] hover:bg-white/5 hover:text-[#c9d0d9]"}`}
+            className={`relative flex w-[64px] flex-col items-center gap-1 rounded-2xl py-2.5 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[#d9a648] ${current ? "bg-[#d9a648]/14 text-[#e9c27a]" : done ? "text-[#c9d0d9] hover:bg-white/5" : "text-[#6f788d] hover:bg-white/5 hover:text-[#c9d0d9]"}`}
           >
             <Icon className="size-[19px]" aria-hidden="true" />
             <span className="text-[10.5px] font-bold">{shortTitles[item.key]}</span>
             {done && (
-              <span className="absolute end-2 top-2 flex size-3.5 items-center justify-center rounded-full bg-[#2fd08a] text-[#0b0d12]">
+              <span className="absolute end-2 top-2 flex size-3.5 items-center justify-center rounded-full bg-[#2fd08a] text-[#0c1222]">
                 <Check className="size-2" strokeWidth={4} aria-hidden="true" />
               </span>
             )}
@@ -241,7 +241,7 @@ const MobileEditor = ({ kind }: { kind: OrderKind }) => {
       <main className="relative min-h-0 flex-1">
         {kind === "app" ? <AppStage /> : <PreviewStage />}
       </main>
-      <DraggableSheet data-tour="panel" className="rounded-t-[24px] bg-[#111419] shadow-[0_-16px_40px_-12px_rgba(0,0,0,0.6)]">
+      <DraggableSheet data-tour="panel" className="rounded-t-[24px] bg-[#121a2e] shadow-[0_-16px_40px_-12px_rgba(0,0,0,0.6)]">
         <StepChips />
         {submitted ? <SubmittedPanel kind={kind} /> : <StepPanel kind={kind} />}
       </DraggableSheet>
@@ -274,7 +274,7 @@ const StepChips = () => {
             type="button"
             onClick={() => goTo(index)}
             aria-current={current ? "step" : undefined}
-            className={`flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3 text-[11.5px] font-bold transition-colors ${current ? "bg-white text-[#0b0d12]" : done ? "bg-[#1d222b] text-[#c9d0d9]" : "bg-[#171b22] text-[#5d6573]"}`}
+            className={`flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3 text-[11.5px] font-bold transition-colors ${current ? "bg-white text-[#0c1222]" : done ? "bg-[#1d2842] text-[#c9d0d9]" : "bg-[#172036] text-[#6f788d]"}`}
           >
             {done ? <Check className="size-3 text-[#2fd08a]" strokeWidth={3} aria-hidden="true" /> : <span className="text-[10px] opacity-70">{faNumber(index + 1)}</span>}
             {shortTitles[item.key]}
@@ -307,12 +307,12 @@ const StepPanel = ({ kind }: { kind: OrderKind }) => {
 
   return (
     <>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-3 pt-3 lg:px-6 lg:pt-6 [scrollbar-color:#2a303b_transparent] [scrollbar-width:thin]">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-3 pt-3 lg:px-6 lg:pt-6 [scrollbar-color:#2a3550_transparent] [scrollbar-width:thin]">
         <AnimatePresence mode="wait" initial={false} custom={direction}>
           <motion.div key={current.key} initial={{ opacity: 0, x: sx(-direction * offset) }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: sx(direction * offset) }} transition={{ duration: still ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}>
-            <span className="mb-1 hidden text-[11.5px] font-bold text-[#4da3ff] lg:block">{tx("مرحله {0} از {1}", [faNumber(step + 1), faNumber(steps.length)])}</span>
+            <span className="mb-1 hidden text-[11.5px] font-bold text-[#d9a648] lg:block">{tx("مرحله {0} از {1}", [faNumber(step + 1), faNumber(steps.length)])}</span>
             <h1 data-guide="panel-question" className="text-[16px] font-extrabold leading-[1.65] text-white lg:text-[20px]">{current.question(kind)}</h1>
-            <p className="mt-1 hidden text-[12px] leading-6 text-[#8a93a0] lg:block">{current.hint}</p>
+            <p className="mt-1 hidden text-[12px] leading-6 text-[#9aa3b8] lg:block">{current.hint}</p>
             <div className="mt-3 lg:mt-6">
               {Panel && <Panel />}
             </div>
@@ -326,7 +326,7 @@ const StepPanel = ({ kind }: { kind: OrderKind }) => {
           onClick={prev}
           disabled={step === 0}
           aria-label={tx("قبلی")}
-          className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#171b22] text-[#c9d0d9] transition hover:bg-[#1d222b] focus-visible:outline-2 focus-visible:outline-[#4da3ff] disabled:opacity-30"
+          className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#172036] text-[#c9d0d9] transition hover:bg-[#1d2842] focus-visible:outline-2 focus-visible:outline-[#d9a648] disabled:opacity-30"
         >
           <ArrowRight className="size-[18px] ltr:-scale-x-100" aria-hidden="true" />
         </button>
@@ -339,7 +339,7 @@ const StepPanel = ({ kind }: { kind: OrderKind }) => {
             void startPayment(due).then((ok) => ok && next());
           }}
           data-tour={isSmall ? "submit" : undefined}
-          className="flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#4da3ff,#7c6cff)] text-[13px] font-extrabold text-white shadow-[0_10px_30px_-12px_rgba(77,163,255,0.8)] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4da3ff] active:scale-[0.98]"
+          className="flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#f5d79c,#d9a648)] text-[13px] font-extrabold text-[#1c1406] shadow-[0_10px_30px_-12px_rgba(217,166,72,0.8)] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d9a648] active:scale-[0.98]"
         >
           {isLast ? tx("پرداخت {0} و ثبت", [formatToman(amountDue(config.plan, estimate(kind, config).min))]) : tx("بعدی: {0}", [steps[step + 1].title])}
           {isLast ? <Check className="size-4" aria-hidden="true" /> : <ArrowLeft className="size-4 ltr:-scale-x-100" aria-hidden="true" />}
@@ -382,17 +382,17 @@ const SubmittedPanel = ({ kind }: { kind: OrderKind }) => {
     <>
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-3 pt-4 lg:px-6 lg:pt-7">
         <div className="flex items-center gap-3">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#2fd08a] text-[#0b0d12]">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#2fd08a] text-[#0c1222]">
             <Check className="size-5" strokeWidth={3} aria-hidden="true" />
           </span>
           <h1 className="text-[18px] font-extrabold text-white lg:text-[20px]">{tx("درخواست شما ثبت شد")}</h1>
         </div>
-        <p className="mt-2 text-[12px] leading-6 text-[#8a93a0]">{tx("طرح اولیه بر اساس همین انتخاب‌ها آماده می‌شود و مشاور پروژه برای جزئیات با شما تماس می‌گیرد.")}</p>
-        <dl className="mt-4 divide-y divide-white/6 rounded-2xl bg-[#171b22]">
+        <p className="mt-2 text-[12px] leading-6 text-[#9aa3b8]">{tx("طرح اولیه بر اساس همین انتخاب‌ها آماده می‌شود و مشاور پروژه برای جزئیات با شما تماس می‌گیرد.")}</p>
+        <dl className="mt-4 divide-y divide-white/6 rounded-2xl bg-[#172036]">
           {summary.map((row) => (
             <div key={row.label} className="flex items-start justify-between gap-4 px-4 py-2.5 text-[12px]">
-              <dt className="shrink-0 text-[#8a93a0]">{row.label}</dt>
-              <dd className="text-end font-bold leading-5 text-[#eef1f5]">{row.value}</dd>
+              <dt className="shrink-0 text-[#9aa3b8]">{row.label}</dt>
+              <dd className="text-end font-bold leading-5 text-[#f2ecdf]">{row.value}</dd>
             </div>
           ))}
         </dl>
@@ -400,10 +400,10 @@ const SubmittedPanel = ({ kind }: { kind: OrderKind }) => {
           <Info className="mt-1 size-3.5 shrink-0" aria-hidden="true" />{tx("این مقادیر طبق خواسته شما قابل تغییر است؛ هر تغییری بخواهید برای مشاور بفرستید.")}</p>
       </div>
       <footer className="flex shrink-0 items-center gap-2 border-t border-white/6 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 lg:px-6 lg:py-4">
-        <button type="button" onClick={restart} aria-label={tx("از اول")} className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#171b22] text-[#c9d0d9] transition hover:bg-[#1d222b]">
+        <button type="button" onClick={restart} aria-label={tx("از اول")} className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#172036] text-[#c9d0d9] transition hover:bg-[#1d2842]">
           <RotateCcw className="size-[18px]" aria-hidden="true" />
         </button>
-        <button type="button" onClick={() => goTo(0)} className="flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-white text-[13px] font-extrabold text-[#0b0d12] transition hover:bg-[#d9ecff]">
+        <button type="button" onClick={() => goTo(0)} className="flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-white text-[13px] font-extrabold text-[#0c1222] transition hover:bg-[#f5e6c6]">
           <PencilLine className="size-4" aria-hidden="true" />{" "}{tx("ویرایش انتخاب‌ها")}</button>
       </footer>
     </>

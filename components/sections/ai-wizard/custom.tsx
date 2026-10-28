@@ -10,8 +10,8 @@ import { CONSULT_FEE, formatToman, startPayment } from "../order-wizard/payments
 import { customData, customDomains, customProcess, fa } from "./config";
 import { useAi } from "./store";
 
-const field = "w-full rounded-2xl bg-[#151920] px-4 text-[13px] text-white outline-none ring-1 ring-white/6 transition placeholder:text-[#5d6573] focus:ring-2 focus:ring-[#4da3ff]/50";
-const label = "mb-2.5 block text-[12.5px] font-bold text-[#a7b0bc]";
+const field = "w-full rounded-2xl bg-[#16203a] px-4 text-[13px] text-white outline-none ring-1 ring-white/6 transition placeholder:text-[#6f788d] focus:ring-2 focus:ring-[#d9a648]/50";
+const label = "mb-2.5 block text-[12.5px] font-bold text-[#b9bfcc]";
 
 /**
  * Bespoke AI (a production line, medical imaging, something bigger): these need a real
@@ -32,7 +32,7 @@ export const CustomAi = () => {
       <div className="flex size-full flex-col items-center justify-center gap-5 px-6 text-center">
         <KhayyamMark size={80} state="intro" />
         <h1 className="text-[24px] font-extrabold text-white">{tx("درخواست شما رسید")}</h1>
-        <p className="max-w-[46ch] text-[14px] leading-7 text-[#a7b0bc]">{tx("کارشناس هوش مصنوعی ما با شما تماس می‌گیرد تا مسئله و داده‌ها را دقیق‌تر بشناسیم. مبلغ مشاوره از قرارداد نهایی کم می‌شود.")}</p>
+        <p className="max-w-[46ch] text-[14px] leading-7 text-[#b9bfcc]">{tx("کارشناس هوش مصنوعی ما با شما تماس می‌گیرد تا مسئله و داده‌ها را دقیق‌تر بشناسیم. مبلغ مشاوره از قرارداد نهایی کم می‌شود.")}</p>
       </div>
     );
   }
@@ -41,9 +41,9 @@ export const CustomAi = () => {
     <div className="size-full overflow-y-auto overscroll-contain [scrollbar-width:thin]">
       <div className="mx-auto flex w-full max-w-[920px] flex-col gap-10 px-5 pb-16 pt-8 lg:pt-12">
         <motion.header {...rise(0)} className="text-center">
-          <span className="rounded-full bg-[#7c6cff]/15 px-3 py-1 text-[12px] font-bold text-[#c4bbff]">{tx("هوش مصنوعی اختصاصی")}</span>
+          <span className="rounded-full bg-[#b8862f]/15 px-3 py-1 text-[12px] font-bold text-[#f5d79c]">{tx("هوش مصنوعی اختصاصی")}</span>
           <h1 className="mt-4 text-[26px] font-extrabold leading-[1.5] text-white lg:text-[38px]">{tx("مسئله خاص شما، راه‌حل اختصاصی")}</h1>
-          <p className="mx-auto mt-3 max-w-[56ch] text-[14px] leading-7 text-[#a7b0bc]">{tx("خط تولید کارخانه، تشخیص پزشکی یا هر ایده بزرگ‌تری؛ این پروژه‌ها با گفتگو و بررسی داده‌های شما شکل می‌گیرند تا به خروجی برسیم که واقعاً قابل استفاده باشد و برای سازمان شما سود بسازد. اطلاعات بیشتری بدهید؛ با شما تماس می‌گیریم.")}</p>
+          <p className="mx-auto mt-3 max-w-[56ch] text-[14px] leading-7 text-[#b9bfcc]">{tx("خط تولید کارخانه، تشخیص پزشکی یا هر ایده بزرگ‌تری؛ این پروژه‌ها با گفتگو و بررسی داده‌های شما شکل می‌گیرند تا به خروجی برسیم که واقعاً قابل استفاده باشد و برای سازمان شما سود بسازد. اطلاعات بیشتری بدهید؛ با شما تماس می‌گیریم.")}</p>
         </motion.header>
 
         <section data-guide="custom-domains">
@@ -58,15 +58,15 @@ export const CustomAi = () => {
                   type="button"
                   aria-pressed={on}
                   onClick={() => toggleCustom("domains", domain.value)}
-                  className={`relative flex flex-col gap-2.5 rounded-[22px] p-4 text-start transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#4da3ff] ${on ? "bg-[#7c6cff]/16 ring-1 ring-[#7c6cff]/50" : "bg-[#111419] ring-1 ring-white/6 hover:bg-[#151920]"}`}
+                  className={`relative flex flex-col gap-2.5 rounded-[22px] p-4 text-start transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#d9a648] ${on ? "bg-[#b8862f]/16 ring-1 ring-[#b8862f]/50" : "bg-[#121a2e] ring-1 ring-white/6 hover:bg-[#16203a]"}`}
                 >
-                  <span className={`flex size-10 items-center justify-center rounded-xl ${on ? "bg-[#7c6cff] text-white" : "bg-white/6 text-[#c9d0d9]"}`}>
+                  <span className={`flex size-10 items-center justify-center rounded-xl ${on ? "bg-[#d9a648] text-[#1c1406]" : "bg-white/6 text-[#c9d0d9]"}`}>
                     <domain.icon className="size-5" aria-hidden="true" />
                   </span>
                   <strong className="text-[13.5px] text-white">{domain.label}</strong>
-                  <span className="text-[11.5px] leading-5 text-[#8a93a0]">{domain.example}</span>
+                  <span className="text-[11.5px] leading-5 text-[#9aa3b8]">{domain.example}</span>
                   {on && (
-                    <span className="absolute end-3 top-3 flex size-5 items-center justify-center rounded-full bg-[#7c6cff] text-white">
+                    <span className="absolute end-3 top-3 flex size-5 items-center justify-center rounded-full bg-[#b8862f] text-white">
                       <Check className="size-3" strokeWidth={3} aria-hidden="true" />
                     </span>
                   )}
@@ -87,7 +87,7 @@ export const CustomAi = () => {
               {customData.map((item) => {
                 const on = custom.data.includes(item.value);
                 return (
-                  <button key={item.value} type="button" aria-pressed={on} onClick={() => toggleCustom("data", item.value)} className={`h-10 rounded-full px-4 text-[12.5px] font-bold transition-colors ${on ? "bg-[#7c6cff] text-white" : "bg-[#151920] text-[#c9d0d9] ring-1 ring-white/6 hover:bg-[#1b2029]"}`}>
+                  <button key={item.value} type="button" aria-pressed={on} onClick={() => toggleCustom("data", item.value)} className={`h-10 rounded-full px-4 text-[12.5px] font-bold transition-colors ${on ? "bg-[#b8862f] text-white" : "bg-[#16203a] text-[#c9d0d9] ring-1 ring-white/6 hover:bg-[#1b2640]"}`}>
                     {item.label}
                   </button>
                 );
@@ -114,8 +114,8 @@ export const CustomAi = () => {
               </select>
             </label>
           </div>
-          <label className="flex cursor-pointer items-center gap-3 rounded-2xl bg-[#151920] px-4 py-3.5 text-[13px] text-[#c9d0d9] border border-dashed border-white/15 transition hover:bg-[#1b2029] lg:col-span-2">
-            <Paperclip className="size-4 text-[#4da3ff]" aria-hidden="true" />
+          <label className="flex cursor-pointer items-center gap-3 rounded-2xl bg-[#16203a] px-4 py-3.5 text-[13px] text-[#c9d0d9] border border-dashed border-white/15 transition hover:bg-[#1b2640] lg:col-span-2">
+            <Paperclip className="size-4 text-[#d9a648]" aria-hidden="true" />
             <span className="flex-1">{custom.fileName || tx("فایل، نمونه داده یا توضیح تکمیلی (اختیاری)")}</span>
             <input type="file" className="sr-only" onChange={(event) => updateCustom({ fileName: event.target.files?.[0]?.name ?? "" })} />
           </label>
@@ -125,19 +125,19 @@ export const CustomAi = () => {
           <span className={label}>{tx("مسیر همکاری")}</span>
           <ol className="grid gap-3 lg:grid-cols-4">
             {customProcess.map((step, index) => (
-              <motion.li {...rise(index * 0.06)} key={step.title} className="relative rounded-[22px] bg-[#111419] p-4 ring-1 ring-white/6">
-                <span className="flex size-8 items-center justify-center rounded-full bg-[linear-gradient(135deg,#4da3ff,#7c6cff)] text-[13px] font-black text-white">{fa(index + 1)}</span>
+              <motion.li {...rise(index * 0.06)} key={step.title} className="relative rounded-[22px] bg-[#121a2e] p-4 ring-1 ring-white/6">
+                <span className="flex size-8 items-center justify-center rounded-full bg-[linear-gradient(135deg,#f5d79c,#d9a648)] text-[13px] font-black text-[#1c1406]">{fa(index + 1)}</span>
                 <strong className="mt-3 block text-[13.5px] text-white">{step.title}</strong>
-                <span className="mt-1 block text-[12px] leading-6 text-[#8a93a0]">{step.text}</span>
+                <span className="mt-1 block text-[12px] leading-6 text-[#9aa3b8]">{step.text}</span>
               </motion.li>
             ))}
           </ol>
         </section>
 
-        <section data-guide="custom-consult" className="rounded-[26px] bg-[linear-gradient(140deg,rgba(124,108,255,0.16),rgba(77,163,255,0.08))] p-5 ring-1 ring-[#7c6cff]/30 lg:p-7">
+        <section data-guide="custom-consult" className="rounded-[26px] bg-[linear-gradient(140deg,rgba(217,166,72,0.16),rgba(217,166,72,0.08))] p-5 ring-1 ring-[#b8862f]/30 lg:p-7">
           <div className="flex items-start gap-3">
-            <MessagesSquare className="mt-1 size-5 shrink-0 text-[#c4bbff]" aria-hidden="true" />
-            <p className="text-[13px] leading-7 text-[#d6d2ff]">{tx("برای این پروژه‌ها قیمت ثابت نمی‌دهیم؛ اول باید مسئله و داده‌ها را بشناسیم. با پرداخت {0} جلسه مشاوره تخصصی رزرو می‌شود و این مبلغ از قرارداد نهایی کم می‌شود.", [formatToman(CONSULT_FEE)])}</p>
+            <MessagesSquare className="mt-1 size-5 shrink-0 text-[#f5d79c]" aria-hidden="true" />
+            <p className="text-[13px] leading-7 text-[#f5e6c6]">{tx("برای این پروژه‌ها قیمت ثابت نمی‌دهیم؛ اول باید مسئله و داده‌ها را بشناسیم. با پرداخت {0} جلسه مشاوره تخصصی رزرو می‌شود و این مبلغ از قرارداد نهایی کم می‌شود.", [formatToman(CONSULT_FEE)])}</p>
           </div>
           <div className="mt-5 grid gap-2.5 sm:grid-cols-3">
             <input value={custom.company} onChange={(event) => updateCustom({ company: event.target.value })} placeholder={tx("نام سازمان")} aria-label={tx("نام سازمان")} className={`${field} h-12`} />
@@ -147,7 +147,7 @@ export const CustomAi = () => {
           <button
             type="button"
             onClick={() => void startPayment(CONSULT_FEE).then((ok) => ok && submit())}
-            className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-white text-[14px] font-extrabold text-[#0b0d12] transition-colors hover:bg-[#e6e2ff]"
+            className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#f5d79c,#d9a648)] text-[14px] font-extrabold text-[#1c1406] transition hover:brightness-105"
           >
             <Check className="size-4" aria-hidden="true" />{" "}{tx("پرداخت {0} و رزرو مشاوره", [formatToman(CONSULT_FEE)])}</button>
         </section>

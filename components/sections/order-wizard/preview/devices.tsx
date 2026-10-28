@@ -79,7 +79,7 @@ const Screen = ({ children, className = "" }: { children: ReactNode; className?:
 export const Laptop = ({ address, installable = false, children }: { address: string; installable?: boolean; children: ReactNode }) => (
   <div className="relative" style={LAPTOP}>
     {/* lid */}
-    <div className="absolute left-1/2 top-0 w-[1316px] -translate-x-1/2 rounded-b-[8px] rounded-t-[30px] bg-[#1a2129] p-[18px] pb-[22px] ring-1 ring-white/12 shadow-[0_40px_80px_-40px_rgba(15,23,32,0.6)]">
+    <div className="absolute left-1/2 top-0 w-[1316px] -translate-x-1/2 rounded-b-[8px] rounded-t-[30px] bg-[#1a2440] p-[18px] pb-[22px] ring-1 ring-white/12 shadow-[0_40px_80px_-40px_rgba(15,23,32,0.6)]">
       <span className="absolute left-1/2 top-[6px] size-[6px] -translate-x-1/2 rounded-full bg-[#3a454f]" />
       <div className="flex h-[800px] flex-col overflow-hidden rounded-[6px] bg-white">
         <div className="flex h-10 shrink-0 items-center gap-2 border-b border-black/6 bg-[#f3f5f6] px-4" dir="ltr">
@@ -102,7 +102,7 @@ export const Laptop = ({ address, installable = false, children }: { address: st
 );
 
 export const Phone = ({ children }: { children: ReactNode }) => (
-  <div className="relative rounded-[60px] bg-[#1a2129] p-3 shadow-[0_40px_70px_-30px_rgba(15,23,32,0.65)] ring-1 ring-white/10" style={PHONE}>
+  <div className="relative rounded-[60px] bg-[#1a2440] p-3 shadow-[0_40px_70px_-30px_rgba(15,23,32,0.65)] ring-1 ring-white/10" style={PHONE}>
     <div className="pv-root relative flex h-full flex-col overflow-hidden rounded-[48px] bg-(--pv-bg) text-(--pv-text)">
       <div className="relative flex h-[52px] shrink-0 items-center justify-between px-9 pt-1 text-[15px] font-bold" dir="ltr">
         <span>9:41</span>

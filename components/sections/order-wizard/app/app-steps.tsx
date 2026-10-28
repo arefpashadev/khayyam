@@ -41,28 +41,28 @@ export const PlatformStep = () => {
                 <strong className="block text-[13.5px] text-white">{option.label}</strong>
                 <span className="mt-0.5 block text-[11px] leading-5 opacity-60">{option.description}</span>
               </span>
-              {selected && <span className="absolute end-3 top-3 flex size-5 items-center justify-center rounded-full bg-[#4da3ff] text-white"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>}
+              {selected && <span className="absolute end-3 top-3 flex size-5 items-center justify-center rounded-full bg-[#d9a648] text-[#1c1406]"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>}
             </Tile>
           );
         })}
       </div>
-      <p className="rounded-2xl bg-[#171b22] px-3.5 py-3 text-[11.5px] leading-6 text-[#8a93a0]">{tx("«هر دو» یعنی یک کد مشترک برای آیفون و اندروید؛ هزینه کمتر از ساخت دو اپ جدا. وب‌اپ بدون نصب از مرورگر باز می‌شود و روی صفحه گوشی هم می‌نشیند.")}</p>
+      <p className="rounded-2xl bg-[#172036] px-3.5 py-3 text-[11.5px] leading-6 text-[#9aa3b8]">{tx("«هر دو» یعنی یک کد مشترک برای آیفون و اندروید؛ هزینه کمتر از ساخت دو اپ جدا. وب‌اپ بدون نصب از مرورگر باز می‌شود و روی صفحه گوشی هم می‌نشیند.")}</p>
     </div>
   );
 };
 
 const NavGlyph = ({ nav }: { nav: AppNav }) => (
   <div className="relative mx-auto h-24 w-14 overflow-hidden rounded-[12px] bg-white/90">
-    {nav === "top" && <span className="absolute inset-x-1.5 top-2 flex gap-1">{[0, 1, 2].map((tab) => <span key={tab} className={`h-1.5 flex-1 rounded-full ${tab === 0 ? "bg-[#4da3ff]" : "bg-black/15"}`} />)}</span>}
+    {nav === "top" && <span className="absolute inset-x-1.5 top-2 flex gap-1">{[0, 1, 2].map((tab) => <span key={tab} className={`h-1.5 flex-1 rounded-full ${tab === 0 ? "bg-[#d9a648]" : "bg-black/15"}`} />)}</span>}
     {nav === "drawer" && (
       <>
-        <span className="absolute inset-y-0 start-0 w-9 bg-[#4da3ff]/25" />
-        <span className="absolute start-1.5 top-2 flex flex-col gap-1">{[0, 1, 2, 3].map((row) => <span key={row} className="h-1 w-5 rounded-full bg-[#4da3ff]" />)}</span>
+        <span className="absolute inset-y-0 start-0 w-9 bg-[#d9a648]/25" />
+        <span className="absolute start-1.5 top-2 flex flex-col gap-1">{[0, 1, 2, 3].map((row) => <span key={row} className="h-1 w-5 rounded-full bg-[#d9a648]" />)}</span>
       </>
     )}
     <span className="absolute inset-x-2 top-6 flex flex-col gap-1.5">{[0, 1].map((row) => <span key={row} className="h-3 rounded-[3px] bg-black/10" />)}</span>
-    {nav === "tabs" && <span className="absolute inset-x-0 bottom-0 flex h-4 items-center justify-around border-t border-black/10 bg-white">{[0, 1, 2, 3].map((tab) => <span key={tab} className={`size-1.5 rounded-full ${tab === 0 ? "bg-[#4da3ff]" : "bg-black/25"}`} />)}</span>}
-    {nav === "floating" && <span className="absolute inset-x-1.5 bottom-1.5 flex h-3.5 items-center justify-around rounded-full bg-[#14202b]">{[0, 1, 2].map((tab) => <span key={tab} className={`size-1.5 rounded-full ${tab === 0 ? "bg-[#4da3ff]" : "bg-white/40"}`} />)}</span>}
+    {nav === "tabs" && <span className="absolute inset-x-0 bottom-0 flex h-4 items-center justify-around border-t border-black/10 bg-white">{[0, 1, 2, 3].map((tab) => <span key={tab} className={`size-1.5 rounded-full ${tab === 0 ? "bg-[#d9a648]" : "bg-black/25"}`} />)}</span>}
+    {nav === "floating" && <span className="absolute inset-x-1.5 bottom-1.5 flex h-3.5 items-center justify-around rounded-full bg-[#14202b]">{[0, 1, 2].map((tab) => <span key={tab} className={`size-1.5 rounded-full ${tab === 0 ? "bg-[#d9a648]" : "bg-white/40"}`} />)}</span>}
   </div>
 );
 
@@ -105,11 +105,11 @@ export const ScreensStep = () => {
               }}
               className={`flex flex-1 items-center gap-3 text-start ${ring} rounded-xl`}
             >
-              <span className={`flex size-9 items-center justify-center rounded-xl ${on ? "bg-[#4da3ff] text-white" : "bg-white/6"}`}>
+              <span className={`flex size-9 items-center justify-center rounded-xl ${on ? "bg-[#d9a648] text-[#1c1406]" : "bg-white/6"}`}>
                 <screen.icon className="size-4" aria-hidden="true" />
               </span>
               <strong className="flex-1 text-[13px]">{screen.label}</strong>
-              {locked ? <span className="text-[10.5px] opacity-60">{tx("همیشه")}</span> : <span className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${on ? "bg-[#4da3ff]" : "bg-[#2a303b]"}`}><span className="absolute top-0.5 size-4 rounded-full bg-white shadow transition-[left]" style={{ left: on ? 2 : 18 }} /></span>}
+              {locked ? <span className="text-[10.5px] opacity-60">{tx("همیشه")}</span> : <span className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${on ? "bg-[#d9a648]" : "bg-[#2a3550]"}`}><span className="absolute top-0.5 size-4 rounded-full bg-white shadow transition-[left]" style={{ left: on ? 2 : 18 }} /></span>}
             </button>
             {on && (
               <button type="button" onClick={() => open(screen.value)} aria-label={tx("نمایش {0}", [screen.label])} className={`flex size-9 items-center justify-center rounded-xl bg-white/6 text-white transition-colors hover:bg-white/12 ${ring}`}>
@@ -154,8 +154,8 @@ export const IconStep = () => {
           ))}
         </div>
       </div>
-      <p className="flex items-center gap-2 rounded-2xl bg-[#171b22] px-3.5 py-3 text-[11.5px] leading-6 text-[#8a93a0]">
-        <Smartphone className="size-4 shrink-0 text-[#4da3ff]" aria-hidden="true" />{tx("در پیش‌نمایش، روی آیکون اپ بزنید تا صفحه آغاز و ورود به اپ را ببینید.")}</p>
+      <p className="flex items-center gap-2 rounded-2xl bg-[#172036] px-3.5 py-3 text-[11.5px] leading-6 text-[#9aa3b8]">
+        <Smartphone className="size-4 shrink-0 text-[#d9a648]" aria-hidden="true" />{tx("در پیش‌نمایش، روی آیکون اپ بزنید تا صفحه آغاز و ورود به اپ را ببینید.")}</p>
     </div>
   );
 };
@@ -179,7 +179,7 @@ export const FeaturesStep = () => {
               }}
               className={`flex flex-1 items-center gap-3 rounded-xl text-start ${ring}`}
             >
-              <span className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${on ? "bg-[#4da3ff] text-white" : "bg-white/6"}`}>
+              <span className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${on ? "bg-[#d9a648] text-[#1c1406]" : "bg-white/6"}`}>
                 <feature.icon className="size-4" aria-hidden="true" />
               </span>
               <span className="min-w-0 flex-1">
@@ -189,7 +189,7 @@ export const FeaturesStep = () => {
                 </strong>
                 <span className="block text-[11px] opacity-60">{feature.description}</span>
               </span>
-              <span className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${on ? "bg-[#4da3ff]" : "bg-[#2a303b]"}`}>
+              <span className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${on ? "bg-[#d9a648]" : "bg-[#2a3550]"}`}>
                 <span className="absolute top-0.5 size-4 rounded-full bg-white shadow transition-[left]" style={{ left: on ? 2 : 18 }} />
               </span>
             </button>
@@ -205,8 +205,8 @@ export const FeaturesStep = () => {
   return (
     <div className="flex flex-col gap-2">
       {appFeatureList.map(row)}
-      <p className="mt-1 flex items-center gap-2 rounded-2xl bg-[#171b22] px-3.5 py-3 text-[11.5px] leading-6 text-[#8a93a0]">
-        <Eye className="size-4 shrink-0 text-[#4da3ff]" aria-hidden="true" />{tx("هر قابلیتی که در فهرست نیست هم قابل ساخت است؛ در مرحله سفارش برایمان بنویسید.")}</p>
+      <p className="mt-1 flex items-center gap-2 rounded-2xl bg-[#172036] px-3.5 py-3 text-[11.5px] leading-6 text-[#9aa3b8]">
+        <Eye className="size-4 shrink-0 text-[#d9a648]" aria-hidden="true" />{tx("هر قابلیتی که در فهرست نیست هم قابل ساخت است؛ در مرحله سفارش برایمان بنویسید.")}</p>
     </div>
   );
 };

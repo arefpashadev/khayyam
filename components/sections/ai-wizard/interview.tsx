@@ -9,7 +9,7 @@ import { createPortal } from "react-dom";
 import { KhayyamMark } from "@/components/brand/khayyam-mark";
 
 import { useStickToBottom } from "../order-wizard/use-stick-bottom";
-import { autonomyLevels, fa, goals, impact, pains, personas, shareChoices, staffChoices, tools, type AiConfig, type GoalKey } from "./config";
+import { fa, goals, pains, personas, tools, type AiConfig, type GoalKey } from "./config";
 import { useAi } from "./store";
 
 type Question = {
@@ -20,9 +20,9 @@ type Question = {
   input: () => ReactNode;
 };
 
-const chip = "rounded-2xl text-start transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#4da3ff]";
-const chipOff = "bg-[#151920] text-[#c9d0d9] ring-1 ring-white/6 hover:bg-[#1b2029]";
-const chipOn = "bg-[#4da3ff]/16 text-white ring-1 ring-[#4da3ff]/60";
+const chip = "rounded-2xl text-start transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#d9a648]";
+const chipOff = "bg-[#16203a] text-[#c9d0d9] ring-1 ring-white/6 hover:bg-[#1b2640]";
+const chipOn = "bg-[#d9a648]/16 text-white ring-1 ring-[#d9a648]/60";
 
 /**
  * The main action of a question. On phones it moves into the bottom action bar
@@ -39,7 +39,7 @@ const Confirm = ({ count, onClick, label = tx("ادامه") }: { count?: number;
       type="button"
       disabled={count === 0}
       onClick={onClick}
-      className={`flex h-12 items-center justify-center gap-2 rounded-2xl bg-white px-5 text-[13.5px] font-extrabold text-[#0b0d12] transition-colors hover:bg-[#d9ecff] disabled:opacity-30 ${bar ? "w-full" : "mt-1 w-fit"}`}
+      className={`flex h-12 items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#f5d79c,#d9a648)] px-5 text-[13.5px] font-extrabold text-[#1c1406] transition hover:brightness-105 disabled:opacity-30 ${bar ? "w-full" : "mt-1 w-fit"}`}
     >
       {label} {count !== undefined && count > 0 && <span className="opacity-50">({fa(count)})</span>}
       <ArrowLeft className="size-4 ltr:-scale-x-100" aria-hidden="true" />
@@ -76,7 +76,7 @@ const PainPick = () => {
           const on = picked.includes(pain.value);
           return (
             <button key={pain.value} type="button" aria-pressed={on} onClick={() => toggle(pain.value)} className={`${chip} flex items-center gap-2.5 px-3.5 py-3 text-[13px] font-bold ${on ? chipOn : chipOff}`}>
-              <span className={`flex size-5 shrink-0 items-center justify-center rounded-md ${on ? "bg-[#4da3ff] text-white" : "ring-1 ring-white/20"}`}>{on && <Check className="size-3" strokeWidth={3} aria-hidden="true" />}</span>
+              <span className={`flex size-5 shrink-0 items-center justify-center rounded-md ${on ? "bg-[#d9a648] text-[#1c1406]" : "ring-1 ring-white/20"}`}>{on && <Check className="size-3" strokeWidth={3} aria-hidden="true" />}</span>
               {pain.label}
             </button>
           );
@@ -109,13 +109,13 @@ const TeamPick = () => {
           const on = config.goals.includes(goal.value);
           return (
             <button key={goal.value} type="button" aria-pressed={on} onClick={() => toggle("goals", goal.value)} className={`${chip} relative flex flex-col gap-2 p-3 ${on ? chipOn : chipOff}`}>
-              <span className={`flex size-9 items-center justify-center rounded-xl ${on ? "bg-[linear-gradient(135deg,#4da3ff,#7c6cff)] text-white" : "bg-white/6"}`}>
+              <span className={`flex size-9 items-center justify-center rounded-xl ${on ? "bg-[linear-gradient(135deg,#f5d79c,#d9a648)] text-[#1c1406]" : "bg-white/6"}`}>
                 <goal.icon className="size-[18px]" aria-hidden="true" />
               </span>
               <strong className="text-[12.5px] leading-5 text-white">{goal.label}</strong>
               <span className="text-[11px] leading-[1.6] opacity-60">{goal.description}</span>
               {suggested.has(goal.value) && (
-                <span className="mt-auto flex items-start gap-1 border-t border-white/8 pt-2 text-[10.5px] leading-[1.6] text-[#9ccbff]">
+                <span className="mt-auto flex items-start gap-1 border-t border-white/8 pt-2 text-[10.5px] leading-[1.6] text-[#e9c27a]">
                   <Sparkles className="mt-0.5 size-3 shrink-0" aria-hidden="true" />{tx("برای «{0}»", [reasonFor(goal.value, config.pains)])}</span>
               )}
             </button>
@@ -167,12 +167,10 @@ const Answer = ({ children }: { children: (answer: (patch: Partial<AiConfig>) =>
 const ShowProposal = () => {
   const config = useAi((state) => state.config);
   const setProposal = useAi((state) => state.setProposal);
-  const result = impact(config);
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap gap-2">
         <span className="rounded-full bg-white/6 px-3 py-1.5 text-[12px] font-bold text-white">{tx("{0} هم‌تیمی هوش مصنوعی", [fa(config.goals.length)])}</span>
-        <span className="rounded-full bg-white/6 px-3 py-1.5 text-[12px] font-bold text-white">{tx("{0} ساعت در ماه صرفه‌جویی", [fa(result.hoursSaved)])}</span>
         <span className="rounded-full bg-white/6 px-3 py-1.5 text-[12px] font-bold text-white">{tx("۲۴ ساعته")}</span>
       </div>
       <Confirm label={tx("دیدن پیشنهاد کامل")} onClick={() => setProposal(true)} />
@@ -202,55 +200,6 @@ const questions: Question[] = [
     ask: () => tx("این هم‌تیمی‌ها کجا کار کنند؟ ابزارهایی را که الان دارید انتخاب کنید؛ به همین‌ها وصلشان می‌کنیم و لازم نیست چیزی را عوض کنید."),
     said: (config) => tools.filter((tool) => config.tools.includes(tool.value)).map((tool) => tool.label).join(tx("، ")),
     input: () => <ToolPick />,
-  },
-  {
-    key: "staff",
-    ask: () => tx("الان چند نفر این کارها را انجام می‌دهند؟"),
-    said: (config) => tx("{0} نفر", [fa(config.staff)]),
-    input: () => <Answer>{(answer) => <Choices options={staffChoices.map((staff) => ({ value: staff, label: staff === 25 ? tx("۲۵ نفر یا بیشتر") : tx("{0} نفر", [fa(staff)]) }))} onPick={(staff) => answer({ staff })} />}</Answer>,
-  },
-  {
-    key: "share",
-    ask: (config) => tx("این {0} نفر چه بخشی از روزشان صرف همین کارها می‌شود؟", [fa(config.staff)]),
-    said: (config) => shareChoices.find((choice) => choice.value === config.share)?.label ?? "",
-    input: () => <Answer>{(answer) => <Choices options={shareChoices} onPick={(share) => answer({ share, hoursPerWeek: Math.round(useAi.getState().config.staff * 44 * share) })} />}</Answer>,
-  },
-  {
-    key: "autonomy",
-    ask: () => tx("تصمیم آخر با چه کسی باشد؟"),
-    said: (config) => autonomyLevels.find((level) => level.value === config.autonomy)?.label ?? "",
-    input: () => (
-      <Answer>
-        {(answer) => (
-          <Choices
-            options={[
-              { value: "suggest" as const, label: tx("هوش مصنوعی پیشنهاد بدهد، ما تأیید کنیم") },
-              { value: "assisted" as const, label: tx("کارهای روزمره خودکار، موارد حساس با ما") },
-              { value: "auto" as const, label: tx("همه‌چیز خودکار؛ ما فقط گزارش ببینیم") },
-            ]}
-            onPick={(autonomy) => answer({ autonomy })}
-          />
-        )}
-      </Answer>
-    ),
-  },
-  {
-    key: "hosting",
-    ask: () => tx("اطلاعات شرکت کجا بماند؟"),
-    said: (config) => (config.hosting === "onprem" ? tx("روی سرور خودمان") : tx("ابری امن")),
-    input: () => (
-      <Answer>
-        {(answer) => (
-          <Choices
-            options={[
-              { value: "cloud" as const, label: tx("ابری امن"), hint: tx("راه‌اندازی سریع‌تر و کم‌هزینه‌تر") },
-              { value: "onprem" as const, label: tx("روی سرور خودمان"), hint: tx("هیچ داده‌ای از سازمان بیرون نمی‌رود") },
-            ]}
-            onPick={(hosting) => answer({ hosting })}
-          />
-        )}
-      </Answer>
-    ),
   },
   {
     key: "persona",
@@ -287,10 +236,10 @@ export const interviewLength = questions.length;
 
 const Bot = ({ children }: { children: ReactNode }) => (
   <div className="flex items-start gap-2.5">
-    <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-[#111419] ring-1 ring-white/10">
+    <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-[#121a2e] ring-1 ring-white/10">
       <KhayyamMark size={20} />
     </span>
-    <div className="max-w-[88%] rounded-[20px] rounded-ss-md bg-[#151920] px-4 py-3 text-[13.5px] leading-7 text-[#e1e6ec] ring-1 ring-white/6">{children}</div>
+    <div className="max-w-[88%] rounded-[20px] rounded-ss-md bg-[#16203a] px-4 py-3 text-[13.5px] leading-7 text-[#e1e6ec] ring-1 ring-white/6">{children}</div>
   </div>
 );
 
@@ -335,7 +284,7 @@ export const Interview = () => {
         {questions.slice(0, stage).map((question, index) => (
           <div key={question.key} className="flex flex-col gap-3">
             <Bot>{question.ask(config)}</Bot>
-            <motion.button {...rise} type="button" onClick={() => rewind(index)} className="group flex max-w-[85%] items-center gap-2 self-end rounded-[20px] rounded-se-md bg-[#1d2431] px-4 py-3 text-start text-[13.5px] leading-7 text-white ring-1 ring-white/[0.06]" title={tx("تغییر پاسخ")}>
+            <motion.button {...rise} type="button" onClick={() => rewind(index)} className="group flex max-w-[85%] items-center gap-2 self-end rounded-[20px] rounded-se-md bg-[#1d2842] px-4 py-3 text-start text-[13.5px] leading-7 text-white ring-1 ring-white/[0.06]" title={tx("تغییر پاسخ")}>
               <span>{question.said(config)}</span>
               <Pencil className="size-3.5 shrink-0 opacity-50 transition-opacity group-hover:opacity-100" aria-hidden="true" />
             </motion.button>
@@ -344,8 +293,8 @@ export const Interview = () => {
 
         <AnimatePresence mode="wait">
           {typingFor === stage ? (
-            <motion.div key="typing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-2.5 text-[12px] text-[#8a93a0]">
-              <span className="flex size-8 items-center justify-center rounded-full bg-[#111419] ring-1 ring-white/10">
+            <motion.div key="typing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-2.5 text-[12px] text-[#9aa3b8]">
+              <span className="flex size-8 items-center justify-center rounded-full bg-[#121a2e] ring-1 ring-white/10">
                 <KhayyamMark size={20} state="thinking" />
               </span>{tx("در حال فکر کردن…")}</motion.div>
           ) : (
@@ -364,7 +313,7 @@ export const Interview = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        {stage > 0 && !submitted && <p className="text-center text-[11px] text-[#5d6573]">{tx("برای تغییر هر پاسخ، رویش بزنید.")}</p>}
+        {stage > 0 && !submitted && <p className="text-center text-[11px] text-[#6f788d]">{tx("برای تغییر هر پاسخ، رویش بزنید.")}</p>}
       </div>
     </div>
   );

@@ -12,7 +12,6 @@ import {
   Mail,
   Megaphone,
   MessageCircle,
-  MessagesSquare,
   Send,
   ShoppingBag,
   Sheet,
@@ -37,7 +36,7 @@ import type { Plan } from "../order-wizard/payments";
 /* ------------------------------------------------------------------ */
 
 export type GoalKey = "support" | "process" | "reports" | "documents" | "marketing" | "forecast" | "knowledge";
-export type ToolKey = "website" | "telegram" | "bale" | "whatsapp" | "instagram" | "email" | "sms" | "sheets" | "crm" | "accounting" | "shop" | "docs";
+export type ToolKey = "website" | "telegram" | "whatsapp" | "instagram" | "email" | "sms" | "sheets" | "crm" | "accounting" | "shop" | "docs";
 export type Autonomy = "suggest" | "assisted" | "auto";
 export type Hosting = "cloud" | "onprem";
 export type Persona = "formal" | "friendly" | "expert";
@@ -113,7 +112,6 @@ export const goals: { value: GoalKey; label: string; description: string; icon: 
 export const tools: { value: ToolKey; label: string; icon: LucideIcon; color: string; side: "in" | "out" }[] = [
   { value: "website", label: tx("سایت"), icon: Globe, color: "#4da3ff", side: "in" },
   { value: "telegram", label: tx("تلگرام"), icon: Send, color: "#2aabee", side: "in" },
-  { value: "bale", label: tx("بله / ایتا"), icon: MessagesSquare, color: "#2fd08a", side: "in" },
   { value: "whatsapp", label: tx("واتس‌اپ"), icon: MessageCircle, color: "#25d366", side: "in" },
   { value: "instagram", label: tx("اینستاگرام"), icon: Smartphone, color: "#e1306c", side: "in" },
   { value: "email", label: tx("ایمیل"), icon: Mail, color: "#f0b44a", side: "in" },

@@ -8,6 +8,8 @@ import { create } from "zustand";
 
 import { KhayyamMark } from "@/components/brand/khayyam-mark";
 
+import { AssistantLauncher } from "./launcher";
+
 import { getSteps } from "../config";
 import { useWizard } from "../store";
 import { useStickToBottom } from "../use-stick-bottom";
@@ -42,7 +44,7 @@ export const useAssistant = create<AssistantState>((set) => ({
 }));
 
 const Typing = () => (
-  <span className="flex items-center gap-2 py-1.5 text-[12px] text-[#8a93a0]" aria-label={tx("در حال نوشتن")}>
+  <span className="flex items-center gap-2 py-1.5 text-[12px] text-[#9aa3b8]" aria-label={tx("در حال نوشتن")}>
     <KhayyamMark size={22} state="thinking" />{tx("در حال محاسبه…")}</span>
 );
 
@@ -101,22 +103,7 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
     <>
       {!open && (
         <div className={`absolute z-20 flex items-end gap-2 ${studio ? "bottom-6" : "bottom-3"} ${studioDir() === "rtl" ? (studio ? "left-6" : "left-3") : studio ? "right-6" : "right-3"}`} dir="ltr">
-          <motion.button
-            key={nudge}
-            type="button"
-            data-tour="assistant"
-            onClick={() => setOpen(true)}
-            animate={reduce || nudge === 0 ? undefined : { rotate: [0, -10, 8, -5, 0], scale: [1, 1.12, 1] }}
-            transition={{ duration: 0.7, ease: "easeInOut" }}
-            className={`relative flex items-center gap-2.5 rounded-full bg-[#111419]/90 text-[12.5px] font-bold text-white shadow-[0_12px_40px_-12px_rgba(77,163,255,0.7)] ring-1 ring-white/10 backdrop-blur transition hover:ring-white/25 ${studio ? "h-12 pe-5 ps-1.5" : "size-12 justify-center"}`}
-            aria-label={tx("دستیار هوشمند")}
-            dir={studioDir()}
-          >
-            {/* a soft ring that pings with every nudge */}
-            {!reduce && nudge > 0 && <motion.span key={`ring-${nudge}`} className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-[#4da3ff]" initial={{ opacity: 0.8, scale: 1 }} animate={{ opacity: 0, scale: 1.5 }} transition={{ duration: 1.1 }} />}
-            <KhayyamMark size={studio ? 36 : 38} state={nudge % 2 === 1 ? "thinking" : "idle"} />
-            {studio && <span>{tx("دستیار هوشمند")}</span>}
-          </motion.button>
+          <AssistantLauncher nudge={nudge} onOpen={() => setOpen(true)} compact={!studio} guide={{ name: "tour", value: "assistant" }} />
         </div>
       )}
 
@@ -137,9 +124,9 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
                 if (info.offset.y > 110 || info.velocity.y > 600) setOpen(false);
               }}
               role="dialog"
-              aria-label={tx("دستیار هوشمند")}
+              aria-label={tx("دستیار خیام")}
               dir={studioDir()}
-              className={`z-[150] flex flex-col overflow-hidden bg-[#111419]/95 text-[#eef1f5] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)] ring-1 ring-white/10 backdrop-blur-xl ${
+              className={`z-[150] flex flex-col overflow-hidden bg-[#121a2e]/95 text-[#f2ecdf] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)] ring-1 ring-white/10 backdrop-blur-xl ${
                 studio ? "absolute bottom-6 end-6 h-[min(600px,calc(100%-110px))] w-[380px] rounded-[26px]" : "fixed inset-x-0 bottom-0 top-[10dvh] rounded-t-[26px]"
               }`}
             >
@@ -152,9 +139,9 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
                 <KhayyamMark size={38} />
                 <div className="leading-tight">
                   <strong className="block text-[14px]">{tx("دستیار خیام")}</strong>
-                  <span className="text-[11px] text-[#8a93a0]">{tx("راهنمای قدم‌به‌قدم · نسخه آزمایشی")}</span>
+                  <span className="text-[11px] text-[#9aa3b8]">{tx("راهنمای قدم‌به‌قدم · نسخه آزمایشی")}</span>
                 </div>
-                <button type="button" onClick={() => setOpen(false)} aria-label={tx("بستن")} className="ms-auto flex size-9 items-center justify-center rounded-full text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white">
+                <button type="button" onClick={() => setOpen(false)} aria-label={tx("بستن")} className="ms-auto flex size-9 items-center justify-center rounded-full text-[#9aa3b8] transition-colors hover:bg-white/6 hover:text-white">
                   <X className="size-4" aria-hidden="true" />
                 </button>
               </header>
@@ -164,11 +151,11 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
                 {messages.map((message) =>
                   message.role === "user" ? (
                     <div key={message.id} className="flex justify-end">
-                      <p className="max-w-[85%] rounded-[18px] rounded-ee-md bg-[#4da3ff] px-3.5 py-2.5 text-[13px] leading-6 text-white">{message.text}</p>
+                      <p className="max-w-[85%] rounded-[18px] rounded-ee-md bg-[#d9a648] px-3.5 py-2.5 text-[13px] leading-6 text-[#1c1406]">{message.text}</p>
                     </div>
                   ) : (
                     <div key={message.id} className="flex flex-col items-start gap-2">
-                      <p className="max-w-[92%] rounded-[18px] rounded-es-md bg-[#1a1f28] px-3.5 py-2.5 text-[13px] leading-7 text-[#e1e6ec]">{message.text}</p>
+                      <p className="max-w-[92%] rounded-[18px] rounded-es-md bg-[#1a2440] px-3.5 py-2.5 text-[13px] leading-7 text-[#e1e6ec]">{message.text}</p>
                       {message.actions && message.actions.length > 0 && (
                         <div className="flex max-w-[92%] flex-wrap gap-1.5">
                           {message.actions.map((action, index) => {
@@ -178,12 +165,12 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
                                 key={action.label}
                                 type="button"
                                 onClick={() => apply(message, action, index)}
-                                className={`flex h-9 items-center gap-2 rounded-full px-3 text-[12px] font-bold transition-colors ${applied ? "bg-[#2fd08a]/15 text-[#7ae6b4]" : "bg-[#4da3ff]/12 text-[#9ccbff] hover:bg-[#4da3ff]/22"}`}
+                                className={`flex h-9 items-center gap-2 rounded-full px-3 text-[12px] font-bold transition-colors ${applied ? "bg-[#2fd08a]/15 text-[#7ae6b4]" : "bg-[#d9a648]/12 text-[#e9c27a] hover:bg-[#d9a648]/22"}`}
                               >
                                 {action.swatches && (
                                   <span className="flex -space-x-1.5 rtl:space-x-reverse">
                                     {action.swatches.map((swatch) => (
-                                      <span key={swatch} className="size-3.5 rounded-full ring-2 ring-[#111419]" style={{ backgroundColor: swatch }} />
+                                      <span key={swatch} className="size-3.5 rounded-full ring-2 ring-[#121a2e]" style={{ backgroundColor: swatch }} />
                                     ))}
                                   </span>
                                 )}
@@ -199,7 +186,7 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
                 )}
                 {typing && (
                   <div className="flex">
-                    <span className="rounded-[18px] rounded-es-md bg-[#1a1f28] px-3">
+                    <span className="rounded-[18px] rounded-es-md bg-[#1a2440] px-3">
                       <Typing />
                     </span>
                   </div>
@@ -210,7 +197,7 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
               <div className="shrink-0 border-t border-white/6 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2.5">
                 <div className="mb-2.5 flex gap-1.5 overflow-x-auto [scrollbar-width:none]">
                   {quickQuestions(stepKey).map((question) => (
-                    <button key={question} type="button" onClick={() => send(question)} className="h-8 shrink-0 rounded-full bg-[#171b22] px-3 text-[11.5px] font-bold text-[#c9d0d9] transition-colors hover:bg-[#1d222b]">
+                    <button key={question} type="button" onClick={() => send(question)} className="h-8 shrink-0 rounded-full bg-[#172036] px-3 text-[11.5px] font-bold text-[#c9d0d9] transition-colors hover:bg-[#1d2842]">
                       {question}
                     </button>
                   ))}
@@ -220,11 +207,11 @@ export const AssistantDock = ({ studio = false }: { studio?: boolean }) => {
                     event.preventDefault();
                     void send(draft);
                   }}
-                  className="flex items-center gap-2 rounded-2xl bg-[#171b22] p-1.5 ps-4 focus-within:ring-2 focus-within:ring-[#4da3ff]/50"
+                  className="flex items-center gap-2 rounded-2xl bg-[#172036] p-1.5 ps-4 focus-within:ring-2 focus-within:ring-[#d9a648]/50"
                 >
                   <label className="sr-only" htmlFor="assistant-input">{tx("پیام به دستیار")}</label>
-                  <input id="assistant-input" value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={tx("سوالتان را بپرسید…")} className="h-9 min-w-0 flex-1 bg-transparent text-[13px] text-white outline-none placeholder:text-[#5d6573]" />
-                  <button type="submit" disabled={!draft.trim() || typing} aria-label={tx("ارسال")} className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#4da3ff,#7c6cff)] text-white transition disabled:opacity-30">
+                  <input id="assistant-input" value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={tx("سوالتان را بپرسید…")} className="h-9 min-w-0 flex-1 bg-transparent text-[13px] text-white outline-none placeholder:text-[#6f788d]" />
+                  <button type="submit" disabled={!draft.trim() || typing} aria-label={tx("ارسال")} className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#f5d79c,#d9a648)] text-[#1c1406] transition disabled:opacity-30">
                     <ArrowUp className="size-4" aria-hidden="true" />
                   </button>
                 </form>

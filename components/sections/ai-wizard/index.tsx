@@ -37,7 +37,7 @@ export const AiWizard = () => {
   }, []);
 
   return (
-    <div dir={studioDir()} className="fixed inset-0 z-[100] overflow-hidden bg-[#0b0d12] font-sans text-[#eef1f5] [color-scheme:dark]">
+    <div dir={studioDir()} className="fixed inset-0 z-[100] overflow-hidden bg-[#0c1222] font-sans text-[#f2ecdf] [color-scheme:dark]">
       <PaymentOverlay />
       {mode === "chat" ? <ChatLayout /> : <CustomLayout />}
     </div>
@@ -46,7 +46,7 @@ export const AiWizard = () => {
 
 const TopBar = ({ title, guide, back, children }: { title: string; guide: string; back?: () => void; children?: ReactNode }) => {
   const openGuide = useGuide((state) => state.open);
-  const icon = "flex size-9 items-center justify-center rounded-xl text-[#8a93a0] transition-colors hover:bg-white/6 hover:text-white";
+  const icon = "flex size-9 items-center justify-center rounded-xl text-[#9aa3b8] transition-colors hover:bg-white/6 hover:text-white";
   return (
     <header className="flex h-14 shrink-0 items-center gap-3 border-b border-white/6 px-3 lg:px-5">
       {back && (
@@ -73,7 +73,7 @@ const Progress = () => {
   const done = submitted ? interviewLength - 1 : Math.min(stage, interviewLength - 1);
   const share = done / (interviewLength - 1);
   return (
-    <span data-guide="progress" className="hidden items-center gap-2 text-[11.5px] text-[#8a93a0] sm:flex">{tx("{0}٪ کامل", [fa(Math.round(share * 100))])}<span className="h-1 w-24 overflow-hidden rounded-full bg-white/8">
+    <span data-guide="progress" className="hidden items-center gap-2 text-[11.5px] text-[#9aa3b8] sm:flex">{tx("{0}٪ کامل", [fa(Math.round(share * 100))])}<span className="h-1 w-24 overflow-hidden rounded-full bg-white/8">
         <span className="block h-full rounded-full bg-[#f0b44a] transition-all duration-500" style={{ width: `${share * 100}%` }} />
       </span>
     </span>
@@ -107,10 +107,10 @@ const ChatLayout = () => {
                 <Interview />
               </div>
               {/* phones: the question's main button lands here, in a bar of its own */}
-              {isSmall && <div id="ai-actions" className="shrink-0 border-t border-white/6 bg-[#0b0d12] px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 empty:hidden" />}
+              {isSmall && <div id="ai-actions" className="shrink-0 border-t border-white/6 bg-[#0c1222] px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 empty:hidden" />}
             </section>
             {!isSmall && (
-              <main data-guide="dossier" className="relative min-w-0 flex-1 overflow-y-auto overscroll-contain bg-[#0e1117] px-10 py-10 [scrollbar-width:thin]">
+              <main data-guide="dossier" className="relative min-w-0 flex-1 overflow-y-auto overscroll-contain bg-[#0e1527] px-10 py-10 [scrollbar-width:thin]">
                 <Dossier config={config} stage={stage} />
               </main>
             )}
@@ -122,7 +122,7 @@ const ChatLayout = () => {
 
       <AnimatePresence>
         {isSmall && dossierOpen && (
-          <motion.div className="fixed inset-0 z-[150] flex flex-col bg-[#0e1117]" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", bounce: 0, duration: 0.4 }}>
+          <motion.div className="fixed inset-0 z-[150] flex flex-col bg-[#0e1527]" initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", bounce: 0, duration: 0.4 }}>
             <div className="flex h-12 shrink-0 items-center justify-between px-4">
               <strong className="text-[14px]">{tx("پرونده تیم")}</strong>
               <button type="button" onClick={() => setDossierOpen(false)} aria-label={tx("بستن")} className="flex size-9 items-center justify-center rounded-full bg-white/8">

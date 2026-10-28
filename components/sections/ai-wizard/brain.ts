@@ -41,7 +41,6 @@ const goalWords: [RegExp, GoalKey][] = [
 const toolWords: [RegExp, ToolKey][] = [
   [/سایت|وب/, "website"],
   [/تلگرام/, "telegram"],
-  [/بله|ایتا/, "bale"],
   [/واتس/, "whatsapp"],
   [/اینستا/, "instagram"],
   [/ایمیل|جیمیل/, "email"],
