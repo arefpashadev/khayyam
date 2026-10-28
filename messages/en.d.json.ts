@@ -440,6 +440,40 @@ declare const messages: {
       "app": "From shopping apps to internal company apps, each with its own look and features.",
       "ai": "Each agent is built around that business’s work and data; a few places where it works."
     }
+  },
+  "Blog": {
+    "metaTitle": "Khayyam blog",
+    "eyebrow": "Blog",
+    "title": "The blog",
+    "sub": "Short, practical notes on websites, apps and AI for businesses.",
+    "persianNote": "Articles are currently written in Persian.",
+    "filter": "Article topics",
+    "allShort": "All",
+    "all": "All articles",
+    "homeTitle": "New on the blog",
+    "pickTitle": "Read more",
+    "read": "Read the article",
+    "minutes": "{n} min read",
+    "back": "Blog",
+    "related": "More articles",
+    "ctaSub": "The first design is free: see it first, decide after.",
+    "kinds": {
+      "site": "Website",
+      "app": "App",
+      "ai": "AI"
+    },
+    "cta": {
+      "site": "Start your website",
+      "app": "Start your app",
+      "ai": "Build your agent"
+    },
+    "start": {
+      "site": "Start a website",
+      "app": "Start an app",
+      "ai": "Start an agent"
+    },
+    "menu": "Menu",
+    "close": "Close"
   }
 };
 export default messages;

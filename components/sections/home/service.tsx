@@ -32,10 +32,12 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import { Link } from "@/i18n/navigation";
 import { dirOf } from "@/lib/locale";
+
+import { BlogPicks } from "../blog";
 
 import { AgentDemo } from "./ai-agent";
 import { AiScene, AppScene, SiteScene } from "./scenes";
@@ -76,8 +78,6 @@ const tones = [
   ["#1d4ed8", "#1e293b"],
   ["#be123c", "#4c0519"],
 ] as const;
-
-const KEYS = ["1", "2", "3", "4", "5", "6"] as const;
 
 /* ------------------------------------------------------------------ */
 /* Hero visual with floating highlights                                 */
@@ -201,34 +201,88 @@ const AgentMock = ({ title, line, Icon }: { title: string; line: string; Icon: L
   </div>
 );
 
+const KEYS = ["1", "2", "3", "4", "5", "6"] as const;
+const SHOW = ["1", "2", "3", "4"] as const;
+const SHOW_MS = 4800;
+
+/**
+ * A few businesses, one at a time: pick a name and its design takes the stage.
+ * Moves on by itself while nobody is pointing at it.
+ */
 const Showcase = ({ kind }: { kind: ServiceKind }) => {
   const t = useTranslations(`Service.${kind}`);
   const s = useTranslations("Service");
   const reduce = useReducedMotion();
-  const dir = dirOf(useLocale());
-  const items = KEYS.map((key, index) =>
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (reduce || paused) return;
+    const timer = window.setTimeout(() => setActive((value) => (value + 1) % SHOW.length), SHOW_MS);
+    return () => window.clearTimeout(timer);
+  }, [active, paused, reduce]);
+
+  const key = SHOW[active];
+  const mock =
     kind === "site" ? (
-      <SiteMock key={key} title={t(`x${key}`)} line={t(`x${key}t`)} tone={tones[index]} />
+      <SiteMock title={t(`x${key}`)} line={t(`x${key}t`)} tone={tones[active]} />
     ) : kind === "app" ? (
-      <AppMock key={key} title={t(`x${key}`)} line={t(`x${key}t`)} tone={tones[index]} />
+      <AppMock title={t(`x${key}`)} line={t(`x${key}t`)} tone={tones[active]} />
     ) : (
-      <AgentMock key={key} title={t(`x${key}`)} line={t(`x${key}t`)} Icon={config.ai.examples[index]} />
-    ),
-  );
+      <AgentMock title={t(`x${key}`)} line={t(`x${key}t`)} Icon={config.ai.examples[active]} />
+    );
 
   return (
-    <section className="overflow-hidden border-t border-[#f2ecdf]/[0.07] py-20 lg:py-28">
-      <Reveal className="mx-auto max-w-[1240px] px-5 lg:px-10">
-        <h2 className="text-[28px] font-extrabold leading-[1.4] lg:text-[40px]">{s("examples")}</h2>
-        <p className="mt-3 max-w-[48ch] text-[15px] leading-8 text-[#9aa3b8]">{s(`examplesSub.${kind}`)}</p>
-      </Reveal>
-      <div className="group relative mt-12 [mask-image:linear-gradient(90deg,transparent,#000_8%,#000_92%,transparent)]" dir="ltr">
-        <div
-          className={`flex w-max items-end gap-5 px-5 ${reduce ? "overflow-x-auto" : "animate-[svc-marquee_48s_linear_infinite] group-hover:[animation-play-state:paused]"}`}
-          dir={dir}
-        >
-          {items}
-          {!reduce && items.map((item, index) => <div key={`copy-${index}`} aria-hidden="true">{item}</div>)}
+    <section className="border-t border-[#f2ecdf]/[0.07] py-20 lg:py-28" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+      <div className="mx-auto grid max-w-[1240px] items-center gap-10 px-5 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16 lg:px-10">
+        <div>
+          <Reveal>
+            <h2 className="text-[28px] font-extrabold leading-[1.4] lg:text-[40px]">{s("examples")}</h2>
+            <p className="mt-3 max-w-[44ch] text-[15px] leading-8 text-[#9aa3b8]">{s(`examplesSub.${kind}`)}</p>
+          </Reveal>
+          <div role="tablist" aria-label={s("examples")} className="-mx-5 mt-8 flex gap-2 overflow-x-auto px-5 [scrollbar-width:none] lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0">
+            {SHOW.map((item, index) => {
+              const on = index === active;
+              return (
+                <button
+                  key={item}
+                  type="button"
+                  role="tab"
+                  aria-selected={on}
+                  onClick={() => setActive(index)}
+                  className={`relative shrink-0 overflow-hidden rounded-full px-4 py-2.5 text-start transition-colors lg:rounded-[20px] lg:px-5 lg:py-4 ${on ? "bg-[#121a2e] ring-1 ring-[#d9a648]/45" : "ring-1 ring-[#f2ecdf]/10 hover:bg-[#f2ecdf]/[0.04]"}`}
+                >
+                  <strong className={`block whitespace-nowrap text-[14px] font-extrabold lg:text-[15.5px] ${on ? "text-[#f2ecdf]" : "text-[#b9bfcc]"}`}>{t(`x${item}`)}</strong>
+                  <span className={`hidden text-[13px] leading-6 lg:block ${on ? "text-[#9aa3b8]" : "text-[#6f788d]"}`}>{t(`x${item}t`)}</span>
+                  {on && !reduce && (
+                    <motion.span
+                      key={`bar-${active}-${paused}`}
+                      className="absolute bottom-0 start-0 h-[2px] bg-[#d9a648]"
+                      initial={{ width: "0%" }}
+                      animate={{ width: paused ? "0%" : "100%" }}
+                      transition={{ duration: paused ? 0 : SHOW_MS / 1000, ease: "linear" }}
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="relative flex h-[340px] items-center justify-center overflow-hidden rounded-[32px] bg-[radial-gradient(90%_80%_at_50%_40%,rgba(217,166,72,0.16),transparent_65%),#0e1527] ring-1 ring-[#f2ecdf]/[0.07] lg:h-[480px]">
+          <span className="absolute inset-0 bg-[linear-gradient(rgba(242,236,223,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(242,236,223,0.035)_1px,transparent_1px)] bg-[size:32px_32px]" aria-hidden="true" />
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={active}
+              initial={reduce ? false : { opacity: 0, y: 24, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={reduce ? undefined : { opacity: 0, y: -16, scale: 0.98 }}
+              transition={{ duration: 0.45, ease }}
+              className={`relative ${kind === "site" ? "scale-[0.95] sm:scale-[1.2] lg:scale-[1.45]" : kind === "app" ? "scale-100 lg:scale-[1.6]" : "scale-100 lg:scale-[1.45]"}`}
+            >
+              {mock}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </section>
@@ -374,6 +428,7 @@ export const ServiceLanding = ({ kind }: { kind: ServiceKind }) => {
       </div>
 
       <Faq kind={kind} />
+      {locale === "fa" && <BlogPicks kind={kind} />}
     </div>
   );
 };

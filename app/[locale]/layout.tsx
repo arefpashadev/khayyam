@@ -3,7 +3,6 @@ import localFont from "next/font/local";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import "../globals.css";
-import Header from "@/components/layouts/header";
 import { isRTLLocale } from "@/i18n/routing";
 
 const yekanBakh = localFont({
@@ -59,7 +58,6 @@ export default async function RootLayout({
     >
       <body className="flex min-h-full flex-col">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <Header />
           {children}
         </NextIntlClientProvider>
       </body>

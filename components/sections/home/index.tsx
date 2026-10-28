@@ -7,6 +7,8 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 import { dirOf } from "@/lib/locale";
 
+import { BlogPicks } from "../blog";
+
 import { AgentDemo } from "./ai-agent";
 import { testimonials } from "./content";
 import { AiScene, AppScene, SiteScene } from "./scenes";
@@ -267,6 +269,7 @@ export const HomePage = () => {
       <Products />
       <Steps />
       <Clients />
+      {locale === "fa" && <BlogPicks />}
     </div>
   );
 };

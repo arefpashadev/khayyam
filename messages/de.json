@@ -437,5 +437,39 @@
       "app": "Von Shopping-Apps bis zu internen Firmen-Apps – jede mit eigenem Look und eigenen Funktionen.",
       "ai": "Jeder Agent entsteht rund um Arbeit und Daten des Unternehmens; ein paar Einsatzorte."
     }
+  },
+  "Blog": {
+    "metaTitle": "Khayyam Blog",
+    "eyebrow": "Blog",
+    "title": "Der Blog",
+    "sub": "Kurze, praktische Texte über Websites, Apps und KI für Unternehmen.",
+    "persianNote": "Die Artikel sind derzeit auf Persisch verfasst.",
+    "filter": "Themen",
+    "allShort": "Alle",
+    "all": "Alle Artikel",
+    "homeTitle": "Neu im Blog",
+    "pickTitle": "Weiterlesen",
+    "read": "Artikel lesen",
+    "minutes": "{n} Min. Lesezeit",
+    "back": "Blog",
+    "related": "Weitere Artikel",
+    "ctaSub": "Der erste Entwurf ist kostenlos: erst ansehen, dann entscheiden.",
+    "kinds": {
+      "site": "Website",
+      "app": "App",
+      "ai": "KI"
+    },
+    "cta": {
+      "site": "Starten Sie Ihre Website",
+      "app": "Starten Sie Ihre App",
+      "ai": "Bauen Sie Ihren Agenten"
+    },
+    "start": {
+      "site": "Website starten",
+      "app": "App starten",
+      "ai": "Agent starten"
+    },
+    "menu": "Menü",
+    "close": "Schließen"
   }
 }

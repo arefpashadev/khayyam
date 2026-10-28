@@ -12,10 +12,18 @@ export const faces: { key: Face; href: string }[] = [
   { key: "site", href: "/website" },
   { key: "app", href: "/apps" },
   { key: "ai", href: "/ai" },
-]
+];
 
 // Isometric cube on a 400×400 canvas.
-const P = { top: "200,52", ur: "328,126", ul: "72,126", c: "200,200", lr: "328,274", ll: "72,274", b: "200,348" };
+const P = {
+  top: "200,52",
+  ur: "328,126",
+  ul: "72,126",
+  c: "200,200",
+  lr: "328,274",
+  ll: "72,274",
+  b: "200,348",
+};
 const shape: Record<Face, string> = {
   ai: `${P.top} ${P.ur} ${P.c} ${P.ul}`,
   site: `${P.ur} ${P.lr} ${P.b} ${P.c}`,
@@ -37,7 +45,11 @@ const IVORY = "#f2ecdf";
  * Pointing at it opens it up: the faces name the studios, the one under the pointer
  * lights up, and choosing it opens that studio. Touch screens show the names right away.
  */
-export const StudioCube = ({ onChange }: { onChange?: (face: Face | null) => void }) => {
+export const StudioCube = ({
+  onChange,
+}: {
+  onChange?: (face: Face | null) => void;
+}) => {
   const reduce = useReducedMotion();
   const router = useRouter();
   const t = useTranslations("Cube");
@@ -46,7 +58,10 @@ export const StudioCube = ({ onChange }: { onChange?: (face: Face | null) => voi
   const [touch, setTouch] = useState(false);
 
   useEffect(() => {
-    const timeout = window.setTimeout(() => setTouch(!window.matchMedia("(hover: hover)").matches), 0);
+    const timeout = window.setTimeout(
+      () => setTouch(!window.matchMedia("(hover: hover)").matches),
+      0,
+    );
     return () => window.clearTimeout(timeout);
   }, []);
 
@@ -56,7 +71,14 @@ export const StudioCube = ({ onChange }: { onChange?: (face: Face | null) => voi
 
   useEffect(() => onChange?.(open ? lit : null), [open, lit, onChange]);
 
-  const draw = (delay: number) => (reduce ? {} : { initial: { pathLength: 0, opacity: 0 }, animate: { pathLength: 1, opacity: 1 }, transition: { duration: 1.2, delay, ease: [0.65, 0, 0.35, 1] as const } });
+  // Same look as the loading cube: ivory edges and a gold top, all there from the start.
+  const enter = reduce
+    ? {}
+    : {
+        initial: { opacity: 0, scale: 0.94 },
+        animate: { opacity: 1, scale: 1 },
+        transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
+      };
 
   return (
     <motion.svg
@@ -80,50 +102,70 @@ export const StudioCube = ({ onChange }: { onChange?: (face: Face | null) => voi
       </defs>
       <circle cx="200" cy="210" r="190" fill="url(#cube-glow)" />
 
-      {faces.map((face, index) => {
-        const on = lit === face.key;
-        return (
-          <g
-            key={face.key}
-            role="link"
-            tabIndex={0}
-            aria-label={`${t(`${face.key}.title`)}: ${t(`${face.key}.cta`)}`}
-            className="cursor-pointer outline-none"
-            onMouseEnter={() => setHeld(face.key)}
-            onFocus={() => {
-              setInside(true);
-              setHeld(face.key);
-            }}
-            onBlur={() => {
-              setInside(false);
-              setHeld(null);
-            }}
-            onClick={() => router.push(face.href)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                router.push(face.href);
-              }
-            }}
-          >
-            <motion.polygon points={shape[face.key]} initial={false} animate={{ fill: on ? GOLD : "rgba(242,236,223,0.025)" }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }} />
-            <motion.polygon points={shape[face.key]} fill="none" stroke={IVORY} strokeWidth="7" strokeLinejoin="round" {...draw(index * 0.18)} />
-            <motion.text
-              transform={label[face.key]}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fontSize={face.key === "ai" && t("ai.label").length > 3 ? 23 : 28}
-              fontWeight="800"
-              initial={false}
-              animate={{ opacity: 1, fill: on ? "#1c1406" : IVORY }}
-              transition={{ duration: 0.35 }}
-              style={{ fontFamily: "inherit", pointerEvents: "none" }}
+      <motion.g {...enter} style={{ transformOrigin: "200px 200px" }}>
+        {faces.map((face) => {
+          const on = lit === face.key;
+          return (
+            <g
+              key={face.key}
+              role="link"
+              tabIndex={0}
+              aria-label={`${t(`${face.key}.title`)}: ${t(`${face.key}.cta`)}`}
+              className="cursor-pointer outline-none"
+              onMouseEnter={() => setHeld(face.key)}
+              onFocus={() => {
+                setInside(true);
+                setHeld(face.key);
+              }}
+              onBlur={() => {
+                setInside(false);
+                setHeld(null);
+              }}
+              onClick={() => router.push(face.href)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  router.push(face.href);
+                }
+              }}
             >
-              {t(`${face.key}.label`)}
-            </motion.text>
-          </g>
-        );
-      })}
+              <motion.polygon
+                points={shape[face.key]}
+                initial={false}
+                animate={{ fill: on ? GOLD : "rgba(242,236,223,0.025)" }}
+                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              />
+              <motion.text
+                transform={label[face.key]}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fontSize={
+                  face.key === "ai" && t("ai.label").length > 3 ? 23 : 28
+                }
+                fontWeight="800"
+                initial={false}
+                animate={{ opacity: 1, fill: on ? "#1c1406" : IVORY }}
+                transition={{ duration: 0.35 }}
+                style={{ fontFamily: "inherit", pointerEvents: "none" }}
+              >
+                {t(`${face.key}.label`)}
+              </motion.text>
+            </g>
+          );
+        })}
+        {/* edges on top, like the logo and the loading cube */}
+        <g
+          fill="none"
+          stroke={IVORY}
+          strokeWidth="7"
+          strokeLinejoin="round"
+          pointerEvents="none"
+        >
+          {faces.map((face) => (
+            <polygon key={face.key} points={shape[face.key]} />
+          ))}
+        </g>
+      </motion.g>
     </motion.svg>
   );
 };
@@ -133,7 +175,10 @@ export const FaceCaption = ({ face }: { face: Face | null }) => {
   const t = useTranslations("Cube");
   const line = face ? t(`${face}.hint`) : t("rest");
   return (
-    <div className="relative h-7 w-full overflow-hidden text-center" aria-live="polite">
+    <div
+      className="relative h-7 w-full overflow-hidden text-center"
+      aria-live="polite"
+    >
       <AnimatePresence mode="wait" initial={false}>
         <motion.p
           key={line}

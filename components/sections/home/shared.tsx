@@ -10,6 +10,7 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { formatNumber } from "@/lib/locale";
 
 import { LanguageSwitch } from "./language-switch";
+import { MobileMenu } from "./mobile-menu";
 
 export const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -66,13 +67,14 @@ export const SiteHeader = ({ cta = { href: "/#start", label: "start" } }: { cta?
         </Link>
         <nav aria-label={t("main")} className="ms-6 hidden items-center gap-7 text-[14px] text-[#b9bfcc] lg:flex">
           {links.map((link) => (
-            <Link key={link.href} href={link.href} aria-current={pathname === link.href ? "page" : undefined} className={`transition-colors hover:text-[#f2ecdf] ${pathname === link.href ? "text-[#e9c27a]" : ""}`}>
+            <Link key={link.href} href={link.href} aria-current={pathname === link.href ? "page" : undefined} className={`transition-colors hover:text-[#f2ecdf] ${pathname === link.href || pathname.startsWith(`${link.href}/`) ? "text-[#e9c27a]" : ""}`}>
               {link.label}
             </Link>
           ))}
         </nav>
-        <div className="ms-auto">
+        <div className="ms-auto flex items-center gap-2">
           <LanguageSwitch />
+          <MobileMenu cta={{ href: cta.href, label: t(cta.label) }} />
         </div>
         <Link href={cta.href} className="hidden h-9 items-center rounded-full bg-[#f2ecdf] px-5 text-[13px] font-extrabold text-[#0c1222] transition-colors hover:bg-white sm:inline-flex">
           {t(cta.label)}
